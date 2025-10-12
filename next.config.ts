@@ -1,5 +1,5 @@
 const nextConfig = {
-  output: 'export', // enable static HTML export
+ // output: 'export', // enable static HTML export
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
