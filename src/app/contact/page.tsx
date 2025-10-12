@@ -47,19 +47,19 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'support@kundali.com',
+      content: 'acharyayogendrasharma@gmail.com',
       subContent: 'We reply within 24 hours',
     },
     {
       icon: Phone,
       title: 'Call Us',
-      content: '+91 98765 43210',
+      content: '+91 7688881017',
       subContent: 'Mon-Sat, 9 AM - 9 PM IST',
     },
     {
       icon: MapPin,
       title: 'Visit Us',
-      content: 'Mumbai, Maharashtra',
+      content: 'bhilwara.rajasthan',
       subContent: 'India',
     },
     {

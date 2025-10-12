@@ -1,19 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import QRCode from 'qrcode';
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const { amount } = await req.json();
 
-    // Generate UPI payment string
+    // Just return the static QR code path + upiString
     const upiString = `upi://pay?pa=astrogensis@upi&pn=Astro Genesis&am=${amount}&cu=INR&tn=Payment for consultation`;
-
-    // Generate QR code
-    const qrCode = await QRCode.toDataURL(upiString);
+    const qrCode = '/qr.png'; // static QR image
 
     return NextResponse.json({ qrCode, upiString });
   } catch (error) {
-    console.error('QR code generation error:', error);
-    return NextResponse.json({ error: 'Failed to generate QR code' }, { status: 500 });
+    console.error('QR code API error:', error);
+    return NextResponse.json({ error: 'Failed to get QR code' }, { status: 500 });
   }
 }
