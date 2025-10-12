@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
         userId: decoded.userId,
         message,
         response: responseMessage,
-        createdAt: new Date()
-      });
+        createdAt: new Date().toISOString()
+      } as any);
     } catch (error) {
       console.error('Failed to save chat session:', error);
     }

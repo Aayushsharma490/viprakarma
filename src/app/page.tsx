@@ -117,7 +117,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/subscription">
-                <Button size="lg" variant="outline" className="text-lg px-8 border-2 border-white text-white hover:bg-white/20 backdrop-blur-sm">
+                <Button size="lg" variant="outline" className="text-lg px-8 border-2 border-white text-black hover:bg-white/20 backdrop-blur-sm">
                   View Plans
                 </Button>
               </Link>
@@ -126,11 +126,11 @@ export default function Home() {
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-amber-100">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-300" />
-                <span className="font-medium">10,000+ Happy Users</span>
+                <span className="font-medium text-black">10,000+ Happy Users</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-amber-300" />
-                <span className="font-medium">Expert Astrologers</span>
+                <span className="font-medium text-black">Expert Astrologers</span>
               </div>
             </div>
           </div>
