@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["node", "jsonwebtoken", "webxr"],   // ✅ add this line
     "plugins": [
       {
         "name": "next"

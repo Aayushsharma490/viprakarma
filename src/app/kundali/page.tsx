@@ -14,7 +14,7 @@ import { Loader2, Star, Sun, Moon, Download, Calendar, TrendingUp, Award, Activi
 import { generateKundali, type BirthDetails, type KundaliData } from '@/lib/astrologyApi';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
+ 
 export default function KundaliPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -37,6 +37,7 @@ export default function KundaliPage() {
 
     try {
       const birthDetails: BirthDetails = {
+        name: formData.name,
         day: parseInt(formData.day),
         month: parseInt(formData.month),
         year: parseInt(formData.year),
@@ -45,12 +46,14 @@ export default function KundaliPage() {
         latitude: parseFloat(formData.latitude) || 28.6139,
         longitude: parseFloat(formData.longitude) || 77.2090,
         timezone: 5.5,
+        place: formData.place
       };
 
       const data = await generateKundali(birthDetails);
       setKundaliData(data);
     } catch (error) {
       console.error('Kundali generation error:', error);
+      alert('Error generating kundali. Please check your birth details and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -82,6 +85,33 @@ export default function KundaliPage() {
       yPosition += 5;
       pdf.text(`Place: ${formData.place}`, pageWidth / 2, yPosition, { align: 'center' });
       yPosition += 15;
+
+      // Panchang Section
+      if (kundaliData.panchang) {
+        pdf.setFontSize(14);
+        pdf.setTextColor(217, 119, 6);
+        pdf.text('Panchang Details', 15, yPosition);
+        yPosition += 8;
+        
+        pdf.setFontSize(9);
+        pdf.setTextColor(50, 50, 50);
+        pdf.text(`Date: ${kundaliData.panchang.date}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Tithi: ${kundaliData.panchang.tithi}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Nakshatra: ${kundaliData.panchang.nakshatra}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Yoga: ${kundaliData.panchang.yoga}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Karana: ${kundaliData.panchang.karana}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Vaar: ${kundaliData.panchang.vaar}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Paksha: ${kundaliData.panchang.paksha}`, 15, yPosition);
+        yPosition += 5;
+        pdf.text(`Ritu: ${kundaliData.panchang.ritu}`, 15, yPosition);
+        yPosition += 10;
+      }
 
       // Capture Kundali Chart
       const chartElement = document.getElementById('kundali-chart');
@@ -459,6 +489,42 @@ export default function KundaliPage() {
                 </Button>
               </div>
 
+              {/* Panchang Section */}
+              {kundaliData.panchang && (
+                <Card className="classical-card p-6">
+                  <h2 className="text-2xl font-semibold mb-4 golden-text flex items-center gap-2">
+                    <Calendar className="w-6 h-6" />
+                    Panchang Details
+                  </h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Date</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.date}</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Tithi</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.tithi}</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Nakshatra</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.nakshatra}</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Yoga</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.yoga}</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Karana</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.karana}</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Vaar</p>
+                      <p className="font-semibold text-amber-700">{kundaliData.panchang.vaar}</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
               {/* Kundali Chart */}
               <div id="kundali-chart">
                 <KundaliChart
@@ -582,7 +648,7 @@ export default function KundaliPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-3">All Mahadashas</h3>
                     <div className="space-y-2">
-                      {kundaliData.dashas.mahadashas.map((dasha, index) => (
+                      {kundaliData.dashas.mahadashas.map((dasha: any, index: number) => (
                         <div key={index} className="flex justify-between items-center text-sm py-2 border-b border-gray-200">
                           <span className="font-medium text-gray-900">{dasha.planet}</span>
                           <span className="text-gray-600">

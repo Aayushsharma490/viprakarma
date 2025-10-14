@@ -182,3 +182,35 @@
 nextjs-portal {
   display: none !important;
 }
+
+
+
+
+
+
+
+/* Add these styles to your CSS */
+.house-box {
+  transition: all 0.2s ease-in-out;
+}
+
+.house-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ascendant-box {
+  background: linear-gradient(135deg, #fef3c7, #f59e0b);
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+}
+
+.golden-text {
+  color: #b45309;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.classical-card {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 2px solid #d97706;
+  box-shadow: 0 8px 16px rgba(146, 64, 14, 0.1);
+}
