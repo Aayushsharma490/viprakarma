@@ -26,14 +26,14 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-amber-200 classical-shadow">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          {/* Updated Logo Section */}
+          {/* Updated Logo Section with smaller size */}
           <Link href="/" className="flex items-center">
             <Image
               src="/logo.png" // Path to your logo in the 'public' folder
               alt="Viprakarma Logo"
-              width={180} // Set the width of your logo
-              height={40} // Set the height of your logo
-              priority // Add priority to preload the logo as it's likely LCP
+              width={80} // Adjusted width for a smaller logo
+              height={12} // Adjusted height to maintain aspect ratio
+              priority
             />
           </Link>
 
