@@ -1,84 +1,138 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
-const KundaliChart: React.FC = () => {
-  // Chart data
-  const houseData = [
-    { house: 1, sign: 'Ari', planets: ['Sun', 'Moon'] },
-    { house: 2, sign: 'Tau', planets: ['Venus'] },
-    { house: 3, sign: 'Gem', planets: ['Mercury'] },
-    { house: 4, sign: 'Can', planets: ['Jupiter'] },
-    { house: 5, sign: 'Leo', planets: ['Mars'] },
-    { house: 6, sign: 'Vir', planets: [] },
-    { house: 7, sign: 'Lib', planets: [] },
-    { house: 8, sign: 'Sco', planets: [] },
-    { house: 9, sign: 'Sag', planets: [] },
-    { house: 10, sign: 'Cap', planets: [] },
-    { house: 11, sign: 'Aqu', planets: [] },
-    { house: 12, sign: 'Pis', planets: [] }
-  ];
+// Grah (Planet) ke liye data structure
+// IMPORTANT: 'name' hamesha Hindi mein hona chahiye, jaise 'सूर्य', 'चंद्र'
+export interface Planet {
+  name: string;
+  house: number;
+}
 
-  // Positions (approximate percentages based on the uploaded image)
-  const positions: Record<number, { top: string; left: string }> = {
-    1: { top: '47%', left: '47%' },
-    2: { top: '25%', left: '67%' },
-    3: { top: '47%', left: '82%' },
-    4: { top: '68%', left: '67%' },
-    5: { top: '82%', left: '47%' },
-    6: { top: '68%', left: '27%' },
-    7: { top: '47%', left: '13%' },
-    8: { top: '25%', left: '27%' },
-    9: { top: '10%', left: '47%' },
-    10: { top: '25%', left: '47%' },
-    11: { top: '47%', left: '47%' },
-    12: { top: '68%', left: '47%' },
-  };
+// Component ke Props
+interface KundaliChartProps {
+  planets: Planet[];
+  ascendant: string; // Lagna Rashi ka English naam, jaise "Aries"
+}
+
+// Rashi (Zodiac) ki jaankari Hindi mein
+const ZODIAC_SIGNS_HINDI = [
+  { name: 'Aries', hindi: 'मेष राशि' }, { name: 'Taurus', hindi: 'वृषभ राशि' },
+  { name: 'Gemini', hindi: 'मिथुन राशि' }, { name: 'Cancer', hindi: 'कर्क राशि' },
+  { name: 'Leo', hindi: 'सिंह राशि' }, { name: 'Virgo', hindi: 'कन्या राशि' },
+  { name: 'Libra', hindi: 'तुला राशि' }, { name: 'Scorpio', hindi: 'वृश्चिक राशि' },
+  { name: 'Sagittarius', hindi: 'धनु राशि' }, { name: 'Capricorn', hindi: 'मकर राशि' },
+  { name: 'Aquarius', hindi: 'कुंभ राशि' }, { name: 'Pisces', hindi: 'मीन राशि' },
+];
+
+// Har Ghar (House) ki jaankari aur unki text positions (North Indian Style)
+// Sabhi positions ko % mein rakha gaya hai taaki size badalne par bhi ainvayi rahe
+const HOUSE_POSITIONS = [
+    { num: 1,  rashiNumPos: { x: 0.5, y: 0.42 }, rashiNamePos: { x: 0.5, y: 0.35 }, planetPos: { x: 0.5, y: 0.5 } },
+    { num: 2,  rashiNumPos: { x: 0.3, y: 0.2 }, rashiNamePos: { x: 0.3, y: 0.13 }, planetPos: { x: 0.3, y: 0.28 } },
+    { num: 3,  rashiNumPos: { x: 0.1, y: 0.3 }, rashiNamePos: { x: 0.1, y: 0.23 }, planetPos: { x: 0.15, y: 0.35 } },
+    { num: 4,  rashiNumPos: { x: 0.2, y: 0.5 }, rashiNamePos: { x: 0.15, y: 0.5 }, planetPos: { x: 0.3, y: 0.5 } },
+    { num: 5,  rashiNumPos: { x: 0.1, y: 0.7 }, rashiNamePos: { x: 0.1, y: 0.63 }, planetPos: { x: 0.15, y: 0.7 } },
+    { num: 6,  rashiNumPos: { x: 0.3, y: 0.8 }, rashiNamePos: { x: 0.3, y: 0.87 }, planetPos: { x: 0.3, y: 0.72 } },
+    { num: 7,  rashiNumPos: { x: 0.5, y: 0.58 }, rashiNamePos: { x: 0.5, y: 0.65 }, planetPos: { x: 0.5, y: 0.5 } },
+    { num: 8,  rashiNumPos: { x: 0.7, y: 0.8 }, rashiNamePos: { x: 0.7, y: 0.87 }, planetPos: { x: 0.7, y: 0.72 } },
+    { num: 9,  rashiNumPos: { x: 0.9, y: 0.7 }, rashiNamePos: { x: 0.9, y: 0.63 }, planetPos: { x: 0.85, y: 0.7 } },
+    { num: 10, rashiNumPos: { x: 0.8, y: 0.5 }, rashiNamePos: { x: 0.85, y: 0.5 }, planetPos: { x: 0.7, y: 0.5 } },
+    { num: 11, rashiNumPos: { x: 0.9, y: 0.3 }, rashiNamePos: { x: 0.9, y: 0.23 }, planetPos: { x: 0.85, y: 0.35 } },
+    { num: 12, rashiNumPos: { x: 0.7, y: 0.2 }, rashiNamePos: { x: 0.7, y: 0.13 }, planetPos: { x: 0.7, y: 0.28 } },
+];
+
+
+const KundaliChart: React.FC<KundaliChartProps> = ({ planets, ascendant }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (!canvasRef.current || !planets || !ascendant) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const size = 600;
+    canvas.width = size;
+    canvas.height = size;
+    
+    // --- Drawing ---
+    ctx.clearRect(0, 0, size, size); 
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, size, size);
+
+    // Step 1: Decorative Outer Shape Banana
+    const c = 0.55; // Curve control point
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(size * 0.5, 0);
+    ctx.quadraticCurveTo(size * c, size * (1-c), 0, size * 0.5);
+    ctx.quadraticCurveTo(size * (1-c), size * c, size * 0.5, size);
+    ctx.quadraticCurveTo(size * c, size * c, size, size * 0.5);
+    ctx.quadraticCurveTo(size * (1-c), size * (1-c), size * 0.5, 0);
+    ctx.stroke();
+
+    // Step 2: Andar ka Diamond (Rhombus) Banana
+    ctx.beginPath();
+    ctx.moveTo(size * 0.5, 0); ctx.lineTo(size, size * 0.5);
+    ctx.lineTo(size * 0.5, size); ctx.lineTo(0, size * 0.5);
+    ctx.closePath();
+    ctx.moveTo(0, size * 0.5); ctx.lineTo(size, size * 0.5);
+    ctx.moveTo(size * 0.5, 0); ctx.lineTo(size * 0.5, size);
+    ctx.stroke();
+
+    // Step 3: Center mein "Om" Symbol
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ॐ', size * 0.5, size * 0.5);
+
+    // Step 4: Rashi, Grah, etc. Banana
+    const ascendantIndex = ZODIAC_SIGNS_HINDI.findIndex(sign => sign.name === ascendant);
+    if (ascendantIndex === -1) return;
+
+    const planetsByHouse: { [key: number]: string[] } = {};
+    planets.forEach(p => {
+        if (!planetsByHouse[p.house]) planetsByHouse[p.house] = [];
+        planetsByHouse[p.house].push(p.name);
+    });
+    
+    // North Indian chart houses are fixed, signs rotate. 1st house is always top.
+    HOUSE_POSITIONS.forEach((houseInfo, houseIndex) => {
+        const signIndex = (ascendantIndex + houseIndex) % 12;
+        const rashi = ZODIAC_SIGNS_HINDI[signIndex];
+        const rashiNumber = signIndex + 1;
+
+        // Draw Rashi Number (Lal rang mein)
+        ctx.font = 'bold 18px Arial';
+        ctx.fillStyle = '#d95f5f';
+        ctx.textAlign = 'center';
+        ctx.fillText(rashiNumber.toString(), houseInfo.rashiNumPos.x * size, houseInfo.rashiNumPos.y * size);
+
+        // Draw Rashi Name (Hindi mein)
+        ctx.font = '14px "Noto Sans Devanagari"';
+        ctx.fillStyle = 'black';
+        ctx.fillText(rashi.hindi, houseInfo.rashiNamePos.x * size, houseInfo.rashiNamePos.y * size);
+        
+        // Draw Planets (Neele rang mein aur stacked)
+        const planetsInThisHouse = planetsByHouse[houseInfo.num];
+        if(planetsInThisHouse) {
+            ctx.font = 'bold 20px "Noto Sans Devanagari"';
+            ctx.fillStyle = '#0000d1'; // Blue color
+            planetsInThisHouse.forEach((planetName, i) => {
+                const yOffset = i * 22; // Har grah ke beech mein vertical gap
+                ctx.fillText(planetName, houseInfo.planetPos.x * size, houseInfo.planetPos.y * size + yOffset);
+            });
+        }
+    });
+
+  }, [planets, ascendant]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50 p-6">
-      <h1 className="text-3xl font-bold text-amber-800 mb-6">Kundali Chart</h1>
-
-      <div className="relative w-[400px] h-[400px] border-4 border-amber-800 rounded-lg shadow-lg overflow-hidden">
-        {/* Background Kundali image */}
-        <img
-          src="/kundali-chart.png" // ⬅️ place your uploaded image in /public/kundali-chart.png
-          alt="Kundali Chart"
-          className="absolute top-0 left-0 w-full h-full object-cover opacity-90"
-        />
-
-        {/* Overlay houses & planets */}
-        {houseData.map((house) => {
-          const pos = positions[house.house] || { top: '50%', left: '50%' };
-          return (
-            <div 
-              key={house.house}
-              className="absolute text-center transform -translate-x-1/2 -translate-y-1/2"
-              style={{ top: pos.top, left: pos.left }}
-            >
-              <div className="text-xs font-bold text-amber-900 bg-amber-100 rounded px-1 shadow">
-                {house.house}. {house.sign}
-              </div>
-              {house.planets.length > 0 && (
-                <div className="mt-1 space-y-0.5">
-                  {house.planets.map((p, i) => (
-                    <div
-                      key={i}
-                      className="text-[10px] text-blue-700 bg-blue-50 px-1 rounded"
-                    >
-                      {p}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <p className="text-sm text-gray-600 mt-4">
-        Ascendant: Aries | Style: North Indian
-      </p>
+    <div className="flex justify-center items-center bg-gray-100 p-4">
+      <canvas ref={canvasRef} />
     </div>
   );
 };

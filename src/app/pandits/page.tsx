@@ -26,7 +26,7 @@ export default function PanditsPage() {
 
   const fetchPandits = async () => {
     try {
-      const response = await fetch('/api/simple-pandits');
+      const response = await fetch('/api/pandits');
       const data = await response.json();
       setPandits(data);
     } catch (error) {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { pandits } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
 // GET all pandits for public website
 export async function GET(request: NextRequest) {
@@ -13,7 +12,7 @@ export async function GET(request: NextRequest) {
     let query = db
       .select()
       .from(pandits)
-      .where(availableOnly === 'true' ? eq(pandits.available, 1) : undefined)
+      .where(availableOnly === 'true' ? eq(pandits.available, true) : undefined)
       .orderBy(pandits.createdAt);
 
     if (limit) {

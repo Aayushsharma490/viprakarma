@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ChatBot from '@/components/ChatBot';
-import { Loader2, Hash, Sparkles, TrendingUp, Heart, Brain, Star, CheckCircle } from 'lucide-react';
+import { Loader2, Hash, Sparkles, TrendingUp, Heart, Brain, Star, CheckCircle, Car, Users } from 'lucide-react';
 import { calculateNumerology, type NumerologyData } from '@/lib/astrologyApi';
 
 export default function NumerologyPage() {
@@ -29,6 +29,7 @@ export default function NumerologyPage() {
       setNumerologyData(data);
     } catch (error) {
       console.error('Numerology calculation error:', error);
+      alert('Error calculating numerology. Please check your details.');
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +59,7 @@ export default function NumerologyPage() {
       </section>
 
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <Card className="classical-card p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
               <Hash className="w-6 h-6 text-amber-600" />
@@ -117,7 +118,8 @@ export default function NumerologyPage() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Core Numbers */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="classical-card p-6 classical-hover">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center classical-shadow">
@@ -205,8 +207,55 @@ export default function NumerologyPage() {
                     </ul>
                   </div>
                 </Card>
+
+                {/* Driver Number */}
+                <Card className="classical-card p-6 classical-hover">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center classical-shadow">
+                      <span className="text-3xl font-bold text-white">{numerologyData.driverNumber}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-purple-900">Driver Number</h3>
+                      <p className="text-sm text-gray-600">Your driving force in life</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed mb-3">{numerologyData.insights.driverNumberMeaning}</p>
+                  <div className="bg-purple-50 border border-purple-200 rounded p-3">
+                    <p className="text-xs font-semibold text-purple-900 mb-2">Life Approach:</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Determined and focused approach</li>
+                      <li>• Strong sense of direction</li>
+                      <li>• Clear life objectives</li>
+                      <li>• Persistent in achieving goals</li>
+                    </ul>
+                  </div>
+                </Card>
+
+                {/* Conductor Number */}
+                <Card className="classical-card p-6 classical-hover">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-700 flex items-center justify-center classical-shadow">
+                      <span className="text-3xl font-bold text-white">{numerologyData.conductorNumber}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-indigo-900">Conductor Number</h3>
+                      <p className="text-sm text-gray-600">How you conduct your life journey</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed mb-3">{numerologyData.insights.conductorNumberMeaning}</p>
+                  <div className="bg-indigo-50 border border-indigo-200 rounded p-3">
+                    <p className="text-xs font-semibold text-indigo-900 mb-2">Life Management:</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Excellent organizational skills</li>
+                      <li>• Natural ability to guide others</li>
+                      <li>• Strategic life planning</li>
+                      <li>• Effective decision-making</li>
+                    </ul>
+                  </div>
+                </Card>
               </div>
 
+              {/* Complete Profile */}
               <Card className="classical-card p-8 bg-gradient-to-br from-amber-50 to-amber-100 classical-shadow">
                 <div className="flex items-center gap-2 mb-6">
                   <Sparkles className="w-7 h-7 text-amber-600" />
@@ -264,7 +313,8 @@ export default function NumerologyPage() {
                 </div>
               </Card>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Additional Insights */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card className="classical-card p-4 text-center">
                   <Heart className="w-8 h-8 text-red-600 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900 mb-1">Love Compatibility</h4>
@@ -276,9 +326,14 @@ export default function NumerologyPage() {
                   <p className="text-xs text-gray-600">Sunday, Tuesday, Thursday</p>
                 </Card>
                 <Card className="classical-card p-4 text-center">
-                  <Sparkles className="w-8 h-8 text-amber-600 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 mb-1">Lucky Colors</h4>
-                  <p className="text-xs text-gray-600">Gold, Orange, Red</p>
+                  <Car className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 mb-1">Driver Energy</h4>
+                  <p className="text-xs text-gray-600">Strong, focused, determined</p>
+                </Card>
+                <Card className="classical-card p-4 text-center">
+                  <Users className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 mb-1">Conductor Style</h4>
+                  <p className="text-xs text-gray-600">Organized, guiding, strategic</p>
                 </Card>
               </div>
             </motion.div>

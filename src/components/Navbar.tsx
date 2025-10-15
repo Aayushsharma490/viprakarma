@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Import the Image component
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, LogOut, Menu, X } from 'lucide-react';
@@ -25,8 +26,15 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-amber-200 classical-shadow">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="text-2xl font-bold golden-text">
-            Astro Genesis
+          {/* Updated Logo Section */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png" // Path to your logo in the 'public' folder
+              alt="Viprakarma Logo"
+              width={180} // Set the width of your logo
+              height={40} // Set the height of your logo
+              priority // Add priority to preload the logo as it's likely LCP
+            />
           </Link>
 
           {/* Desktop Navigation */}

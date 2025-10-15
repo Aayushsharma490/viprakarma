@@ -21,6 +21,8 @@ interface Astrologer {
   pricePerMinute: number;
   available: boolean;
   image?: string;
+  phoneNumber?: string;
+  whatsappNumber?: string;
 }
 
 export default function TalkToAstrologerPage() {
@@ -51,7 +53,9 @@ export default function TalkToAstrologerPage() {
       
       if (response.ok) {
         const data = await response.json();
-        setAstrologers(data.astrologers || []);
+        // Only show approved astrologers
+        const approvedAstrologers = data.astrologers?.filter((a: any) => a.status === 'approved') || [];
+        setAstrologers(approvedAstrologers);
       }
     } catch (error) {
       console.error('Failed to fetch astrologers:', error);
@@ -61,7 +65,28 @@ export default function TalkToAstrologerPage() {
   };
 
   const handleConnect = (astrologerId: number, type: 'chat' | 'call' | 'video') => {
-    router.push(`/talk-to-astrologer/${astrologerId}?type=${type}`);
+    if (type === 'call' || type === 'video') {
+      // For call/video, redirect to WhatsApp with pre-filled message
+      const astrologer = astrologers.find(a => a.id === astrologerId);
+      if (astrologer?.whatsappNumber) {
+        const message = `Hello ${astrologer.name}, I would like to book a ${type} consultation.`;
+        window.open(`https://wa.me/${astrologer.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      } else if (astrologer?.phoneNumber) {
+        // Fallback to regular call
+        window.open(`tel:${astrologer.phoneNumber}`, '_blank');
+      }
+    } else {
+      // For chat, use the existing chat interface
+      router.push(`/talk-to-astrologer/${astrologerId}?type=${type}`);
+    }
+  };
+
+  const handleDirectCall = (phoneNumber: string) => {
+    window.open(`tel:${phoneNumber}`, '_blank');
+  };
+
+  const handleDirectWhatsApp = (whatsappNumber: string) => {
+    window.open(`https://wa.me/${whatsappNumber}`, '_blank');
   };
 
   const filteredAstrologers = filter === 'available' 
@@ -160,6 +185,35 @@ export default function TalkToAstrologerPage() {
                       <Clock className="w-4 h-4 text-primary" />
                       <span className="font-semibold">₹{astrologer.pricePerMinute}/min</span>
                     </div>
+
+                    {/* Contact Numbers */}
+                    {(astrologer.phoneNumber || astrologer.whatsappNumber) && (
+                      <div className="pt-2 border-t border-border">
+                        <p className="text-xs text-muted-foreground mb-2">Direct Contact:</p>
+                        <div className="flex gap-2">
+                          {astrologer.phoneNumber && (
+                            <Button
+                              size="sm"
+                              onClick={() => handleDirectCall(astrologer.phoneNumber!)}
+                              className="bg-green-500 hover:bg-green-600 text-xs"
+                            >
+                              <Phone className="w-3 h-3 mr-1" />
+                              Call
+                            </Button>
+                          )}
+                          {astrologer.whatsappNumber && (
+                            <Button
+                              size="sm"
+                              onClick={() => handleDirectWhatsApp(astrologer.whatsappNumber!)}
+                              className="bg-green-500 hover:bg-green-600 text-xs"
+                            >
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              WhatsApp
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">

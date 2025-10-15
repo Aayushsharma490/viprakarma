@@ -15,7 +15,10 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Loader2
+  Loader2,
+  Phone,
+  Video,
+  MessageCircle
 } from 'lucide-react';
 
 interface Stats {
@@ -33,6 +36,8 @@ interface Astrologer {
   email: string;
   specialization: string;
   status: string;
+  phoneNumber?: string;
+  whatsappNumber?: string;
 }
 
 interface Booking {
@@ -57,64 +62,63 @@ export default function AdminDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'astrologers' | 'bookings'>('overview');
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Check admin authentication
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    if (!token || !user) {
-      router.push('/login?redirect=/admin');
-      return;
-    }
+    checkAuthAndFetchData();
+  }, [router]);
 
+  const checkAuthAndFetchData = async () => {
     try {
-      const userData = JSON.parse(user);
-      if (userData.email !== 'admin@kundali.com') {
-        router.push('/');
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+
+      if (!token || !userData) {
+        router.push('/admin/login');
         return;
       }
-    } catch (e) {
-      router.push('/login');
-      return;
-    }
 
-    fetchDashboardData();
-  }, [router]);
+      const userObj = JSON.parse(userData);
+      setUser(userObj);
+
+      // Verify token is valid by making an API call
+      const verifyResponse = await fetch('/api/admin/verify', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!verifyResponse.ok) {
+        throw new Error('Invalid token');
+      }
+
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/admin/login');
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Fetch users
-      const usersRes = await fetch('/api/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const usersData = await usersRes.json();
+      // Fetch all data in parallel
+      const [usersRes, astrologersRes, bookingsRes, paymentsRes, chatsRes] = await Promise.all([
+        fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/admin/astrologers', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/admin/bookings', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/admin/payments', { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch('/api/admin/chat-sessions', { headers: { 'Authorization': `Bearer ${token}` } })
+      ]);
 
-      // Fetch astrologers
-      const astrologersRes = await fetch('/api/astrologers', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const astrologersData = await astrologersRes.json();
-
-      // Fetch bookings
-      const bookingsRes = await fetch('/api/bookings', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const bookingsData = await bookingsRes.json();
-
-      // Fetch payments
-      const paymentsRes = await fetch('/api/payments', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const paymentsData = await paymentsRes.json();
-
-      // Fetch chat sessions
-      const chatsRes = await fetch('/api/chat-sessions', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const chatsData = await chatsRes.json();
+      const [usersData, astrologersData, bookingsData, paymentsData, chatsData] = await Promise.all([
+        usersRes.json(),
+        astrologersRes.json(),
+        bookingsRes.json(),
+        paymentsRes.json(),
+        chatsRes.json()
+      ]);
 
       // Calculate stats
       const totalRevenue = paymentsData.payments?.reduce((sum: number, p: any) => 
@@ -144,7 +148,7 @@ export default function AdminDashboard() {
   const handleAstrologerStatus = async (id: number, status: 'approved' | 'rejected') => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`/api/astrologers/${id}`, {
+      await fetch(`/api/admin/astrologers/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -157,6 +161,20 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Failed to update astrologer status:', error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/admin/login');
+  };
+
+  const handleCallAstrologer = (phoneNumber: string) => {
+    window.open(`tel:${phoneNumber}`, '_blank');
+  };
+
+  const handleWhatsAppAstrologer = (whatsappNumber: string) => {
+    window.open(`https://wa.me/${whatsappNumber}`, '_blank');
   };
 
   const statCards = [
@@ -187,10 +205,18 @@ export default function AdminDashboard() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold text-cosmic">Admin Dashboard</h1>
-            <Button onClick={() => router.push('/')} variant="outline">
-              Back to Home
-            </Button>
+            <div>
+              <h1 className="text-4xl font-bold text-cosmic">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+            </div>
+            <div className="flex gap-4">
+              <Button onClick={() => router.push('/admin/pandits')} variant="outline">
+                Manage Pandits
+              </Button>
+              <Button onClick={handleLogout} variant="outline">
+                Logout
+              </Button>
+            </div>
           </div>
 
           {/* Stats Grid */}
@@ -279,14 +305,14 @@ export default function AdminDashboard() {
 
           {activeTab === 'astrologers' && (
             <Card className="glass-effect p-6">
-              <h2 className="text-2xl font-bold mb-4">Astrologer Applications</h2>
+              <h2 className="text-2xl font-bold mb-4">Astrologer Management</h2>
               <div className="space-y-4">
                 {astrologers.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">No astrologers found</p>
                 ) : (
                   astrologers.map(astrologer => (
                     <div key={astrologer.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                      <div>
+                      <div className="flex-1">
                         <p className="font-semibold">{astrologer.name}</p>
                         <p className="text-sm text-muted-foreground">{astrologer.email}</p>
                         <p className="text-sm text-primary">{astrologer.specialization}</p>
@@ -298,26 +324,51 @@ export default function AdminDashboard() {
                           {astrologer.status}
                         </span>
                       </div>
-                      {astrologer.status === 'pending' && (
-                        <div className="flex gap-2">
+                      
+                      <div className="flex gap-2">
+                        {/* Contact Buttons */}
+                        {astrologer.phoneNumber && (
                           <Button
                             size="sm"
-                            onClick={() => handleAstrologerStatus(astrologer.id, 'approved')}
+                            onClick={() => handleCallAstrologer(astrologer.phoneNumber!)}
                             className="bg-green-500 hover:bg-green-600"
                           >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Approve
+                            <Phone className="w-4 h-4" />
                           </Button>
+                        )}
+                        
+                        {astrologer.whatsappNumber && (
                           <Button
                             size="sm"
-                            variant="destructive"
-                            onClick={() => handleAstrologerStatus(astrologer.id, 'rejected')}
+                            onClick={() => handleWhatsAppAstrologer(astrologer.whatsappNumber!)}
+                            className="bg-green-500 hover:bg-green-600"
                           >
-                            <XCircle className="w-4 h-4 mr-1" />
-                            Reject
+                            <MessageCircle className="w-4 h-4" />
                           </Button>
-                        </div>
-                      )}
+                        )}
+
+                        {/* Status Update Buttons */}
+                        {astrologer.status === 'pending' && (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleAstrologerStatus(astrologer.id, 'approved')}
+                              className="bg-green-500 hover:bg-green-600"
+                            >
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleAstrologerStatus(astrologer.id, 'rejected')}
+                            >
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))
                 )}

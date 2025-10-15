@@ -106,6 +106,8 @@ export const pandits = sqliteTable('pandits', {
   location: text('location').notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
+  phoneNumber: text('phone_number'), // ✅ Added this column
+  whatsappNumber: text('whatsapp_number'), // ✅ Added this column
   available: integer('available', { mode: 'boolean' }).default(true),
   createdAt: text('created_at').notNull(),
 });

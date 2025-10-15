@@ -208,7 +208,7 @@ export default function KundaliPage() {
       
       pdf.setFontSize(9);
       pdf.setTextColor(50, 50, 50);
-      kundaliData.yogas.forEach((yoga) => {
+      kundaliData.yogas.forEach((yoga: { name: any; strength: any; description: string; }) => {
         if (yPosition > pageHeight - 20) {
           pdf.addPage();
           yPosition = 20;
@@ -272,7 +272,7 @@ export default function KundaliPage() {
       
       pdf.setFontSize(9);
       pdf.setTextColor(50, 50, 50);
-      kundaliData.remedies.forEach((remedy, index) => {
+      kundaliData.remedies.forEach((remedy: any, index: number) => {
         if (yPosition > pageHeight - 15) {
           pdf.addPage();
           yPosition = 20;
