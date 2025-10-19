@@ -1,0 +1,23 @@
+CREATE TABLE `payment_verifications` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`booking_id` integer,
+	`subscription_id` integer,
+	`amount` integer NOT NULL,
+	`payment_method` text NOT NULL,
+	`payer_name` text NOT NULL,
+	`bank_name` text,
+	`account_number` text,
+	`transaction_id` text,
+	`phone_number` text NOT NULL,
+	`status` text DEFAULT 'pending' NOT NULL,
+	`admin_notes` text,
+	`verified_by` integer,
+	`verified_at` text,
+	`created_at` text NOT NULL,
+	`updated_at` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`booking_id`) REFERENCES `bookings`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`subscription_id`) REFERENCES `subscriptions`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`verified_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
