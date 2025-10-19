@@ -149,10 +149,10 @@ export default function LoginPage() {
           </div>
         </Card>
 
-        <div className="mt-6 text-center text-sm text-gray-600 bg-white/80 p-3 rounded-lg">
+        {/* <div className="mt-6 text-center text-sm text-gray-600 bg-white/80 p-3 rounded-lg">
           <p>Demo Admin: viprakarma@gmail.com / viprakarma</p>
           <p>Demo User: rahul@test.com / Test@123</p>
-        </div>
+        </div> */}
       </motion.div>
     </div>
   );

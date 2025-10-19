@@ -158,9 +158,9 @@ export default function AdminLoginPage() {
           </div>
         </Card>
 
-        <div className="mt-6 text-center text-sm text-gray-400 bg-white/10 backdrop-blur-sm p-3 rounded-lg">
+        {/* <div className="mt-6 text-center text-sm text-gray-400 bg-white/10 backdrop-blur-sm p-3 rounded-lg">
           <p>Default Credentials: viprakarma@gmail.com / viprakarma</p>
-        </div>
+        </div> */}
       </motion.div>
     </div>
   );
