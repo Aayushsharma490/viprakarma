@@ -6,46 +6,49 @@ import Footer from '@/components/Footer';
 import ChatBot from '@/components/ChatBot';
 import { Card } from '@/components/ui/card';
 import { Star, Users, Award, Heart, Sparkles, Target, Shield } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AboutPage() {
+  const { t } = useLanguage();
+
   const values = [
     {
       icon: Star,
-      title: 'Authenticity',
-      description: 'We provide genuine Vedic astrology insights based on ancient wisdom and modern calculations.',
+      title: t('about.value1.title'),
+      description: t('about.value1.desc'),
     },
     {
       icon: Users,
-      title: 'Expert Astrologers',
-      description: 'Our team consists of certified and experienced astrologers with years of practice.',
+      title: t('about.value2.title'),
+      description: t('about.value2.desc'),
     },
     {
       icon: Award,
-      title: 'Accuracy',
-      description: 'We use precise astronomical calculations and authentic astrological methods.',
+      title: t('about.value3.title'),
+      description: t('about.value3.desc'),
     },
     {
       icon: Heart,
-      title: 'Personalized Care',
-      description: 'Every consultation is tailored to your unique birth chart and life circumstances.',
+      title: t('about.value4.title'),
+      description: t('about.value4.desc'),
     },
     {
       icon: Shield,
-      title: 'Privacy & Security',
-      description: 'Your personal data and birth details are kept completely confidential.',
+      title: t('about.value5.title'),
+      description: t('about.value5.desc'),
     },
     {
       icon: Target,
-      title: 'Life Guidance',
-      description: 'We help you make informed decisions about career, relationships, health, and more.',
+      title: t('about.value6.title'),
+      description: t('about.value6.desc'),
     },
   ];
 
   const stats = [
-    { number: '10,000+', label: 'Happy Users' },
-    { number: '50+', label: 'Expert Astrologers' },
-    { number: '25,000+', label: 'Kundalis Generated' },
-    { number: '98%', label: 'Satisfaction Rate' },
+    { number: '10,000+', label: t('about.stats1') },
+    { number: '50+', label: t('about.stats2') },
+    { number: '25,000+', label: t('about.stats3') },
+    { number: '98%', label: t('about.stats4') },
   ];
 
   return (
@@ -89,15 +92,8 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-cosmic">
                 Our Mission
               </h2>
-              <p className="text-lg text-muted-foreground text-center leading-relaxed mb-4">
-                At Viprakarma, we believe that understanding the cosmic forces that shape our lives 
-                can lead to better decisions, deeper self-awareness, and a more fulfilling existence. 
-                Our mission is to make authentic Vedic astrology and spiritual services accessible to everyone through 
-                modern technology while preserving the ancient wisdom of our traditions.
-              </p>
               <p className="text-lg text-muted-foreground text-center leading-relaxed">
-                We combine the precision of astronomical calculations with the insights of experienced 
-                astrologers to provide you with accurate, personalized guidance for every aspect of your life.
+                {t('about.ourMission')}
               </p>
             </Card>
           </motion.div>

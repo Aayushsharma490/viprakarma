@@ -8,9 +8,11 @@ import { Card } from '@/components/ui/card';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ChatBot from '@/components/ChatBot';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Sparkles, Star, BookOpen, Users, MessageCircle, Calendar, Award, TrendingUp, ChevronRight, Orbit, Zap, Shield, Clock, Heart, Globe, Eye, Target } from 'lucide-react';
 
 export default function Home() {
+  const { t } = useLanguage();
   const heroRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
@@ -420,43 +422,43 @@ export default function Home() {
                 
                 <h1 className="hero-title text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-slate-900 font-serif leading-tight">
                   <span className="block bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 bg-clip-text text-transparent">
-                    Discover
+                    {t('hero.title1')}
                   </span>
                   <span className="block bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 bg-clip-text text-transparent">
-                    Your Destiny
+                    {t('hero.title2')}
                   </span>
                 </h1>
-                
+
                 <p className="hero-subtitle text-xl md:text-2xl text-slate-700 mb-8 font-light leading-relaxed max-w-2xl font-serif">
-                  Unlock the <span className="text-amber-600 font-semibold">secrets of the universe</span> with personalized astrology, numerology, and expert guidance from renowned astrologers.
+                  {t('hero.subtitle')}
                 </p>
               </div>
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 <Link href="/kundali">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="cta-button hero-button bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-lg px-8 py-7 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-amber-400/50 font-bold relative overflow-hidden group"
                     onMouseEnter={handleButtonHover}
                     onMouseLeave={handleButtonLeave}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <Sparkles className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                    Get Free Kundali
+                    {t('hero.cta1')}
                     <Zap className="w-5 h-5 ml-2 group-hover:scale-110 transition-transform duration-300" />
                   </Button>
                 </Link>
                 <Link href="/subscription">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     variant="outline"
                     className="cta-button hero-button text-lg px-8 py-7 rounded-2xl border-3 border-amber-500/80 text-amber-700 bg-white/80 backdrop-blur-sm hover:bg-amber-50 hover:border-amber-600 hover:text-amber-800 transition-all duration-300 shadow-xl hover:shadow-2xl font-semibold group"
                     onMouseEnter={handleButtonHover}
                     onMouseLeave={handleButtonLeave}
                   >
                     <Star className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
-                    Premium Features
+                    {t('hero.cta2')}
                     <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </Link>
@@ -510,12 +512,12 @@ export default function Home() {
             <div className="inline-flex items-center gap-4 mb-6">
               <div className="w-20 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 font-serif">
-                Divine Services
+                {t('features.title')}
               </h2>
               <div className="w-20 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
             </div>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-serif">
-              Explore our comprehensive range of astrological services crafted to guide you through life's celestial journey with precision and wisdom
+              {t('features.subtitle')}
             </p>
           </div>
 

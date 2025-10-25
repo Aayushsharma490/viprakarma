@@ -9,6 +9,8 @@ import Footer from '@/components/Footer';
 import PaymentModal from '@/components/PaymentModal';
 import { Phone, Video, MessageCircle, Clock, Star, CheckCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const consultationTypes = [
   {
@@ -56,6 +58,8 @@ const consultationTypes = [
 ];
 
 export default function ConsultationPage() {
+  const { user } = useAuth();
+  const { t } = useLanguage();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
@@ -92,10 +96,10 @@ export default function ConsultationPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 golden-text">
-              Talk to Expert Astrologers
+              {t('consultation.title') || 'Talk to Expert Astrologers'}
             </h1>
             <p className="text-xl text-gray-700 mb-8">
-              Get personalized guidance from certified astrologers via chat, call, or video consultation
+              {t('consultation.subtitle') || 'Get personalized guidance from certified astrologers via chat, call, or video consultation'}
             </p>
             <div className="flex items-center justify-center gap-6 text-sm text-amber-900">
               <div className="flex items-center gap-2">
@@ -161,7 +165,7 @@ export default function ConsultationPage() {
                     className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                     size="lg"
                   >
-                    Book Now
+                    {t('consultation.bookNow') || 'Book Now'}
                   </Button>
                 </Card>
               </motion.div>
@@ -180,19 +184,19 @@ export default function ConsultationPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4 golden-text">
-              How It Works
+              {t('consultation.howItWorks.title') || 'How It Works'}
             </h2>
             <p className="text-xl text-gray-600">
-              Simple steps to connect with expert astrologers
+              {t('consultation.howItWorks.subtitle') || 'Simple steps to connect with expert astrologers'}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {[
-              { step: '1', title: 'Choose Service', desc: 'Select chat, call, or video consultation' },
-              { step: '2', title: 'Make Payment', desc: 'Secure payment via Razorpay or QR code' },
-              { step: '3', title: 'Get Connected', desc: 'Instantly connect with an expert astrologer' },
-              { step: '4', title: 'Receive Guidance', desc: 'Get personalized cosmic insights and remedies' },
+              { step: '1', title: t('consultation.steps.chooseService.title') || 'Choose Service', desc: t('consultation.steps.chooseService.desc') || 'Select chat, call, or video consultation' },
+              { step: '2', title: t('consultation.steps.makePayment.title') || 'Make Payment', desc: t('consultation.steps.makePayment.desc') || 'Secure payment via Razorpay or QR code' },
+              { step: '3', title: t('consultation.steps.getConnected.title') || 'Get Connected', desc: t('consultation.steps.getConnected.desc') || 'Instantly connect with an expert astrologer' },
+              { step: '4', title: t('consultation.steps.receiveGuidance.title') || 'Receive Guidance', desc: t('consultation.steps.receiveGuidance.desc') || 'Get personalized cosmic insights and remedies' },
             ].map((item, index) => (
               <motion.div
                 key={item.step}
@@ -224,16 +228,16 @@ export default function ConsultationPage() {
             <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-12 h-12 text-white" />
             </div>
-            <h3 className="text-2xl font-bold mb-4 golden-text">Session Active!</h3>
+            <h3 className="text-2xl font-bold mb-4 golden-text">{t('consultation.sessionActive.title') || 'Session Active!'}</h3>
             <p className="text-gray-600 mb-6">
-              Your {selectedConsultation?.title} session is now active. An astrologer will join shortly.
+              {t('consultation.sessionActive.message') || `Your ${selectedConsultation?.title} session is now active. An astrologer will join shortly.`}
             </p>
             <div className="space-y-3">
               <Button
                 onClick={() => setSessionActive(false)}
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white"
               >
-                Enter Session
+                {t('consultation.sessionActive.enterSession') || 'Enter Session'}
               </Button>
               <Button
                 onClick={() => {
@@ -244,7 +248,7 @@ export default function ConsultationPage() {
                 variant="outline"
                 className="w-full border-amber-600 text-amber-900"
               >
-                Close
+                {t('consultation.sessionActive.close') || 'Close'}
               </Button>
             </div>
           </Card>
@@ -260,6 +264,7 @@ export default function ConsultationPage() {
           title={selectedConsultation.title}
           description={`${selectedConsultation.duration} consultation session`}
           onSuccess={handlePaymentSuccess}
+          userId={user?.id}
         />
       )}
 

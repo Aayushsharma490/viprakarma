@@ -59,8 +59,8 @@ export default function ContactPage() {
     {
       icon: MapPin,
       title: 'Visit Us',
-      content: 'Mumbai, Maharashtra',
-      subContent: 'India',
+      content: '#22/23 16th Main Road, Near Old Konica Garments',
+      subContent: 'Srigandha Nagar Peenya 2nd Stage, Hegganahalli, Bengaluru 560 091',
     },
     {
       icon: Clock,

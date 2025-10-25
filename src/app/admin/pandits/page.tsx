@@ -44,6 +44,7 @@ export default function AdminPanditsPage() {
     imageUrl: '',
     available: true,
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchPandits();
@@ -61,15 +62,39 @@ export default function AdminPanditsPage() {
     }
   };
 
+  const handleImageUpload = async (file: File) => {
+    setUploadingImage(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFormData({ ...formData, imageUrl: data.url });
+      } else {
+        console.error('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const url = editingPandit 
+      const url = editingPandit
         ? `/api/pandits?id=${editingPandit.id}`
         : '/api/pandits';
-      
+
       const method = editingPandit ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -274,6 +299,22 @@ export default function AdminPanditsPage() {
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                     />
+                  </div>
+                  <div>
+                    <Label htmlFor="uploadImage">Upload Image</Label>
+                    <Input
+                      id="uploadImage"
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingImage}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleImageUpload(file);
+                        }
+                      }}
+                    />
+                    {uploadingImage && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
                   </div>
                 </div>
                 <div>

@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MessageCircle, Phone, Video, Star, Clock } from 'lucide-react';
+import { Star, Clock, Upload, Camera, MessageCircle, Phone, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -32,6 +33,7 @@ export default function TalkToAstrologerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user, token, isLoading } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   useEffect(() => {
@@ -109,11 +111,10 @@ export default function TalkToAstrologerPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Talk to Our Expert Pandits
+              {t('consultation.title')}
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Connect with experienced Vedic scholars and astrologers for personalized guidance
-              on life, career, relationships, and spiritual matters.
+              {t('consultation.subtitle')}
             </p>
           </div>
 
@@ -168,33 +169,16 @@ export default function TalkToAstrologerPage() {
                       </Badge>
                     </div>
 
-                    <div className="flex gap-2">
+
+
+                    {/* Payment Integration */}
+                    <div className="mt-4 pt-4 border-t border-gray-200">
                       <Button
-                        onClick={() => handleConnect(pandit.id, 'chat')}
-                        disabled={!pandit.available}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        onClick={() => router.push('/payment?service=consultation&panditId=' + pandit.id)}
+                        className="w-full bg-amber-600 hover:bg-amber-700"
                         size="sm"
                       >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Chat
-                      </Button>
-                      <Button
-                        onClick={() => handleConnect(pandit.id, 'call')}
-                        disabled={!pandit.available}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
-                        size="sm"
-                      >
-                        <Phone className="w-4 h-4 mr-2" />
-                        Call
-                      </Button>
-                      <Button
-                        onClick={() => handleConnect(pandit.id, 'video')}
-                        disabled={!pandit.available}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700"
-                        size="sm"
-                      >
-                        <Video className="w-4 h-4 mr-2" />
-                        Video
+                        Book Consultation (₹{pandit.pricePerHour}/hour)
                       </Button>
                     </div>
                   </div>

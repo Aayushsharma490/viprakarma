@@ -19,6 +19,13 @@ export async function POST(req: NextRequest) {
     // If payment details are provided, save to payment_verifications table
     if (paymentDetails) {
       // Validate required fields
+      if (!userId) {
+        return NextResponse.json({
+          success: false,
+          error: 'User ID is required for payment verification'
+        }, { status: 400 });
+      }
+
       if (!paymentDetails.payerName || !paymentDetails.phoneNumber || !paymentDetails.paymentMethod) {
         return NextResponse.json({
           success: false,

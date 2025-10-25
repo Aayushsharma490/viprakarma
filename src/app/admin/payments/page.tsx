@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Search, CheckCircle, XCircle, Eye, Loader2, CreditCard, User, Phone, Banknote } from 'lucide-react';
+import { Search, CheckCircle, XCircle, Eye, Loader2, CreditCard, User, Phone, Banknote, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -207,6 +207,18 @@ export default function AdminPaymentsPage() {
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View Details
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const message = `Payment Request Details:\nName: ${payment.payerName}\nPhone: ${payment.phoneNumber}\nAmount: ₹${payment.amount}\nMethod: ${payment.paymentMethod}\nStatus: ${payment.status}`;
+                          const whatsappUrl = `https://wa.me/${payment.phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+                          window.open(whatsappUrl, '_blank');
+                        }}
+                      >
+                        <MessageCircle className="w-4 h-4 mr-1" />
+                        WhatsApp
                       </Button>
                       {payment.status === 'pending' && (
                         <>

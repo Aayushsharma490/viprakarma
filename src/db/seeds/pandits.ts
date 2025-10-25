@@ -133,6 +133,32 @@ async function main() {
             available: true,
             createdAt: new Date().toISOString(),
         },
+        {
+            name: 'पंडित विष्णुश्री कृष्णतनय महाराज (गुर्जी)',
+            specialization: 'अथर्ववेदी, भागवताचार्य, (भागवत कथा, रामकथा, नानीबाई रो मायरो, शिवमहापुराण, रुक्मिणी - मंगल,)',
+            experience: 15,
+            languages: 'हिंदी',
+            rating: 4.5,
+            pricePerHour: 3000,
+            location: 'Bengaluru',
+            description: 'विगत 15 वर्षों से कथा और कर्मकांड, ज्योतिष प्रकोष्ठ का कार्यानुभव। सोशल मोटिवेटर, ज्योतिष प्रकोष्ठ।',
+            imageUrl: null,
+            available: true,
+            createdAt: new Date().toISOString(),
+        },
+        {
+            name: 'आचार्य सुनील पाठक',
+            specialization: 'सर्व धर्म समभाव, ज्योतिष प्रकोष्ठ',
+            experience: 20,
+            languages: 'हिंदी, संस्कृत',
+            rating: 4.5,
+            pricePerHour: 3000,
+            location: 'Bengaluru',
+            description: 'शास्त्री और आचार्य की डिग्री प्राप्त। 20 वर्षों का अनुभव। ये नहीं कि हम भाग्य बदल सकते किन्तु ईश्वरवाद का सहारा लेकर आपको तड़पती हुई उलझी हुई तथा ठहरी हुई अव्यवस्था से मुक्ति उन्नति पथ को प्रशस्त करने मे सहयोग कर सकते।',
+            imageUrl: null,
+            available: true,
+            createdAt: new Date().toISOString(),
+        },
     ];
 
     await db.insert(pandits).values(samplePandits);

@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Sparkles, Loader2, Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -40,7 +42,7 @@ export default function LoginPage() {
       }
 
       login(data.token, data.user);
-      
+
       if (data.user.isAdmin) {
         router.push('/admin');
       } else {
@@ -60,7 +62,7 @@ export default function LoginPage() {
         <div className="absolute top-20 left-20 w-32 h-32 border-4 border-amber-600 rounded-full"></div>
         <div className="absolute bottom-40 right-40 w-24 h-24 border-4 border-amber-700 rounded-full"></div>
       </div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,10 +76,10 @@ export default function LoginPage() {
 
         <Card className="classical-card p-8 bg-white">
           <h1 className="text-3xl font-bold text-center text-amber-900 mb-2">
-            Welcome Back
+            {t('login.welcomeBack')}
           </h1>
           <p className="text-center text-gray-600 mb-6">
-            Sign in to access your cosmic insights
+            {t('login.subtitle')}
           </p>
 
           {error && (
@@ -88,7 +90,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('login.email')}</Label>
               <div className="relative mt-1">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -104,7 +106,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('login.password')}</Label>
               <div className="relative mt-1">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -127,24 +129,24 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t('login.signingIn')}
                 </>
               ) : (
-                'Sign In'
+                t('login.signIn')
               )}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link href="/signup" className="text-amber-700 hover:underline font-medium">
-              Sign up
+              {t('login.signUp')}
             </Link>
           </div>
 
           <div className="mt-4 text-center text-sm text-gray-600">
             <Link href="/" className="hover:text-amber-700 transition-colors">
-              ← Back to Home
+              {t('login.backToHome')}
             </Link>
           </div>
         </Card>

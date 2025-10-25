@@ -11,16 +11,18 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ChatBot from '@/components/ChatBot';
 import KundaliChart from '@/components/KundaliChart';
-import { Loader2, Star, Sun, Moon, Download, Calendar, TrendingUp, Award, Activity, Heart, BookOpen, Briefcase, Users } from 'lucide-react';
+import { Loader2, Star, Sun, Moon, Download, Save, Calendar, TrendingUp, Award, Activity, Heart, BookOpen, Briefcase, Users } from 'lucide-react';
 import { generateKundali, type BirthDetails, type KundaliData } from '@/lib/astrologyApi';
 import { indianCities, type IndianCity } from '@/lib/locations'; // Import the city data
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 gsap.registerPlugin(useGSAP);
 
 export default function KundaliPage() {
+  const { t, language, toggleLanguage } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     day: '',
@@ -28,14 +30,15 @@ export default function KundaliPage() {
     year: '',
     hour: '',
     minute: '',
+    ampm: 'AM',
     place: '',
     latitude: '',
     longitude: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [kundaliData, setKundaliData] = useState<KundaliData | null>(null);
   const [isManualLocation, setIsManualLocation] = useState(false);
+  const [kundaliData, setKundaliData] = useState<KundaliData | null>(null);
 
   const container = useRef(null);
   const resultsRef = useRef(null);
@@ -96,15 +99,24 @@ export default function KundaliPage() {
         setIsLoading(false);
         return;
       }
+
+      // Convert 12-hour to 24-hour format
+      let hour24 = parseInt(formData.hour);
+      if (formData.ampm === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (formData.ampm === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+
       const birthDetails: BirthDetails = {
+        name: formData.name,
         day: parseInt(formData.day),
         month: parseInt(formData.month),
         year: parseInt(formData.year),
-        hour: parseInt(formData.hour),
+        hour: hour24,
         minute: parseInt(formData.minute),
-        latitude: lat,
-        longitude: lon,
         timezone: 5.5, // Standard for India
+        zodiac: 'Pisces' // Default zodiac
       };
       const data = await generateKundali(birthDetails);
       setKundaliData(data);
@@ -113,6 +125,30 @@ export default function KundaliPage() {
       toast.error('Failed to generate kundali. Check inputs and try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const saveKundali = () => {
+    if (!kundaliData) return;
+
+    try {
+      const savedKundalis = JSON.parse(localStorage.getItem('savedKundalis') || '[]');
+      const kundaliToSave = {
+        id: Date.now().toString(),
+        name: formData.name,
+        birthDetails: formData,
+        kundaliData,
+        savedAt: new Date().toISOString(),
+        status: 'pending', // Default status for admin approval
+      };
+
+      savedKundalis.push(kundaliToSave);
+      localStorage.setItem('savedKundalis', JSON.stringify(savedKundalis));
+
+      toast.success('Kundali saved successfully!');
+    } catch (error) {
+      console.error('Save error:', error);
+      toast.error('Failed to save kundali.');
     }
   };
 
@@ -172,12 +208,20 @@ export default function KundaliPage() {
       <ChatBot />
 
       <div className="container mx-auto px-4 py-24">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 relative">
+          <div className="absolute top-0 right-0">
+            <Button
+              onClick={toggleLanguage}
+              className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold"
+            >
+              {language === 'en' ? 'हिंदी' : 'EN'}
+            </Button>
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4 golden-text">
-            Kundali Generator
+            {t('kundali.title') || 'Kundali Generator'}
           </h1>
           <p className="text-xl text-gray-600">
-            Generate your comprehensive birth chart with detailed astrological insights
+            {t('kundali.subtitle') || 'Generate your comprehensive birth chart with detailed astrological insights'}
           </p>
         </div>
 
@@ -212,14 +256,26 @@ export default function KundaliPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 form-field">
+              <div className="grid grid-cols-3 gap-4 form-field">
                 <div>
-                  <Label htmlFor="hour">Hour (24h)</Label>
-                  <Input id="hour" type="number" placeholder="HH" min="0" max="23" value={formData.hour} onChange={(e) => setFormData({ ...formData, hour: e.target.value })} required />
+                  <Label htmlFor="hour">Hour</Label>
+                  <Input id="hour" type="number" placeholder="HH" min="1" max="12" value={formData.hour} onChange={(e) => setFormData({ ...formData, hour: e.target.value })} required />
                 </div>
                 <div>
                   <Label htmlFor="minute">Minute</Label>
                   <Input id="minute" type="number" placeholder="MM" min="0" max="59" value={formData.minute} onChange={(e) => setFormData({ ...formData, minute: e.target.value })} required />
+                </div>
+                <div>
+                  <Label htmlFor="ampm">AM/PM</Label>
+                  <Select value={formData.ampm || 'AM'} onValueChange={(value) => setFormData({ ...formData, ampm: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="AM/PM" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AM">AM</SelectItem>
+                      <SelectItem value="PM">PM</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -248,45 +304,46 @@ export default function KundaliPage() {
                   <Label htmlFor="manualLocation" className="text-sm text-gray-700">Enter location manually</Label>
                 </div>
                 {isManualLocation && (
-                  <div className="mt-3">
-                    <Label htmlFor="manualCity">City/Town</Label>
-                    <Input
-                      id="manualCity"
-                      type="text"
-                      placeholder="Enter city or village name"
-                      value={formData.place}
-                      onChange={(e) => setFormData({ ...formData, place: e.target.value })}
-                      required
-                    />
+                  <div className="mt-3 space-y-3">
+                    <div>
+                      <Label htmlFor="manualCity">City/Town</Label>
+                      <Input
+                        id="manualCity"
+                        type="text"
+                        placeholder="Enter city or village name"
+                        value={formData.place}
+                        onChange={(e) => setFormData({ ...formData, place: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="latitude">Latitude</Label>
+                        <Input
+                          id="latitude"
+                          type="number"
+                          step="any"
+                          placeholder="e.g., 28.6139"
+                          value={formData.latitude}
+                          onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="longitude">Longitude</Label>
+                        <Input
+                          id="longitude"
+                          type="number"
+                          step="any"
+                          placeholder="e.g., 77.2090"
+                          value={formData.longitude}
+                          onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 form-field">
-                <div>
-                  <Label htmlFor="latitude">Latitude</Label>
-                  <Input
-                    id="latitude"
-                    type="text"
-                    placeholder={isManualLocation ? 'Enter latitude (e.g., 26.9124)' : 'Auto-filled'}
-                    value={formData.latitude}
-                    onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                    readOnly={!isManualLocation}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="longitude">Longitude</Label>
-                  <Input
-                    id="longitude"
-                    type="text"
-                    placeholder={isManualLocation ? 'Enter longitude (e.g., 75.7873)' : 'Auto-filled'}
-                    value={formData.longitude}
-                    onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                    readOnly={!isManualLocation}
-                    required
-                  />
-                </div>
               </div>
 
               <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-white form-field" disabled={isLoading}>
@@ -301,7 +358,10 @@ export default function KundaliPage() {
 
           {kundaliData && (
             <div id="kundali-results" className="space-y-6 lg:col-span-2" ref={resultsRef}>
-              <div className="flex justify-end result-card">
+              <div className="flex justify-end gap-4 result-card">
+                <Button onClick={saveKundali} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Save className="mr-2 h-4 w-4" /> Save Kundali
+                </Button>
                 <Button onClick={exportToPDF} disabled={isExporting} className="bg-amber-600 hover:bg-amber-700 text-white">
                   {isExporting ? (
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Exporting...</>
@@ -319,23 +379,23 @@ export default function KundaliPage() {
               <Card className="classical-card p-6 result-card">
                 <div className="flex items-center mb-4">
                   <Sun className="h-6 w-6 text-amber-600 mr-2" />
-                  <h3 className="text-xl font-semibold text-gray-900">Basic Details</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">{t('kundali.basicDetails')}</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 bg-amber-50 rounded-lg">
                     <Sun className="h-8 w-8 text-amber-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Sun Sign</p>
-                    <p className="font-semibold text-lg">{kundaliData.sunSign}</p>
+                    <p className="text-sm text-gray-600">{t('kundali.sunSign')}</p>
+                    <p className="font-semibold text-lg">{t(`zodiac.${kundaliData.sunSign.toLowerCase()}`)}</p>
                   </div>
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <Moon className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Moon Sign</p>
-                    <p className="font-semibold text-lg">{kundaliData.moonSign}</p>
+                    <p className="text-sm text-gray-600">{t('kundali.moonSign')}</p>
+                    <p className="font-semibold text-lg">{t(`zodiac.${kundaliData.moonSign.toLowerCase()}`)}</p>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <Star className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Ascendant</p>
-                    <p className="font-semibold text-lg">{kundaliData.ascendant}</p>
+                    <p className="text-sm text-gray-600">{t('kundali.ascendant')}</p>
+                    <p className="font-semibold text-lg">{t(`zodiac.${kundaliData.ascendant.toLowerCase()}`)}</p>
                   </div>
                 </div>
               </Card>

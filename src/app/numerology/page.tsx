@@ -11,8 +11,10 @@ import Footer from '@/components/Footer';
 import ChatBot from '@/components/ChatBot';
 import { Loader2, Hash, Sparkles, TrendingUp, Heart, Brain, Star, CheckCircle } from 'lucide-react';
 import { calculateNumerology, type NumerologyData } from '@/lib/astrologyApi';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function NumerologyPage() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     dateOfBirth: '',
@@ -48,10 +50,10 @@ export default function NumerologyPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6 golden-text">
-              Numerology Calculator
+              {t('numerology.title') || 'Numerology Calculator'}
             </h1>
             <p className="text-xl text-gray-700">
-              Discover the hidden meanings in your name and birth date with comprehensive insights
+              {t('numerology.subtitle') || 'Discover the hidden meanings in your name and birth date with comprehensive insights'}
             </p>
           </motion.div>
         </div>
@@ -62,7 +64,7 @@ export default function NumerologyPage() {
           <Card className="classical-card p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
               <Hash className="w-6 h-6 text-amber-600" />
-              Enter Your Details
+              {t('numerology.enterDetails') || 'Enter Your Details'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
