@@ -17,6 +17,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if database is available
+    if (!db) {
+      console.error('[Signup] Database not configured');
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
     const existingUser = await db
       .select()
       .from(users)
@@ -42,6 +51,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         subscriptionPlan: 'free',
         isAdmin: false,
+        canChatWithAstrologer: false,
         createdAt: now,
         updatedAt: now,
       })
@@ -63,9 +73,9 @@ export async function POST(request: NextRequest) {
       user: userWithoutPassword,
     }, { status: 201 });
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('[Signup] Error:', error);
     return NextResponse.json(
-      { error: 'Signup failed' },
+      { error: 'Signup failed. Please try again.' },
       { status: 500 }
     );
   }

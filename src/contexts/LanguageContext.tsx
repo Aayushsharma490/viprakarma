@@ -1652,6 +1652,41 @@ const translations = {
     "subscription.expires": "समाप्ति तिथि",
     "subscription.renew": "सदस्यता नवीनीकरण",
     "subscription.daysLeft": "दिन शेष",
+    "subscription.ultimate": "अल्टीमेट योजना",
+
+    // Subscription Page - Comprehensive Hindi
+    "subscription.chooseJourney": "अपनी ज्योतिषीय यात्रा चुनें",
+    "subscription.unlockMysteries": "हमारी व्यापक ज्योतिष सदस्यता योजनाओं के साथ ब्रह्मांड के रहस्यों को अनलॉक करें",
+    "subscription.close": "बंद करें",
+    "subscription.mostPopular": "सबसे लोकप्रिय",
+    "subscription.loading": "लोड हो रहा है...",
+    "subscription.processing": "प्रोसेस हो रहा है...",
+    "subscription.activeSubscription": "सक्रिय सदस्यता",
+    "subscription.expiresLabel": "समाप्ति:",
+    "subscription.subscribeTo": "सब्सक्राइब करें",
+    "subscription.allPlansInclude": "सभी योजनाओं में हमारे प्रीमियम ज्योतिष उपकरण और विशेषज्ञ मार्गदर्शन तक पहुंच शामिल है",
+    "subscription.cancelAnytime": "कभी भी रद्द करें • सुरक्षित भुगतान • 100% संतुष्टि गारंटी",
+
+    // Plan Durations Hindi
+    "subscription.duration.1month": "1 महीना",
+    "subscription.duration.3months": "3 महीने",
+    "subscription.duration.6months": "6 महीने",
+
+    // Plan Features Hindi
+    "subscription.feature.basicKundali": "बेसिक कुंडली रीडिंग",
+    "subscription.feature.dailyHoroscope": "दैनिक राशिफल",
+    "subscription.feature.emailSupport": "ईमेल सपोर्ट",
+    "subscription.feature.mobileApp": "मोबाइल ऐप एक्सेस",
+    "subscription.feature.advancedKundali": "एडवांस्ड कुंडली विश्लेषण",
+    "subscription.feature.personalizedPredictions": "व्यक्तिगत भविष्यवाणियां",
+    "subscription.feature.videoConsultation1": "वीडियो परामर्श (1)",
+    "subscription.feature.prioritySupport": "प्राथमिकता सपोर्ट",
+    "subscription.feature.allBasic": "सभी बेसिक फीचर्स",
+    "subscription.feature.completeLife": "संपूर्ण जीवन विश्लेषण",
+    "subscription.feature.videoConsultation3": "वीडियो परामर्श (3)",
+    "subscription.feature.remedialSolutions": "उपचारात्मक समाधान",
+    "subscription.feature.familyCompatibility": "पारिवारिक अनुकूलता",
+    "subscription.feature.allPremium": "सभी प्रीमियम फीचर्स",
   },
 };
 
