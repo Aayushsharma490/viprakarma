@@ -1,13 +1,13 @@
 import Razorpay from 'razorpay';
 
 export function initRazorpay() {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET_) {
     throw new Error('Razorpay keys not configured');
   }
 
   return new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
+    key_secret: process.env.RAZORPAY_KEY_SECRET_,
   });
 }
 

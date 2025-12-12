@@ -90,13 +90,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Original Razorpay verification logic
-    if (!process.env.RAZORPAY_KEY_SECRET) {
+    if (!process.env.RAZORPAY_KEY_SECRET_) {
       return NextResponse.json({ success: false, error: 'Configuration error' }, { status: 500 });
     }
 
     const body = orderId + '|' + paymentId;
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET_)
       .update(body)
       .digest('hex');
 

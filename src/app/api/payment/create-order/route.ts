@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const { amount, currency = 'INR' } = await req.json();
 
     // Check if Razorpay keys are configured
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET_) {
       return NextResponse.json(
         { error: 'Payment gateway unavailable' },
         { status: 503 }
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      key_secret: process.env.RAZORPAY_KEY_SECRET_,
     });
 
     const options = {
