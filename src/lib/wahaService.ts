@@ -159,7 +159,7 @@ export function formatMahuratMessage(mahurats: any[], purpose: string, rashi: st
     }).join('\n\n');
 
     // Complete Hindi Section
-    const hindiSection = `🕉️ *महूर्त विवरण* 🕉️
+    const hindiSection = `🕉️ *मुहूर्त विवरण* 🕉️
 
 🎯 *उद्देश्य:* ${purposeHindi}
 ♈ *राशि:* ${rashiHindi}

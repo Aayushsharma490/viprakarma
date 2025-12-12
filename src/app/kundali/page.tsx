@@ -691,7 +691,7 @@ export default function KundaliPage() {
                             {t("kundali.sunSign")}
                           </p>
                           <p className="text-xl font-semibold text-gray-900">
-                            {kundaliData.sunSign}
+                            {t(`sign.${kundaliData.sunSign}`)}
                           </p>
                         </div>
                       </div>
