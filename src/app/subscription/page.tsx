@@ -29,44 +29,44 @@ interface UserSubscription {
   isActive: boolean;
 }
 
-const plans: SubscriptionPlan[] = [
+const getPlans = (t: (key: string) => string): SubscriptionPlan[] => [
   {
     id: 'basic',
-    name: 'Basic Plan',
+    name: t('subscription.basic'),
     price: 999,
-    duration: '1 Month',
+    duration: t('subscription.duration.1month'),
     features: [
-      'Basic Kundali Reading',
-      'Daily Horoscope',
-      'Email Support',
-      'Mobile App Access'
+      t('subscription.feature.basicKundali'),
+      t('subscription.feature.dailyHoroscope'),
+      t('subscription.feature.emailSupport'),
+      t('subscription.feature.mobileApp')
     ]
   },
   {
     id: 'premium',
-    name: 'Premium Plan',
+    name: t('subscription.premium'),
     price: 2499,
-    duration: '3 Months',
+    duration: t('subscription.duration.3months'),
     features: [
-      'Advanced Kundali Analysis',
-      'Personalized Predictions',
-      'Video Consultation (1)',
-      'Priority Support',
-      'All Basic Features'
+      t('subscription.feature.advancedKundali'),
+      t('subscription.feature.personalizedPredictions'),
+      t('subscription.feature.videoConsultation1'),
+      t('subscription.feature.prioritySupport'),
+      t('subscription.feature.allBasic')
     ],
     popular: true
   },
   {
     id: 'ultimate',
-    name: 'Ultimate Plan',
+    name: t('subscription.ultimate'),
     price: 4999,
-    duration: '6 Months',
+    duration: t('subscription.duration.6months'),
     features: [
-      'Complete Life Analysis',
-      'Video Consultations (3)',
-      'Remedial Solutions',
-      'Family Compatibility',
-      'All Premium Features'
+      t('subscription.feature.completeLife'),
+      t('subscription.feature.videoConsultation3'),
+      t('subscription.feature.remedialSolutions'),
+      t('subscription.feature.familyCompatibility'),
+      t('subscription.feature.allPremium')
     ]
   }
 ];
@@ -80,6 +80,9 @@ export default function SubscriptionPage() {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [userSubscriptions, setUserSubscriptions] = useState<Record<string, UserSubscription>>({});
+
+  // Get translated plans
+  const plans = getPlans(t);
 
   useEffect(() => {
     fetchUserSubscriptionStatus();
@@ -203,15 +206,15 @@ export default function SubscriptionPage() {
           <div className="flex justify-end mb-2">
             <Button variant="outline" onClick={handleClose} className="gap-2">
               <X className="w-4 h-4" />
-              Close
+              {t('subscription.close')}
             </Button>
           </div>
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Choose Your Astrological Journey
+              {t('subscription.chooseJourney')}
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Unlock the mysteries of the cosmos with our comprehensive astrology subscription plans
+              {t('subscription.unlockMysteries')}
             </p>
           </div>
 
@@ -227,7 +230,7 @@ export default function SubscriptionPage() {
               <Card key={plan.id} className={`relative p-8 ${plan.popular ? 'border-amber-500 border-2 shadow-xl' : 'border-gray-200'}`}>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white">
-                    Most Popular
+                    {t('subscription.mostPopular')}
                   </Badge>
                 )}
 
@@ -257,7 +260,7 @@ export default function SubscriptionPage() {
                     return (
                       <Button disabled className="w-full bg-gray-400 text-white">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading...
+                        {t('subscription.loading')}
                       </Button>
                     );
                   }
@@ -272,16 +275,16 @@ export default function SubscriptionPage() {
                         <div className={`p-4 rounded-lg border-2 ${isExpiringSoon ? 'border-orange-500 bg-orange-50' : 'border-green-500 bg-green-50'}`}>
                           <div className="flex items-center justify-center gap-2 mb-2">
                             <Check className="w-5 h-5 text-green-600" />
-                            <span className="font-semibold text-green-700">Active Subscription</span>
+                            <span className="font-semibold text-green-700">{t('subscription.activeSubscription')}</span>
                           </div>
                           <div className="flex items-center justify-center gap-2 text-sm text-gray-700">
                             <Calendar className="w-4 h-4" />
-                            <span>Expires: {expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                            <span>{t('subscription.expiresLabel')} {expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                           </div>
                           {isExpiringSoon && (
                             <div className="flex items-center justify-center gap-2 text-sm text-orange-600 mt-2">
                               <Clock className="w-4 h-4" />
-                              <span className="font-medium">{daysRemaining} days remaining</span>
+                              <span className="font-medium">{daysRemaining} {t('subscription.daysLeft')}</span>
                             </div>
                           )}
                         </div>
@@ -290,7 +293,7 @@ export default function SubscriptionPage() {
                           variant="outline"
                           className="w-full border-amber-600 text-amber-700 hover:bg-amber-50"
                         >
-                          Renew Subscription
+                          {t('subscription.renew')}
                         </Button>
                       </div>
                     );
@@ -305,10 +308,10 @@ export default function SubscriptionPage() {
                       {loading === plan.id ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
+                          {t('subscription.processing')}
                         </>
                       ) : (
-                        `Subscribe to ${plan.name}`
+                        `${t('subscription.subscribeTo')} ${plan.name}`
                       )}
                     </Button>
                   );
@@ -319,10 +322,10 @@ export default function SubscriptionPage() {
 
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4">
-              All plans include access to our premium astrology tools and expert guidance
+              {t('subscription.allPlansInclude')}
             </p>
             <p className="text-sm text-gray-500">
-              Cancel anytime • Secure payments • 100% satisfaction guarantee
+              {t('subscription.cancelAnytime')}
             </p>
           </div>
         </div>

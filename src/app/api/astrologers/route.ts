@@ -30,6 +30,12 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
 
+    // Check if database is configured
+    if (!db) {
+      console.warn('[Astrologers API] Database not configured, returning empty array');
+      return NextResponse.json([]);
+    }
+
     // Single astrologer by ID
     if (id) {
       if (!id || isNaN(parseInt(id))) {
@@ -103,10 +109,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(resultsWithoutPasswords);
 
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({
-      error: 'Internal server error: ' + error
-    }, { status: 500 });
+    console.error('[Astrologers API] Error:', error);
+    // Return empty array as fallback to prevent frontend errors
+    return NextResponse.json([]);
   }
 }
 

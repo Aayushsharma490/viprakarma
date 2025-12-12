@@ -733,6 +733,7 @@ const translations = {
     "subscription.basic": "Basic Plan",
     "subscription.premium": "Premium Plan",
     "subscription.pro": "Pro Plan",
+    "subscription.ultimate": "Ultimate Plan",
     "subscription.perMonth": "per month",
     "subscription.perYear": "per year",
     "subscription.subscribe": "Subscribe",
@@ -741,6 +742,40 @@ const translations = {
     "subscription.expires": "Expires on",
     "subscription.renew": "Renew Subscription",
     "subscription.daysLeft": "days remaining",
+
+    // Subscription Page - Comprehensive
+    "subscription.chooseJourney": "Choose Your Astrological Journey",
+    "subscription.unlockMysteries": "Unlock the mysteries of the cosmos with our comprehensive astrology subscription plans",
+    "subscription.close": "Close",
+    "subscription.mostPopular": "Most Popular",
+    "subscription.loading": "Loading...",
+    "subscription.processing": "Processing...",
+    "subscription.activeSubscription": "Active Subscription",
+    "subscription.expiresLabel": "Expires:",
+    "subscription.subscribeTo": "Subscribe to",
+    "subscription.allPlansInclude": "All plans include access to our premium astrology tools and expert guidance",
+    "subscription.cancelAnytime": "Cancel anytime • Secure payments • 100% satisfaction guarantee",
+
+    // Plan Durations
+    "subscription.duration.1month": "1 Month",
+    "subscription.duration.3months": "3 Months",
+    "subscription.duration.6months": "6 Months",
+
+    // Plan Features
+    "subscription.feature.basicKundali": "Basic Kundali Reading",
+    "subscription.feature.dailyHoroscope": "Daily Horoscope",
+    "subscription.feature.emailSupport": "Email Support",
+    "subscription.feature.mobileApp": "Mobile App Access",
+    "subscription.feature.advancedKundali": "Advanced Kundali Analysis",
+    "subscription.feature.personalizedPredictions": "Personalized Predictions",
+    "subscription.feature.videoConsultation1": "Video Consultation (1)",
+    "subscription.feature.prioritySupport": "Priority Support",
+    "subscription.feature.allBasic": "All Basic Features",
+    "subscription.feature.completeLife": "Complete Life Analysis",
+    "subscription.feature.videoConsultation3": "Video Consultations (3)",
+    "subscription.feature.remedialSolutions": "Remedial Solutions",
+    "subscription.feature.familyCompatibility": "Family Compatibility",
+    "subscription.feature.allPremium": "All Premium Features",
   },
   hi: {
     // Navigation
@@ -1626,15 +1661,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('en');
   const [mounted, setMounted] = useState(false);
 
-  // After mount, load the saved language preference
+  // Load language from localStorage on mount (client-side only)
   useEffect(() => {
     setMounted(true);
-
     // Read from localStorage only on client after hydration
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('viprakarma-language') as Language;
-      if (saved === 'en' || saved === 'hi') {
-        setLanguage(saved);
+      const savedLang = localStorage.getItem('viprakarma-language') as Language;
+      if (savedLang === 'en' || savedLang === 'hi') {
+        setLanguage(savedLang);
+        document.documentElement.setAttribute("data-language", savedLang);
       }
     }
   }, []);
