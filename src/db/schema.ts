@@ -29,6 +29,8 @@ export const users = sqliteTable('users', {
   isAdmin: integer('is_admin', { mode: 'boolean' }).notNull().default(false),
   canChatWithAstrologer: integer('can_chat_with_astrologer', { mode: 'boolean' }).notNull().default(false),
   activeConsultationAstrologerId: integer('active_consultation_astrologer_id').references(() => astrologers.id),
+  resetToken: text('reset_token'),
+  resetTokenExpiry: text('reset_token_expiry'),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });

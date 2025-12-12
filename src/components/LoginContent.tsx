@@ -121,6 +121,12 @@ export default function LoginContent() {
                             </div>
                         </div>
 
+                        <div className="flex justify-end">
+                            <Link href="/forgot-password" className="text-sm text-amber-600 hover:text-amber-700 hover:underline">
+                                {t('login.forgotPassword') || 'Forgot Password?'}
+                            </Link>
+                        </div>
+
                         <Button
                             type="submit"
                             className="w-full bg-amber-600 hover:bg-amber-700 text-white classical-shadow"

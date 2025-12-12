@@ -199,6 +199,37 @@ const translations = {
     "nav.admin": "Admin Portal",
     "nav.profile": "Profile",
 
+    // Login Page
+    "login.welcomeBack": "Welcome Back",
+    "login.subtitle": "Sign in to your account",
+    "login.email": "Email",
+    "login.password": "Password",
+    "login.forgotPassword": "Forgot Password?",
+    "login.signIn": "Sign In",
+    "login.signingIn": "Signing in...",
+    "login.noAccount": "Don't have an account?",
+    "login.signUp": "Sign Up",
+    "login.backToHome": "Back to Home",
+
+    // Forgot Password Page
+    "forgotPassword.title": "Forgot Password",
+    "forgotPassword.subtitle": "Reset your password",
+    "forgotPassword.emailLabel": "Enter your email",
+    "forgotPassword.submitButton": "Send Reset Code",
+    "forgotPassword.generating": "Generating...",
+    "forgotPassword.backToLogin": "Back to Login",
+    "forgotPassword.successMessage": "Reset code generated!",
+
+    // Reset Password Page
+    "resetPassword.title": "Reset Password",
+    "resetPassword.subtitle": "Enter your reset code and new password",
+    "resetPassword.emailLabel": "Email",
+    "resetPassword.tokenLabel": "Reset Code (6 digits)",
+    "resetPassword.newPasswordLabel": "New Password",
+    "resetPassword.confirmPasswordLabel": "Confirm Password",
+    "resetPassword.submitButton": "Reset Password",
+    "resetPassword.resetting": "Resetting...",
+
     // Footer
     "footer.brandDesc":
       "Discover your cosmic blueprint with personalized astrology insights and expert spiritual guidance.",
@@ -655,17 +686,6 @@ const translations = {
       "Click on Chat/Call/Video to select and proceed to payment",
     "astrologer.noAstrologers": "No astrologers available at the moment.",
     "astrologer.noBio": "No bio available",
-
-    // Login Page
-    "login.welcomeBack": "Welcome Back",
-    "login.subtitle": "Sign in to access your cosmic insights",
-    "login.email": "Email",
-    "login.password": "Password",
-    "login.signIn": "Sign In",
-    "login.signingIn": "Signing in...",
-    "login.noAccount": "Don't have an account?",
-    "login.signUp": "Sign up",
-    "login.backToHome": "← Back to Home",
 
     // About Page
     "about.value1.title": "Authenticity",
