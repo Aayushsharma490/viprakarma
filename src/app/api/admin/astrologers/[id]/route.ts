@@ -15,11 +15,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
     }
 
-    const { name, email, phone, password, specializations, experience, hourlyRate, bio } = await request.json();
-
-    if (!name || !email || !phone || !specializations || !experience || !hourlyRate || !bio) {
-      return NextResponse.json({ error: 'Required fields are missing' }, { status: 400 });
-    }
+    const body = await request.json();
+    const { name, email, phone, password, specializations, experience, hourlyRate, bio, languages, location, isApproved, isOnline } = body;
 
     // Check if astrologer exists
     const existingAstrologer = await db
@@ -32,16 +29,21 @@ export async function PUT(
       return NextResponse.json({ error: 'Astrologer not found' }, { status: 404 });
     }
 
-    // Prepare update data
-    const updateData: any = {
-      name,
-      email,
-      phone,
-      specializations,
-      experience: parseInt(experience),
-      hourlyRate: parseInt(hourlyRate),
-      bio,
-    };
+    // Prepare update data (only update provided fields)
+    const updateData: any = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (specializations !== undefined) updateData.specializations = specializations;
+    if (experience !== undefined) updateData.experience = parseInt(experience);
+    if (hourlyRate !== undefined) updateData.hourlyRate = parseInt(hourlyRate);
+    if (bio !== undefined) updateData.bio = bio;
+    if (languages !== undefined) updateData.languages = languages;
+    if (location !== undefined) updateData.location = location;
+    if (isApproved !== undefined) updateData.isApproved = isApproved;
+    if (isOnline !== undefined) updateData.isOnline = isOnline;
+
 
     // Only update password if provided
     if (password && password.trim() !== '') {

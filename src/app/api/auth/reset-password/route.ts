@@ -6,9 +6,9 @@ import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
     try {
-        const { email, resetToken, newPassword } = await request.json();
+        const { email, code, newPassword } = await request.json();
 
-        if (!email || !resetToken || !newPassword) {
+        if (!email || !code || !newPassword) {
             return NextResponse.json(
                 { error: 'Email, reset code, and new password are required' },
                 { status: 400 }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
             .where(
                 and(
                     eq(users.email, email.toLowerCase().trim()),
-                    eq(users.resetToken, resetToken)
+                    eq(users.resetToken, code)
                 )
             )
             .limit(1);

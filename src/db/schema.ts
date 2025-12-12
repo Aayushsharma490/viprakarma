@@ -87,6 +87,28 @@ export const subscriptions = sqliteTable('subscriptions', {
   createdAt: text('created_at').notNull(),
 });
 
+// Subscription Requests table - User subscription requests pending admin approval
+// TEMPORARILY COMMENTED OUT - CAUSING 500 ERRORS
+/*
+export const subscriptionRequests = sqliteTable('subscription_requests', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').notNull().references(() => users.id),
+  planId: text('plan_id').notNull(),
+  planName: text('plan_name').notNull(),
+  amount: integer('amount').notNull(),
+  duration: integer('duration').notNull(),
+  status: text('status').notNull().default('pending'),
+  paymentId: text('payment_id'),
+  paymentScreenshot: text('payment_screenshot'),
+  expiryDate: text('expiry_date'),
+  adminNotes: text('admin_notes'),
+  approvedBy: integer('approved_by').references(() => users.id),
+  processedAt: text('processed_at'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+*/
+
 // Chat Sessions table - AI and astrologer chat sessions
 export const chatSessions = sqliteTable('chat_sessions', {
   id: integer('id').primaryKey({ autoIncrement: true }),

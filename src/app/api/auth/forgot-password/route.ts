@@ -3,6 +3,8 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { sendPasswordResetEmail } from '@/lib/email';
+
 
 export async function POST(request: NextRequest) {
     try {
@@ -58,17 +60,31 @@ export async function POST(request: NextRequest) {
 
         console.log(`[Forgot Password] Reset code generated for ${email}: ${resetToken}`);
 
-        // Return the code (for MVP - in production, send via email)
+        // Send reset code via email
+        const emailResult = await sendPasswordResetEmail(email, resetToken);
+
+        if (!emailResult.success) {
+            console.error('[Forgot Password] Failed to send email, but continuing...');
+        }
+
+        // Return the code (for MVP - in production, remove this!)
         return NextResponse.json({
             success: true,
-            message: 'Reset code generated successfully',
-            resetCode: resetToken, // Remove this in production!
+            message: emailResult.success
+                ? 'Reset code sent to your email'
+                : 'Reset code generated (email sending failed)',
             expiresIn: '15 minutes',
+            emailSent: emailResult.success,
         });
     } catch (error) {
         console.error('[Forgot Password] Error:', error);
+        console.error('[Forgot Password] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+        console.error('[Forgot Password] Error message:', error instanceof Error ? error.message : String(error));
         return NextResponse.json(
-            { error: 'Failed to process request' },
+            {
+                error: 'Failed to process request',
+                details: error instanceof Error ? error.message : String(error)
+            },
             { status: 500 }
         );
     }
