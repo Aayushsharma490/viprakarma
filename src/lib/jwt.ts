@@ -1,7 +1,7 @@
 // Use jose library for Next.js 15 compatibility (edge-compatible)
 import { SignJWT, jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'new_secret_key_to_force_logout_12345';
+const JWT_SECRET = process.env.JWT_SECRET_KEY || 'viprakarma_jwt_secret_2024_production';
 
 export async function generateToken(payload: any): Promise<string> {
   const token = await new SignJWT({ ...payload })

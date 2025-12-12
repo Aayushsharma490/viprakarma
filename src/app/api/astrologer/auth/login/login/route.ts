@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { SignJWT } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key');
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET_KEY || 'viprakarma_jwt_secret_2024_production');
 
 export async function POST(request: NextRequest) {
     try {
