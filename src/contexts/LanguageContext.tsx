@@ -1,0 +1,1682 @@
+"use client";
+
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+type Language = "en" | "hi";
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  toggleLanguage: () => void;
+  t: (key: string) => string;
+}
+
+
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
+
+// Translation data
+const translations = {
+  en: {
+    // Navigation
+    "nav.kundali": "Kundali",
+    "nav.numerology": "Numerology",
+    "nav.palmistry": "Palmistry",
+    "nav.mahurat": "Mahurat",
+    "nav.consultation": "Consultation",
+    "nav.talkToAstrologer": "Talk to Astrologer",
+    "nav.about": "About",
+    "nav.contact": "Contact",
+    "nav.subscribe": "Subscribe",
+    "nav.login": "Login",
+
+    // Admin Panel
+    "admin.title": "VipraKarma Admin",
+    "admin.dashboard": "Dashboard",
+    "admin.astrologers": "Astrologers",
+    "admin.pandits": "Pandits",
+    "admin.subscriptions": "Subscriptions",
+    "admin.whatsapp": "WhatsApp",
+    "admin.logout": "Logout",
+    "admin.home": "Home",
+    "admin.managePlatform": "Manage your astrology platform",
+
+    // Admin Dashboard
+    "admin.dashboard.title": "Viprakarma Admin",
+    "admin.dashboard.totalUsers": "Total Users",
+    "admin.dashboard.astrologers": "Astrologers",
+    "admin.dashboard.bookings": "Bookings",
+    "admin.dashboard.payments": "Payments",
+    "admin.dashboard.revenue": "Revenue",
+    "admin.dashboard.overview": "Overview",
+    "admin.dashboard.recentBookings": "Recent Bookings",
+    "admin.dashboard.paymentVerifications": "Payment Verifications",
+    "admin.dashboard.userManagement": "User Management",
+    "admin.dashboard.managePandits": "Manage Pandits",
+    "admin.dashboard.subscriptions": "Subscriptions",
+    "admin.dashboard.whatsappMessaging": "WhatsApp Messaging",
+    "admin.dashboard.platformOverview": "Platform Overview",
+    "admin.dashboard.platformGrowth": "Platform Growth",
+    "admin.dashboard.registeredUsers": "registered users and growing",
+    "admin.dashboard.expertAstrologers": "Expert Astrologers",
+    "admin.dashboard.verifiedAstrologers": "verified astrologers on platform",
+    "admin.dashboard.totalRevenue": "Total Revenue",
+    "admin.dashboard.generatedFrom": "generated from",
+    "admin.dashboard.paymentsText": "payments",
+    "admin.dashboard.totalBookings": "Total Bookings",
+    "admin.dashboard.consultationsBooked": "consultations booked",
+    "admin.dashboard.noBookings": "No bookings found",
+    "admin.dashboard.loading": "Loading...",
+
+    // Admin Pandits/Astrologers
+    "admin.pandits.title": "Manage Astrologers",
+    "admin.pandits.subtitle": "Add, edit, or remove astrologers (Pandits) from the platform",
+    "admin.pandits.search": "Search astrologers...",
+    "admin.pandits.addAstrologer": "Add Astrologer",
+    "admin.pandits.cancel": "Cancel",
+    "admin.pandits.editAstrologer": "Edit Astrologer",
+    "admin.pandits.addNewAstrologer": "Add New Astrologer",
+    "admin.pandits.name": "Name",
+    "admin.pandits.email": "Email",
+    "admin.pandits.password": "Password",
+    "admin.pandits.passwordHint": "(Leave blank to keep)",
+    "admin.pandits.specializations": "Specializations (comma separated)",
+    "admin.pandits.specializationsPlaceholder": "Vedic, Tarot, Numerology",
+    "admin.pandits.experience": "Experience (years)",
+    "admin.pandits.languages": "Languages",
+    "admin.pandits.languagesPlaceholder": "Hindi, English",
+    "admin.pandits.rating": "Rating (0-5)",
+    "admin.pandits.hourlyRate": "Hourly Rate (₹)",
+    "admin.pandits.location": "Location",
+    "admin.pandits.imageUrl": "Image URL",
+    "admin.pandits.uploadImage": "Upload Image",
+    "admin.pandits.uploading": "Uploading...",
+    "admin.pandits.bio": "Bio / Description",
+    "admin.pandits.availableForBooking": "Available for booking (Online)",
+    "admin.pandits.create": "Create",
+    "admin.pandits.update": "Update",
+    "admin.pandits.astrologer": "Astrologer",
+    "admin.pandits.edit": "Edit",
+    "admin.pandits.approve": "Approve",
+    "admin.pandits.disapprove": "Disapprove",
+    "admin.pandits.delete": "Delete",
+    "admin.pandits.online": "Online",
+    "admin.pandits.offline": "Offline",
+    "admin.pandits.approved": "Approved",
+    "admin.pandits.pending": "Pending",
+    "admin.pandits.yearsExp": "years exp",
+    "admin.pandits.perHour": "/hr",
+    "admin.pandits.emailLabel": "Email:",
+    "admin.pandits.noAstrologers": "No astrologers found",
+    "admin.pandits.deleteConfirm": "Are you sure you want to delete this astrologer?",
+
+    // Admin Subscriptions
+    "admin.subscriptions.title": "Subscription Management",
+    "admin.subscriptions.search": "Search by name, email, or plan...",
+    "admin.subscriptions.pending": "Pending",
+    "admin.subscriptions.approved": "Approved",
+    "admin.subscriptions.rejected": "Rejected",
+    "admin.subscriptions.noRequests": "No",
+    "admin.subscriptions.subscriptionRequests": "subscription requests",
+    "admin.subscriptions.viewDetails": "View Details",
+    "admin.subscriptions.sendReminder": "Send Reminder",
+    "admin.subscriptions.cancel": "Cancel",
+    "admin.subscriptions.requestedOn": "Requested:",
+    "admin.subscriptions.expiresOn": "Expires:",
+    "admin.subscriptions.days": "days",
+    "admin.subscriptions.detailsTitle": "Subscription Request Details",
+    "admin.subscriptions.detailsSubtitle": "Review and process subscription request",
+    "admin.subscriptions.userName": "User Name",
+    "admin.subscriptions.email": "Email",
+    "admin.subscriptions.plan": "Plan",
+    "admin.subscriptions.amount": "Amount",
+    "admin.subscriptions.paymentMethod": "Payment Method",
+    "admin.subscriptions.phone": "Phone",
+    "admin.subscriptions.transactionId": "Transaction ID",
+    "admin.subscriptions.paymentScreenshot": "Payment Screenshot",
+    "admin.subscriptions.adminNotes": "Admin Notes",
+    "admin.subscriptions.adminNotesPlaceholder": "Add notes about this request...",
+    "admin.subscriptions.reject": "Reject",
+    "admin.subscriptions.approve": "Approve",
+    "admin.subscriptions.cancelSubscription": "Cancel Subscription",
+    "admin.subscriptions.cancelConfirm": "Are you sure you want to cancel this subscription? This action cannot be undone.",
+    "admin.subscriptions.user": "User:",
+    "admin.subscriptions.planLabel": "Plan:",
+    "admin.subscriptions.cancellationReason": "Cancellation Reason",
+    "admin.subscriptions.cancellationPlaceholder": "Please provide a reason for cancellation...",
+    "admin.subscriptions.noKeepIt": "No, Keep It",
+    "admin.subscriptions.yesCancelSubscription": "Yes, Cancel Subscription",
+    "admin.subscriptions.loading": "Loading subscriptions...",
+
+    // WhatsApp Admin
+    "admin.whatsapp.title": "WhatsApp Bulk Messaging",
+    "admin.whatsapp.subtitle": "Send messages to all registered users via Baileys",
+    "admin.whatsapp.reconnect": "Reconnect",
+    "admin.whatsapp.disconnect": "Disconnect & Show QR",
+    "admin.whatsapp.forgotLogin": "Forgot Login? Show QR",
+    "admin.whatsapp.status": "WhatsApp Status",
+    "admin.whatsapp.connected": "Connected",
+    "admin.whatsapp.scanQR": "Scan QR Code",
+    "admin.whatsapp.connecting": "Connecting...",
+    "admin.whatsapp.disconnected": "Disconnected",
+    "admin.whatsapp.readyToSend": "Ready to send messages",
+    "admin.whatsapp.scanBelow": "Scan the QR code below with WhatsApp",
+    "admin.whatsapp.pleaseWait": "Please wait...",
+    "admin.whatsapp.clickReconnect": "Click Reconnect to start",
+    "admin.whatsapp.scanInstructions": "Open WhatsApp → Settings → Linked Devices → Link a Device",
+    "admin.whatsapp.senderName": "Sender Name",
+    "admin.whatsapp.senderNamePlaceholder": "e.g., VipraKarma Support",
+    "admin.whatsapp.senderPhone": "Sender Phone (WhatsApp)",
+    "admin.whatsapp.senderPhonePlaceholder": "e.g., +91 9876543210",
+    "admin.whatsapp.messageLanguage": "Message Language",
+    "admin.whatsapp.english": "English",
+    "admin.whatsapp.hindi": "Hindi (हिंदी)",
+    "admin.whatsapp.message": "Message",
+    "admin.whatsapp.messagePlaceholder": "Enter your message to all users...",
+    "admin.whatsapp.autoTranslate": "Auto-Translate to Hindi",
+    "admin.whatsapp.tipEnglish": "💡 Tip: Type your message in English",
+    "admin.whatsapp.tipHindi": "💡 Tip: Type in English and click \"Auto-Translate\" or type directly in Hindi",
+    "admin.whatsapp.messagePreview": "Message Preview",
+    "admin.whatsapp.previewEnglish": "English",
+    "admin.whatsapp.previewHindi": "Hindi",
+    "admin.whatsapp.sendToAll": "Send to All Users",
+    "admin.whatsapp.sending": "Sending Messages...",
+    "admin.whatsapp.deliveryReport": "Delivery Report",
+    "admin.whatsapp.successfullySent": "Successfully sent:",
+    "admin.whatsapp.failed": "Failed:",
+    "admin.whatsapp.howItWorks": "How It Works",
+    "admin.whatsapp.feature1": "Messages are sent from YOUR WhatsApp number (the one you scan)",
+    "admin.whatsapp.feature2": "Completely FREE - no per-message costs",
+    "admin.whatsapp.feature3": "Choose message language: English or Hindi",
+    "admin.whatsapp.feature4": "Auto-translate feature for Hindi messages",
+    "admin.whatsapp.feature5": "1-second delay between messages to avoid blocking",
+    "admin.whatsapp.feature6": "Only users with registered phone numbers receive messages",
+    "admin.whatsapp.feature7": "QR scan needed only once - stays connected",
+    "admin.whatsapp.scanQRWithWhatsApp": "📱 Scan this QR code with WhatsApp",
+    "nav.signup": "Sign Up",
+    "nav.logout": "Logout",
+    "nav.admin": "Admin Portal",
+    "nav.profile": "Profile",
+
+    // Footer
+    "footer.brandDesc":
+      "Discover your cosmic blueprint with personalized astrology insights and expert spiritual guidance.",
+    "footer.services": "Services",
+    "footer.kundaliGenerator": "Kundali Generator",
+    "footer.numerology": "Numerology",
+    "footer.palmistryAnalysis": "Palmistry Analysis",
+    "footer.aiAstroChat": "AI Astro Chat",
+    "footer.company": "Company",
+    "footer.aboutUs": "About Us",
+    "footer.ourAstrologers": "Our Astrologers",
+    "footer.pricing": "Pricing",
+    "footer.adminLogin": "Admin Login",
+    "footer.contact": "Contact",
+    "footer.copyright":
+      "All rights reserved. Made with ✨ for spiritual seekers.",
+
+    // Hero Section
+    "hero.title1": "Discover",
+    "hero.title2": "Your Destiny",
+    "hero.subtitle":
+      "Unlock the secrets of the universe with personalized astrology, numerology, and expert guidance from renowned astrologers.",
+    "hero.cta1": "Get Free Kundali",
+    "hero.cta2": "Premium Features",
+    "hero.stats1": "Happy Users",
+    "hero.stats2": "Expert Astrologers",
+    "hero.stats3": "Years Experience",
+    "hero.stats4": "Accuracy",
+    "hero.scroll": "Explore More",
+
+    // Features
+    "features.title": "Divine Services",
+    "features.subtitle":
+      "Explore our comprehensive range of astrological services crafted to guide you through life's celestial journey with precision and wisdom",
+    "feature1.title": "Kundali Generator",
+    "feature1.desc":
+      "Get your personalized birth chart with detailed planetary positions and accurate predictions based on Vedic astrology principles",
+    "feature2.title": "Numerology",
+    "feature2.desc":
+      "Discover your life path, destiny, and soul urge numbers with comprehensive insights into your personality and future",
+    "feature3.title": "Palmistry Analysis",
+    "feature3.desc":
+      "Upload your palm image for detailed analysis and accurate readings of your life lines and future predictions",
+    "feature4.title": "AI Astro Chat",
+    "feature4.desc":
+      "Chat with our advanced AI astrologer anytime for instant cosmic guidance, daily horoscope, and personalized advice",
+    "feature5.title": "Talk to Astrologer",
+    "feature5.desc":
+      "Connect with certified expert astrologers for personalized consultations via call, video, or chat sessions",
+    "feature6.title": "Book Pandit",
+    "feature6.desc":
+      "Book experienced pandits for pujas, ceremonies, and rituals at your home with complete arrangements",
+    "feature.explore": "Explore Service",
+
+    // Stats
+    "stats.title": "Trusted by Thousands",
+    "stats.subtitle":
+      "Join our growing community of believers who have found guidance, clarity, and transformation",
+    "stats.testimonials": "What Our Clients Say",
+    "stats.users": "Satisfied Clients",
+    "stats.astrologers": "Expert Astrologers",
+    "stats.predictions": "Accurate Predictions",
+    "stats.rate": "Success Rate",
+
+    "cta.title": "Begin Your Cosmic Journey Today",
+    "cta.subtitle":
+      "Join thousands of enlightened souls who have discovered their true path through our divine guidance and celestial insights",
+    "cta.trial": "Start Free Trial",
+    "cta.consult": "Consult Expert",
+    "cta.secure": "100% Secure",
+    "cta.available": "24/7 Available",
+    "cta.trusted": "Trusted Since",
+
+    // Mahurat Page
+    "mahurat.title": "Mahurat Calculator",
+    "mahurat.subtitle": "Find the most auspicious time for your important events",
+    "mahurat.subscriptionRequired": "Subscription Required",
+    "mahurat.subscriptionMessage": "Get access to personalized Mahurat calculations for all your important events",
+    "mahurat.subscribeButton": "Subscribe Now - ₹999/year",
+    "mahurat.purpose": "Purpose",
+    "mahurat.purposePlaceholder": "Select purpose",
+    "mahurat.startDate": "Start Date",
+    "mahurat.endDate": "End Date",
+    "mahurat.location": "Location (Optional)",
+    "mahurat.locationPlaceholder": "e.g., Delhi, India",
+    "mahurat.rashi": "Your Rashi (Zodiac Sign)",
+    "mahurat.rashiPlaceholder": "Select your Rashi",
+    "mahurat.phoneNumber": "Phone Number (WhatsApp)",
+    "mahurat.phoneNumberPlaceholder": "e.g., +91 9876543210",
+    "mahurat.generateButton": "Generate Mahurat",
+    "mahurat.calculating": "Calculating...",
+    "mahurat.auspiciousTimings": "Auspicious Timings",
+    "mahurat.at": "at",
+
+    // Mahurat Purposes
+    "mahurat.purpose.marriage": "Marriage",
+    "mahurat.purpose.businessOpening": "Business Opening",
+    "mahurat.purpose.houseWarming": "House Warming",
+    "mahurat.purpose.vehiclePurchase": "Vehicle Purchase",
+    "mahurat.purpose.travel": "Travel",
+    "mahurat.purpose.education": "Education",
+    "mahurat.purpose.propertyPurchase": "Property Purchase",
+    "mahurat.purpose.nameCeremony": "Name Ceremony",
+    "mahurat.purpose.threadCeremony": "Thread Ceremony",
+    "mahurat.purpose.other": "Other",
+
+    // Rashi (Zodiac Signs)
+    "mahurat.rashi.aries": "Aries (Mesh)",
+    "mahurat.rashi.taurus": "Taurus (Vrishabha)",
+    "mahurat.rashi.gemini": "Gemini (Mithuna)",
+    "mahurat.rashi.cancer": "Cancer (Karka)",
+    "mahurat.rashi.leo": "Leo (Simha)",
+    "mahurat.rashi.virgo": "Virgo (Kanya)",
+    "mahurat.rashi.libra": "Libra (Tula)",
+    "mahurat.rashi.scorpio": "Scorpio (Vrishchika)",
+    "mahurat.rashi.sagittarius": "Sagittarius (Dhanu)",
+    "mahurat.rashi.capricorn": "Capricorn (Makara)",
+    "mahurat.rashi.aquarius": "Aquarius (Kumbha)",
+    "mahurat.rashi.pisces": "Pisces (Meena)",
+
+    // Auspiciousness Levels
+    "mahurat.highlyAuspicious": "Highly Auspicious",
+    "mahurat.auspicious": "Auspicious",
+    "mahurat.moderate": "Moderate",
+    "mahurat.inauspicious": "Inauspicious",
+
+    // Messages
+    "mahurat.error.subscriptionRequired": "Mahurat subscription required",
+    "mahurat.error.fillAllFields": "Please fill all required fields",
+    "mahurat.error.phoneRequired": "Phone number is required",
+    "mahurat.error.rashiRequired": "Please select your Rashi",
+    "mahurat.success.calculated": "Mahurat calculated successfully",
+    "mahurat.success.whatsappSent": "Results sent to your WhatsApp!",
+    "mahurat.error.failed": "Failed to generate mahurat",
+
+    // Testimonials
+    "testimonial1.name": "Priya Sharma",
+    "testimonial1.role": "Software Engineer",
+    "testimonial1.content":
+      "The kundali analysis was incredibly accurate! It helped me understand my career path better.",
+    "testimonial2.name": "Rajesh Kumar",
+    "testimonial2.role": "Business Owner",
+    "testimonial2.content":
+      "The numerology reading transformed my business decisions. Highly recommended!",
+    "testimonial3.name": "Anita Patel",
+    "testimonial3.role": "Teacher",
+    "testimonial3.content":
+      "AI chat feature is amazing! Got instant answers to all my astrology questions.",
+
+    // Kundali Page
+    "kundali.title": "Kundali Generator",
+    "kundali.subtitle":
+      "Generate your comprehensive birth chart with detailed astrological insights",
+    "kundali.fullName": "Full Name",
+    "kundali.gender": "Gender",
+    "kundali.male": "Male",
+    "kundali.female": "Female",
+    "kundali.dateOfBirth": "Date of Birth",
+    "kundali.timeOfBirth": "Time of Birth (24h)",
+    "kundali.timezoneOffset": "Timezone Offset",
+    "kundali.localBirthTime": "Local Birth Time",
+    "kundali.utcTime": "UTC Time",
+    "kundali.description":
+      "Enter your birth details to compute an accurate Lagna (D1), Chandra, Navamsa (D9) and Dashamsa (D10) chart powered by the Swiss Ephemeris.",
+    "kundali.awaitingTitle": "Awaiting Birth Details",
+    "kundali.awaitingDesc":
+      "Enter your accurate birth information to unlock high-fidelity Swiss Ephemeris calculations for all major divisional charts.",
+    "kundali.planetaryPositions": "Planetary Positions",
+    "kundali.planet": "Planet",
+    "kundali.sign": "Sign",
+    "kundali.house": "House",
+    "kundali.degree": "Degree",
+    "kundali.nakshatra": "Nakshatra",
+    "kundali.status": "Status",
+    "kundali.retrograde": "Retrograde",
+    "kundali.direct": "Direct",
+    "kundali.benefic": "Benefic",
+    "kundali.malefic": "Malefic",
+    "kundali.houseCusps": "House Cusps (Whole Sign)",
+    "kundali.nakshatraHighlights": "Nakshatra Highlights",
+    "kundali.dashaTimeline": "Vimshottari Dasha Timeline",
+    "kundali.currentMahadasha": "Current Mahadasha",
+    "kundali.pada": "Pada",
+    "kundali.houseLabel": "House",
+    "kundali.sun": "Sun",
+    "kundali.moon": "Moon",
+    "kundali.to": "to",
+    "kundali.years": "years",
+    "kundali.duration": "Duration",
+    "kundali.lagnaChart": "Lagna (D1)",
+    "kundali.chandraChart": "Chandra",
+    "kundali.navamsaChart": "Navamsa (D9)",
+    "kundali.dashamsaChart": "Dashamsa (D10)",
+    "kundali.lagnaKundaliTitle": "Lagna Kundali (D1)",
+    "kundali.chandraKundaliTitle": "Chandra Kundali",
+    "kundali.navamsaTitle": "Navamsa (D9)",
+    "kundali.dashamsaTitle": "Dashamsa (D10)",
+    "kundali.namePlaceholder": "Enter your full name",
+    "kundali.dayPlaceholder": "DD",
+    "kundali.monthPlaceholder": "MM",
+    "kundali.yearPlaceholder": "YYYY",
+    "kundali.hourPlaceholder": "HH",
+    "kundali.minutePlaceholder": "MM",
+    "kundali.secondPlaceholder": "SS",
+    "kundali.selectCity": "Select your city",
+    "kundali.manualLocation": "Enter location manually",
+    "kundali.manualCityPlaceholder": "City/Town name",
+    "kundali.latitude": "Latitude",
+    "kundali.longitude": "Longitude",
+    "kundali.placeOfBirth": "Place of Birth",
+    "kundali.generateKundali": "Generate Kundali",
+    "kundali.generating": "Generating...",
+    "kundali.sunSign": "Sun Sign",
+    "kundali.moonSign": "Moon Sign",
+    "kundali.ascendant": "Ascendant",
+
+    // Zodiac Signs
+    "sign.Aries": "Aries",
+    "sign.Taurus": "Taurus",
+    "sign.Gemini": "Gemini",
+    "sign.Cancer": "Cancer",
+    "sign.Leo": "Leo",
+    "sign.Virgo": "Virgo",
+    "sign.Libra": "Libra",
+    "sign.Scorpio": "Scorpio",
+    "sign.Sagittarius": "Sagittarius",
+    "sign.Capricorn": "Capricorn",
+    "sign.Aquarius": "Aquarius",
+    "sign.Pisces": "Pisces",
+
+    // Planets
+    "planet.Sun": "Sun",
+    "planet.Moon": "Moon",
+    "planet.Mars": "Mars",
+    "planet.Mercury": "Mercury",
+    "planet.Jupiter": "Jupiter",
+    "planet.Venus": "Venus",
+    "planet.Saturn": "Saturn",
+    "planet.Rahu": "Rahu",
+    "planet.Ketu": "Ketu",
+    "planet.Uranus": "Uranus",
+    "planet.Neptune": "Neptune",
+    "planet.Pluto": "Pluto",
+
+    // Other Dynamic Terms
+    "benefic": "Benefic",
+    "malefic": "Malefic",
+    "retrograde": "Retrograde",
+    "strong": "Strong",
+    "weak": "Weak",
+    "verystrong": "Very Strong",
+    "average": "Average",
+    "present": "Present",
+    "absent": "Absent",
+    "active": "Active",
+    "inactive": "Inactive",
+
+    // Numerology Page
+    "numerology.title": "Numerology Calculator",
+    "numerology.subtitle":
+      "Discover the hidden meanings in your name and birth date with comprehensive insights",
+    "numerology.enterDetails": "Enter Your Details",
+    "numerology.fullName": "Full Name",
+    "numerology.namePlaceholder": "Aayush Sharma",
+    "numerology.dateOfBirth": "Date of Birth",
+    "numerology.calculateNumbers": "Calculate Numbers",
+    "numerology.calculating": "Calculating...",
+
+    // Palmistry Page
+    "palmistry.title": "Palmistry Analysis",
+    "palmistry.subtitle":
+      "Upload your palm image for comprehensive AI-powered insights and predictions",
+    "palmistry.uploadTitle": "Upload Palm Image",
+    "palmistry.uploadText": "Click to upload",
+    "palmistry.uploadHint": "PNG, JPG up to 10MB",
+    "palmistry.changeImage": "Click to change image",
+    "palmistry.tipsTitle": "Tips for Best Results:",
+    "palmistry.tips1": "• Use natural bright lighting",
+    "palmistry.tips2": "• Keep palm flat and straight",
+    "palmistry.tips3": "• Capture entire palm clearly with fingers",
+    "palmistry.tips4": "• Avoid shadows and reflections",
+    "palmistry.tips5": "• Use clean, dry hands",
+    "palmistry.analyzing": "Analyzing palm...",
+    "palmistry.analyze": "Analyze Palm",
+    "palmistry.noAnalysis": "No Analysis Yet",
+    "palmistry.noAnalysisDesc":
+      "Upload a palm image and click analyze to see detailed results",
+    "palmistry.lifeLine": "Life Line",
+    "palmistry.heartLine": "Heart Line",
+    "palmistry.headLine": "Head Line",
+    "palmistry.fateLine": "Fate Line",
+    "palmistry.mountsAnalysis": "Mounts Analysis",
+    "palmistry.recommendations": "Recommendations",
+    "palmistry.predictions": "Predictions:",
+    "palmistry.length": "Length:",
+    "palmistry.depth": "Depth:",
+    "palmistry.clarity": "Clarity:",
+    "palmistry.shape": "Shape:",
+    "palmistry.position": "Position:",
+    "palmistry.presence": "Presence:",
+    "palmistry.overallAnalysis": "Overall Analysis",
+
+    // Palmistry Analysis Results (English)
+    "palmistry.analysis.lifeLine.length": "Long (extending to wrist)",
+    "palmistry.analysis.lifeLine.depth": "Deep and well-marked",
+    "palmistry.analysis.lifeLine.clarity": "Clear without breaks",
+    "palmistry.analysis.lifeLine.meaning":
+      "Indicates exceptional vitality, robust health, and strong life force. You possess remarkable resilience and can enjoy a long, healthy life. The depth suggests physical stamina and endurance.",
+    "palmistry.analysis.lifeLine.prediction1": "Good health throughout life",
+    "palmistry.analysis.lifeLine.prediction2": "Strong immune system",
+    "palmistry.analysis.lifeLine.prediction3": "Quick recovery from illnesses",
+    "palmistry.analysis.lifeLine.prediction4": "High energy levels",
+    "palmistry.analysis.heartLine.shape": "Curved upward toward fingers",
+    "palmistry.analysis.heartLine.position": "High on palm",
+    "palmistry.analysis.heartLine.clarity": "Clear and unbroken",
+    "palmistry.analysis.heartLine.meaning":
+      "Shows deep emotional depth, strong romantic inclinations, and passionate nature. You value relationships deeply and express emotions freely. The high position indicates idealistic love outlook.",
+    "palmistry.analysis.heartLine.prediction1":
+      "Deep, meaningful relationships",
+    "palmistry.analysis.heartLine.prediction2": "Strong emotional bonds",
+    "palmistry.analysis.heartLine.prediction3":
+      "Romantic and passionate nature",
+    "palmistry.analysis.heartLine.prediction4": "Loyalty in partnerships",
+    "palmistry.analysis.headLine.clarity": "Clear and well-defined",
+    "palmistry.analysis.headLine.length": "Long, extending across palm",
+    "palmistry.analysis.headLine.curve": "Slightly curved",
+    "palmistry.analysis.headLine.meaning":
+      "Indicates sharp intellect, analytical thinking abilities, and strong decision-making capabilities. The length suggests comprehensive thinking and attention to detail. The slight curve shows balance between logic and creativity.",
+    "palmistry.analysis.headLine.prediction1":
+      "Excellent problem-solving abilities",
+    "palmistry.analysis.headLine.prediction2":
+      "Success in intellectual pursuits",
+    "palmistry.analysis.headLine.prediction3": "Strategic thinking",
+    "palmistry.analysis.headLine.prediction4": "Leadership potential",
+    "palmistry.analysis.fateLine.presence": "Present and strong",
+    "palmistry.analysis.fateLine.clarity": "Well-defined",
+    "palmistry.analysis.fateLine.position":
+      "Running from wrist to middle finger",
+    "palmistry.analysis.fateLine.meaning":
+      "Suggests clear life direction, career success, and strong sense of purpose. Your path is well-defined and you have natural ability to achieve goals. Strong fate line indicates self-made success.",
+    "palmistry.analysis.fateLine.prediction1": "Career advancement",
+    "palmistry.analysis.fateLine.prediction2": "Financial stability",
+    "palmistry.analysis.fateLine.prediction3": "Achievement of goals",
+    "palmistry.analysis.fateLine.prediction4": "Recognition in profession",
+    "palmistry.analysis.mounts.jupiter.prominence": "Well-developed",
+    "palmistry.analysis.mounts.jupiter.meaning":
+      "Leadership, ambition, confidence",
+    "palmistry.analysis.mounts.saturn.prominence": "Balanced",
+    "palmistry.analysis.mounts.saturn.meaning":
+      "Wisdom, discipline, responsibility",
+    "palmistry.analysis.mounts.apollo.prominence": "Prominent",
+    "palmistry.analysis.mounts.apollo.meaning":
+      "Creativity, success, artistic talents",
+    "palmistry.analysis.mounts.mercury.prominence": "Moderate",
+    "palmistry.analysis.mounts.mercury.meaning":
+      "Communication, business skills",
+    "palmistry.analysis.mounts.venus.prominence": "Full",
+    "palmistry.analysis.mounts.venus.meaning": "Love, passion, vitality",
+    "palmistry.analysis.mounts.luna.prominence": "Developed",
+    "palmistry.analysis.mounts.luna.meaning":
+      "Imagination, intuition, sensitivity",
+    "palmistry.analysis.fingerAnalysis.thumb":
+      "Strong and well-proportioned - indicates willpower and determination",
+    "palmistry.analysis.fingerAnalysis.index":
+      "Long - shows leadership and ambition",
+    "palmistry.analysis.fingerAnalysis.middle":
+      "Balanced - suggests stability and responsibility",
+    "palmistry.analysis.fingerAnalysis.ring":
+      "Prominent - indicates creativity and desire for recognition",
+    "palmistry.analysis.fingerAnalysis.pinky":
+      "Good length - shows communication skills",
+    "palmistry.analysis.specialMarks.star": "Brilliant success and recognition",
+    "palmistry.analysis.specialMarks.triangle":
+      "Exceptional career achievement",
+    "palmistry.analysis.specialMarks.moneyLine": "Financial prosperity",
+    "palmistry.analysis.overall":
+      "Your palmistry analysis reveals an exceptionally balanced and fortunate personality. Strong vitality combined with emotional depth and intellectual capabilities create a powerful foundation for success. The well-defined fate line and prominent mounts indicate clear life direction and multiple talents. You are naturally equipped for leadership, creative pursuits, and building deep relationships. Your palm suggests a life of achievement, good health, and emotional fulfillment.",
+    "palmistry.analysis.recommendations.1":
+      "Focus on leadership roles in your career",
+    "palmistry.analysis.recommendations.2":
+      "Develop your creative talents further",
+    "palmistry.analysis.recommendations.3":
+      "Maintain work-life balance for optimal health",
+    "palmistry.analysis.recommendations.4":
+      "Nurture your emotional relationships",
+    "palmistry.analysis.recommendations.5":
+      "Trust your intuition in decision-making",
+
+    // Consultation Page
+    "consultation.title": "Talk to Expert Astrologers",
+    "consultation.subtitle":
+      "Get personalized guidance from certified astrologers via chat, call, or video consultation",
+    "consultation.bookNow": "Book Now",
+    "consultation.howItWorks.title": "How It Works",
+    "consultation.howItWorks.subtitle":
+      "Simple steps to connect with expert astrologers",
+    "consultation.steps.chooseService.title": "Choose Service",
+    "consultation.steps.chooseService.desc":
+      "Select chat, call, or video consultation",
+    "consultation.steps.makePayment.title": "Make Payment",
+    "consultation.steps.makePayment.desc":
+      "Secure payment via Razorpay or QR code",
+    "consultation.steps.getConnected.title": "Get Connected",
+    "consultation.steps.getConnected.desc":
+      "Instantly connect with an expert astrologer",
+    "consultation.steps.receiveGuidance.title": "Receive Guidance",
+    "consultation.steps.receiveGuidance.desc":
+      "Get personalized cosmic insights and remedies",
+    "consultation.sessionActive.title": "Session Active!",
+    "consultation.sessionActive.message":
+      "Your session is now active. An astrologer will join shortly.",
+    "consultation.sessionActive.enterSession": "Enter Session",
+    "consultation.sessionActive.close": "Close",
+    "consultation.enterDetails": "Enter Your Details",
+    "consultation.pageTitle": "Book Your Consultation",
+    "consultation.pageSubtitle":
+      "Get personalized astrological guidance from expert astrologers",
+    "consultation.formTitle": "Consultation Details",
+    "consultation.formSubtitle":
+      "Please provide your details for accurate astrological guidance",
+    "consultation.fullName": "Full Name",
+    "consultation.namePlaceholder": "Aayush Sharma",
+    "consultation.email": "Email",
+    "consultation.emailPlaceholder": "aayushsharma2005@gmail.com",
+    "consultation.phoneNumber": "Phone Number",
+    "consultation.phonePlaceholder": "+91 9876543210",
+    "consultation.dateOfBirth": "Date of Birth",
+    "consultation.timeOfBirth": "Time of Birth",
+    "consultation.placeOfBirth": "Place of Birth",
+    "consultation.placePlaceholder": "City, State, Country",
+    "consultation.yourConcerns": "Your Concerns/Questions",
+    "consultation.concernsPlaceholder":
+      "Please describe your concerns, questions, or what you'd like guidance on...",
+    "consultation.bookNowButton": "Book Now - ₹299",
+    "consultation.creatingRequest": "Creating Request...",
+
+    // Talk to Astrologer Page
+    "astrologer.loading": "Loading astrologers...",
+    "astrologer.tryAgain": "Try Again",
+    "astrologer.chatLocked":
+      "Chat is locked. Complete a consultation payment to unlock chat.",
+    "astrologer.years": "years",
+    "astrologer.perHour": "/hr",
+    "astrologer.online": "Online",
+    "astrologer.offline": "Offline",
+    "astrologer.chatNow": "Chat Now",
+    "astrologer.continueChat": "Continue Chat",
+    "astrologer.startChatLocked": "Start Chat (Locked)",
+    "astrologer.call": "Call",
+    "astrologer.video": "Video",
+    "astrologer.selectedMessage":
+      "Selected for consultation - proceed to payment",
+    "astrologer.clickToSelect":
+      "Click on Chat/Call/Video to select and proceed to payment",
+    "astrologer.noAstrologers": "No astrologers available at the moment.",
+    "astrologer.noBio": "No bio available",
+
+    // Login Page
+    "login.welcomeBack": "Welcome Back",
+    "login.subtitle": "Sign in to access your cosmic insights",
+    "login.email": "Email",
+    "login.password": "Password",
+    "login.signIn": "Sign In",
+    "login.signingIn": "Signing in...",
+    "login.noAccount": "Don't have an account?",
+    "login.signUp": "Sign up",
+    "login.backToHome": "← Back to Home",
+
+    // About Page
+    "about.value1.title": "Authenticity",
+    "about.value1.desc":
+      "We provide genuine Vedic astrology services based on ancient wisdom and modern accuracy.",
+    "about.value2.title": "Community",
+    "about.value2.desc":
+      "Join our growing community of seekers who have found guidance and transformation through astrology.",
+    "about.value3.title": "Excellence",
+    "about.value3.desc":
+      "We maintain the highest standards in astrological practice, ensuring accurate and reliable predictions.",
+    "about.value4.title": "Compassion",
+    "about.value4.desc":
+      "Every consultation is approached with empathy, understanding, and genuine care for your well-being.",
+    "about.value5.title": "Trust",
+    "about.value5.desc":
+      "Your privacy and security are paramount, with all consultations conducted in complete confidence.",
+    "about.value6.title": "Innovation",
+    "about.value6.desc":
+      "We blend traditional wisdom with modern technology to make astrology accessible and convenient.",
+    "about.stats1": "Happy Users",
+    "about.stats2": "Expert Astrologers",
+    "about.stats3": "Years Experience",
+    "about.stats4": "Accuracy Rate",
+    "about.title": "About Viprakarma",
+    "about.subtitle":
+      "Your trusted companion for cosmic guidance and spiritual services",
+    "about.missionTitle": "Our Mission",
+    "about.ourMission":
+      "At Viprakarma, we believe that understanding the cosmic forces that shape our lives can lead to better decisions, deeper self-awareness, and a more fulfilling existence. Our mission is to make authentic Vedic astrology and spiritual services accessible to everyone through modern technology while preserving the ancient wisdom of our traditions. We combine the precision of astronomical calculations with the insights of experienced astrologers to provide you with accurate, personalized guidance for every aspect of your life.",
+    "about.valuesTitle": "Our Values",
+    "about.valuesSubtitle": "The principles that guide everything we do",
+    "about.storyTitle": "Our Story",
+    "about.ourStory":
+      "Viprakarma was born from a deep passion for Vedic astrology and a vision to make this ancient science accessible to the modern world. Our founders, experienced astrologers themselves, recognized the gap between traditional astrological consultations and the fast-paced digital age.\n\nWe assembled a team of certified astrologers, skilled developers, and design experts to create a platform that combines the best of both worlds - the profound wisdom of Vedic astrology and the convenience of modern technology.\n\nToday, we serve thousands of users worldwide, helping them navigate life's challenges with cosmic guidance. Whether it's career decisions, relationship questions, health concerns, or spiritual growth, we're here to illuminate your path with the light of astrological wisdom.",
+
+    // Contact Page
+    "contact.title": "Contact Us",
+    "contact.subtitle": "Get in Touch",
+    "contact.description": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+    "contact.form.title": "Send Us A Message",
+    "contact.form.name": "Full Name",
+    "contact.form.email": "Email",
+    "contact.form.phone": "Phone Number",
+    "contact.form.subject": "Subject",
+    "contact.form.message": "Message",
+    "contact.form.send": "Send Message",
+    "contact.form.sending": "Sending...",
+    "contact.form.success": "Thank you! Your message has been sent successfully. We'll get back to you soon.",
+    "contact.info.email.title": "Email Us",
+    "contact.info.email.content": "support@kundali.com",
+    "contact.info.email.sub": "We reply within 24 hours",
+    "contact.info.phone.title": "Call Us",
+    "contact.info.phone.content": "+91 98765 43210",
+    "contact.info.phone.sub": "Mon-Sat, 9 AM - 9 PM IST",
+    "contact.info.visit.title": "Visit Us",
+    "contact.info.hours.title": "Business Hours",
+    "contact.info.hours.content": "9:00 AM - 9:00 PM",
+    "contact.info.hours.sub": "Monday to Saturday",
+
+    // Subscription Page
+    "subscription.title": "Choose Your Plan",
+    "subscription.subtitle": "Unlock Premium Features",
+    "subscription.description": "Select the perfect plan for your spiritual journey",
+    "subscription.basic": "Basic Plan",
+    "subscription.premium": "Premium Plan",
+    "subscription.pro": "Pro Plan",
+    "subscription.perMonth": "per month",
+    "subscription.perYear": "per year",
+    "subscription.subscribe": "Subscribe",
+    "subscription.current": "Current Plan",
+    "subscription.active": "Active Subscription",
+    "subscription.expires": "Expires on",
+    "subscription.renew": "Renew Subscription",
+    "subscription.daysLeft": "days remaining",
+  },
+  hi: {
+    // Navigation
+    "nav.kundali": "कुंडली",
+    "nav.numerology": "अंकशास्त्र",
+    "nav.palmistry": "हस्तरेखा शास्त्र",
+    "nav.mahurat": "मुहूर्त",
+    "nav.consultation": "परामर्श",
+    "nav.talkToAstrologer": "ज्योतिषी से बात करें",
+    "nav.about": "हमारे बारे में",
+    "nav.contact": "संपर्क",
+    "nav.subscribe": "सब्स्क्राइब",
+    "nav.login": "लॉगिन",
+    "nav.signup": "साइन अप",
+    "nav.logout": "लॉगआउट",
+    "nav.admin": "एडमिन पोर्टल",
+    "nav.profile": "प्रोफाइल",
+
+    // Footer
+    "footer.brandDesc":
+      "व्यक्तिगत ज्योतिष अंतर्दृष्टि और विशेषज्ञ आध्यात्मिक मार्गदर्शन के साथ अपनी ब्रह्मांडीय रूपरेखा की खोज करें।",
+    "footer.services": "सेवाएं",
+    "footer.kundaliGenerator": "कुंडली जनरेटर",
+    "footer.numerology": "अंकशास्त्र",
+    "footer.palmistryAnalysis": "हस्तरेखा विश्लेषण",
+    "footer.aiAstroChat": "एआई एस्ट्रो चैट",
+    "footer.company": "कंपनी",
+    "footer.aboutUs": "हमारे बारे में",
+    "footer.ourAstrologers": "हमारे ज्योतिषी",
+    "footer.pricing": "मूल्य निर्धारण",
+    "footer.adminLogin": "एडमिन लॉगिन",
+    "footer.contact": "संपर्क करें",
+    "footer.copyright":
+      "सर्वाधिकार सुरक्षित। आध्यात्मिक खोजकर्ताओं के लिए ✨ के साथ बनाया गया।",
+
+    // Admin Panel
+    "admin.title": "विप्रकर्म एडमिन",
+    "admin.dashboard": "डैशबोर्ड",
+    "admin.astrologers": "ज्योतिषी",
+    "admin.pandits": "पंडित",
+    "admin.subscriptions": "सदस्यता",
+    "admin.whatsapp": "व्हाट्सएप",
+    "admin.logout": "लॉगआउट",
+    "admin.home": "होम",
+    "admin.managePlatform": "अपने ज्योतिष मंच का प्रबंधन करें",
+
+    // Admin Dashboard
+    "admin.dashboard.title": "विप्रकर्म एडमिन",
+    "admin.dashboard.totalUsers": "कुल उपयोगकर्ता",
+    "admin.dashboard.astrologers": "ज्योतिषी",
+    "admin.dashboard.bookings": "बुकिंग",
+    "admin.dashboard.payments": "भुगतान",
+    "admin.dashboard.revenue": "राजस्व",
+    "admin.dashboard.overview": "अवलोकन",
+    "admin.dashboard.recentBookings": "हाल की बुकिंग",
+    "admin.dashboard.paymentVerifications": "भुगतान सत्यापन",
+    "admin.dashboard.userManagement": "उपयोगकर्ता प्रबंधन",
+    "admin.dashboard.managePandits": "पंडित प्रबंधन",
+    "admin.dashboard.subscriptions": "सदस्यता",
+    "admin.dashboard.whatsappMessaging": "व्हाट्सएप मैसेजिंग",
+    "admin.dashboard.platformOverview": "प्लेटफॉर्म अवलोकन",
+    "admin.dashboard.platformGrowth": "प्लेटफॉर्म विकास",
+    "admin.dashboard.registeredUsers": "पंजीकृत उपयोगकर्ता और बढ़ रहे हैं",
+    "admin.dashboard.expertAstrologers": "विशेषज्ञ ज्योतिषी",
+    "admin.dashboard.verifiedAstrologers": "प्लेटफॉर्म पर सत्यापित ज्योतिषी",
+    "admin.dashboard.totalRevenue": "कुल राजस्व",
+    "admin.dashboard.generatedFrom": "से उत्पन्न",
+    "admin.dashboard.paymentsText": "भुगतान",
+    "admin.dashboard.totalBookings": "कुल बुकिंग",
+    "admin.dashboard.consultationsBooked": "परामर्श बुक किए गए",
+    "admin.dashboard.noBookings": "कोई बुकिंग नहीं मिली",
+    "admin.dashboard.loading": "लोड हो रहा है...",
+
+    // Admin Pandits/Astrologers
+    "admin.pandits.title": "ज्योतिषियों का प्रबंधन करें",
+    "admin.pandits.subtitle": "प्लेटफॉर्म से ज्योतिषियों (पंडितों) को जोड़ें, संपादित करें या हटाएं",
+    "admin.pandits.search": "ज्योतिषी खोजें...",
+    "admin.pandits.addAstrologer": "ज्योतिषी जोड़ें",
+    "admin.pandits.cancel": "रद्द करें",
+    "admin.pandits.editAstrologer": "ज्योतिषी संपादित करें",
+    "admin.pandits.addNewAstrologer": "नया ज्योतिषी जोड़ें",
+    "admin.pandits.name": "नाम",
+    "admin.pandits.email": "ईमेल",
+    "admin.pandits.password": "पासवर्ड",
+    "admin.pandits.passwordHint": "(रखने के लिए खाली छोड़ दें)",
+    "admin.pandits.specializations": "विशेषज्ञता (अल्पविराम से अलग)",
+    "admin.pandits.specializationsPlaceholder": "वैदिक, टैरो, अंकशास्त्र",
+    "admin.pandits.experience": "अनुभव (वर्ष)",
+    "admin.pandits.languages": "भाषाएं",
+    "admin.pandits.languagesPlaceholder": "हिंदी, अंग्रेजी",
+    "admin.pandits.rating": "रेटिंग (0-5)",
+    "admin.pandits.hourlyRate": "प्रति घंटा दर (₹)",
+    "admin.pandits.location": "स्थान",
+    "admin.pandits.imageUrl": "छवि URL",
+    "admin.pandits.uploadImage": "छवि अपलोड करें",
+    "admin.pandits.uploading": "अपलोड हो रहा है...",
+    "admin.pandits.bio": "जीवनी / विवरण",
+    "admin.pandits.availableForBooking": "बुकिंग के लिए उपलब्ध (ऑनलाइन)",
+    "admin.pandits.create": "बनाएं",
+    "admin.pandits.update": "अपडेट करें",
+    "admin.pandits.astrologer": "ज्योतिषी",
+    "admin.pandits.edit": "संपादित करें",
+    "admin.pandits.approve": "स्वीकृत करें",
+    "admin.pandits.disapprove": "अस्वीकृत करें",
+    "admin.pandits.delete": "हटाएं",
+    "admin.pandits.online": "ऑनलाइन",
+    "admin.pandits.offline": "ऑफलाइन",
+    "admin.pandits.approved": "स्वीकृत",
+    "admin.pandits.pending": "लंबित",
+    "admin.pandits.yearsExp": "वर्ष अनुभव",
+    "admin.pandits.perHour": "/घंटा",
+    "admin.pandits.emailLabel": "ईमेल:",
+    "admin.pandits.noAstrologers": "कोई ज्योतिषी नहीं मिला",
+    "admin.pandits.deleteConfirm": "क्या आप वाकई इस ज्योतिषी को हटाना चाहते हैं?",
+
+    // Admin Subscriptions
+    "admin.subscriptions.title": "सदस्यता प्रबंधन",
+    "admin.subscriptions.search": "नाम, ईमेल या योजना से खोजें...",
+    "admin.subscriptions.pending": "लंबित",
+    "admin.subscriptions.approved": "स्वीकृत",
+    "admin.subscriptions.rejected": "अस्वीकृत",
+    "admin.subscriptions.noRequests": "कोई",
+    "admin.subscriptions.subscriptionRequests": "सदस्यता अनुरोध नहीं",
+    "admin.subscriptions.viewDetails": "विवरण देखें",
+    "admin.subscriptions.sendReminder": "रिमाइंडर भेजें",
+    "admin.subscriptions.cancel": "रद्द करें",
+    "admin.subscriptions.requestedOn": "अनुरोधित:",
+    "admin.subscriptions.expiresOn": "समाप्त होता है:",
+    "admin.subscriptions.days": "दिन",
+    "admin.subscriptions.detailsTitle": "सदस्यता अनुरोध विवरण",
+    "admin.subscriptions.detailsSubtitle": "सदस्यता अनुरोध की समीक्षा और प्रक्रिया करें",
+    "admin.subscriptions.userName": "उपयोगकर्ता नाम",
+    "admin.subscriptions.email": "ईमेल",
+    "admin.subscriptions.plan": "योजना",
+    "admin.subscriptions.amount": "राशि",
+    "admin.subscriptions.paymentMethod": "भुगतान विधि",
+    "admin.subscriptions.phone": "फोन",
+    "admin.subscriptions.transactionId": "लेनदेन आईडी",
+    "admin.subscriptions.paymentScreenshot": "भुगतान स्क्रीनशॉट",
+    "admin.subscriptions.adminNotes": "एडमिन नोट्स",
+    "admin.subscriptions.adminNotesPlaceholder": "इस अनुरोध के बारे में नोट्स जोड़ें...",
+    "admin.subscriptions.reject": "अस्वीकार करें",
+    "admin.subscriptions.approve": "स्वीकृत करें",
+    "admin.subscriptions.cancelSubscription": "सदस्यता रद्द करें",
+    "admin.subscriptions.cancelConfirm": "क्या आप वाकई इस सदस्यता को रद्द करना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "admin.subscriptions.user": "उपयोगकर्ता:",
+    "admin.subscriptions.planLabel": "योजना:",
+    "admin.subscriptions.cancellationReason": "रद्द करने का कारण",
+    "admin.subscriptions.cancellationPlaceholder": "कृपया रद्द करने का कारण बताएं...",
+    "admin.subscriptions.noKeepIt": "नहीं, इसे रखें",
+    "admin.subscriptions.yesCancelSubscription": "हां, सदस्यता रद्द करें",
+    "admin.subscriptions.loading": "सदस्यता लोड हो रही है...",
+
+    // WhatsApp Admin
+    "admin.whatsapp.title": "व्हाट्सएप बल्क मैसेजिंग",
+    "admin.whatsapp.subtitle": "Baileys के माध्यम से सभी पंजीकृत उपयोगकर्ताओं को संदेश भेजें",
+    "admin.whatsapp.reconnect": "पुनः कनेक्ट करें",
+    "admin.whatsapp.disconnect": "डिस्कनेक्ट करें और QR दिखाएं",
+    "admin.whatsapp.forgotLogin": "लॉगिन भूल गए? QR दिखाएं",
+    "admin.whatsapp.status": "व्हाट्सएप स्थिति",
+    "admin.whatsapp.connected": "कनेक्टेड",
+    "admin.whatsapp.scanQR": "QR कोड स्कैन करें",
+    "admin.whatsapp.connecting": "कनेक्ट हो रहा है...",
+    "admin.whatsapp.disconnected": "डिस्कनेक्टेड",
+    "admin.whatsapp.readyToSend": "संदेश भेजने के लिए तैयार",
+    "admin.whatsapp.scanBelow": "नीचे दिए गए QR कोड को व्हाट्सएप से स्कैन करें",
+    "admin.whatsapp.pleaseWait": "कृपया प्रतीक्षा करें...",
+    "admin.whatsapp.clickReconnect": "शुरू करने के लिए पुनः कनेक्ट पर क्लिक करें",
+    "admin.whatsapp.scanInstructions": "व्हाट्सएप खोलें → सेटिंग्स → लिंक किए गए डिवाइस → एक डिवाइस लिंक करें",
+    "admin.whatsapp.senderName": "भेजने वाले का नाम",
+    "admin.whatsapp.senderNamePlaceholder": "जैसे, विप्रकर्म सपोर्ट",
+    "admin.whatsapp.senderPhone": "भेजने वाले का फोन (व्हाट्सएप)",
+    "admin.whatsapp.senderPhonePlaceholder": "जैसे, +91 9876543210",
+    "admin.whatsapp.messageLanguage": "संदेश भाषा",
+    "admin.whatsapp.english": "अंग्रेजी",
+    "admin.whatsapp.hindi": "हिंदी (हिंदी)",
+    "admin.whatsapp.message": "संदेश",
+    "admin.whatsapp.messagePlaceholder": "सभी उपयोगकर्ताओं को अपना संदेश दर्ज करें...",
+    "admin.whatsapp.autoTranslate": "हिंदी में स्वतः अनुवाद करें",
+    "admin.whatsapp.tipEnglish": "💡 टिप: अपना संदेश अंग्रेजी में टाइप करें",
+    "admin.whatsapp.tipHindi": "💡 टिप: अंग्रेजी में टाइप करें और \"स्वतः अनुवाद\" पर क्लिक करें या सीधे हिंदी में टाइप करें",
+    "admin.whatsapp.messagePreview": "संदेश पूर्वावलोकन",
+    "admin.whatsapp.previewEnglish": "अंग्रेजी",
+    "admin.whatsapp.previewHindi": "हिंदी",
+    "admin.whatsapp.sendToAll": "सभी उपयोगकर्ताओं को भेजें",
+    "admin.whatsapp.sending": "संदेश भेजे जा रहे हैं...",
+    "admin.whatsapp.deliveryReport": "डिलीवरी रिपोर्ट",
+    "admin.whatsapp.successfullySent": "सफलतापूर्वक भेजा गया:",
+    "admin.whatsapp.failed": "विफल:",
+    "admin.whatsapp.howItWorks": "यह कैसे काम करता है",
+    "admin.whatsapp.feature1": "संदेश आपके व्हाट्सएप नंबर से भेजे जाते हैं (जिसे आप स्कैन करते हैं)",
+    "admin.whatsapp.feature2": "पूरी तरह से मुफ्त - कोई प्रति-संदेश लागत नहीं",
+    "admin.whatsapp.feature3": "संदेश भाषा चुनें: अंग्रेजी या हिंदी",
+    "admin.whatsapp.feature4": "हिंदी संदेशों के लिए स्वतः अनुवाद सुविधा",
+    "admin.whatsapp.feature5": "ब्लॉक होने से बचने के लिए संदेशों के बीच 1-सेकंड की देरी",
+    "admin.whatsapp.feature6": "केवल पंजीकृत फोन नंबर वाले उपयोगकर्ताओं को संदेश प्राप्त होते हैं",
+    "admin.whatsapp.feature7": "QR स्कैन केवल एक बार आवश्यक - कनेक्टेड रहता है",
+    "admin.whatsapp.scanQRWithWhatsApp": "📱 इस QR कोड को व्हाट्सएप से स्कैन करें",
+
+    // About Page
+    "about.missionTitle": "हमारा विशेष कार्य",
+    "about.ourMission":
+      "विप्रकर्म में, हम मानते हैं कि हमारे जीवन को आकार देने वाली ब्रह्मांडीय शक्तियों को समझना बेहतर निर्णय, गहरी आत्म-जागरूकता और अधिक संतोषजनक अस्तित्व की ओर ले जा सकता है। हमारा मिशन आधुनिक तकनीक के माध्यम से प्रामाणिक वैदिक ज्योतिष और आध्यात्मिक सेवाओं को सभी के लिए सुलभ बनाना है, जबकि हमारी परंपराओं की प्राचीन बुद्धिमत्ता को संरक्षित रखते हुए। हम आपको आपके जीवन के हर पहलू के लिए सटीक, व्यक्तिगत मार्गदर्शन प्रदान करने के लिए खगोलीय गणनाओं की सटीकता को अनुभवी ज्योतिषियों की अंतर्दृष्टि के साथ जोड़ते हैं।",
+    "about.title": "विप्रकर्म के बारे में",
+    "about.subtitle": "ब्रह्मांडीय मार्गदर्शन और आध्यात्मिक सेवाओं के लिए आपका विश्वसनीय साथी",
+    "about.valuesTitle": "हमारे मूल्य",
+    "about.valuesSubtitle": "वे सिद्धांत जो हम जो कुछ भी करते हैं उसका मार्गदर्शन करते हैं",
+    "about.storyTitle": "हमारी कहानी",
+    "about.ourStory":
+      "विप्रकर्म वैदिक ज्योतिष के प्रति गहरे जुनून और इस प्राचीन विज्ञान को आधुनिक दुनिया के लिए सुलभ बनाने की दृष्टि से जन्मा था। हमारे संस्थापक, स्वयं अनुभवी ज्योतिषी, ने पारंपरिक ज्योतिषीय परामर्श और तेज़-तर्रार डिजिटल युग के बीच की खाई को पहचाना।\n\nहमने प्रमाणित ज्योतिषियों, कुशल डेवलपर्स और डिज़ाइन विशेषज्ञों की एक टीम इकट्ठी की ताकि एक ऐसा मंच बनाया जा सके जो दोनों दुनिया के सर्वश्रेष्ठ को जोड़ता है - वैदिक ज्योतिष की गहन बुद्धिमत्ता और आधुनिक तकनीक की सुविधा।\n\nआज, हम दुनिया भर में हजारों उपयोगकर्ताओं की सेवा करते हैं, उन्हें ब्रह्मांडीय मार्गदर्शन के साथ जीवन की चुनौतियों को नेविगेट करने में मदद करते हैं। चाहे वह करियर निर्णय हों, रिश्ते के सवाल हों, स्वास्थ्य चिंताएं हों, या आध्यात्मिक विकास हो, हम ज्योतिषीय ज्ञान के प्रकाश से आपके मार्ग को रोशन करने के लिए यहां हैं।",
+
+    // Hero Section
+    "hero.title1": "अपनी",
+    "hero.title2": "दैव नियति खोजें",
+    "hero.subtitle":
+      "वैयक्तिक ज्योतिष, अंकशास्त्र और प्रसिद्ध ज्योतिषियों से विशेष मार्गदर्शन के साथ ब्रह्मांड के रहस्यों को अनलॉक करें।",
+    "hero.cta1": "मुफ्त कुंडली प्राप्त करें",
+    "hero.cta2": "प्रीमियम सुविधाएं",
+    "hero.stats1": "खुश उपयोगकर्ता",
+    "hero.stats2": "विशेषज्ञ ज्योतिषी",
+    "hero.stats3": "साल का अनुभव",
+    "hero.stats4": "सटीकता",
+    "hero.scroll": "और अधिक खोजें",
+
+    // Features
+    "features.title": "दिव्य सेवाएं",
+    "features.subtitle":
+      "हमारी व्यापक ज्योतिष सेवाओं की खोज करें जो जीवन की खगोलीय यात्रा में आपको सटीकता और बुद्धिमत्ता के साथ मार्गदर्शन करने के लिए तैयार की गई हैं",
+    "feature1.title": "कुंडली जनरेटर",
+    "feature1.desc":
+      "वैदिक ज्योतिष सिद्धांतों के आधार पर विस्तृत ग्रहों की स्थिति और सटीक भविष्यवाणियों के साथ अपनी व्यक्तिगत जन्म कुंडली प्राप्त करें",
+    "feature2.title": "अंकशास्त्र",
+    "feature2.desc":
+      "अपनी जीवन पथ संख्या, भाग्य संख्या और आत्मा की इच्छा संख्या की खोज करें साथ ही अपनी व्यक्तित्व और भविष्य में व्यापक अंतर्दृष्टि प्राप्त करें",
+    "feature3.title": "हस्तरेखा विश्लेषण",
+    "feature3.desc":
+      "अपनी हथेली की छवि अपलोड करें विस्तृत विश्लेषण और अपनी जीवन रेखाओं और भविष्य की भविष्यवाणियों के सटीक पठन के लिए",
+    "feature4.title": "एआई एस्ट्रो चैट",
+    "feature4.desc":
+      "हमारे उन्नत एआई ज्योतिषी से कभी भी चैट करें त्वरित ब्रह्मांडीय मार्गदर्शन, दैनिक कुंडली और व्यक्तिगत सलाह के लिए",
+    "feature5.title": "ज्योतिषी से बात करें",
+    "feature5.desc":
+      "कॉल, वीडियो या चैट सत्रों के माध्यम से व्यक्तिगत परामर्श के लिए प्रमाणित विशेषज्ञ ज्योतिषियों से जुड़ें",
+    "feature6.title": "पंडित बुक करें",
+    "feature6.desc":
+      "पूजा, समारोह और रिवाज के लिए अपने घर पर अनुभवी पंडितों को बुक करें पूर्ण व्यवस्था के साथ",
+    "feature.explore": "सेवा खोजें",
+
+    // Stats
+    "stats.title": "हजारों लोगों द्वारा विश्वसनीय",
+    "stats.subtitle":
+      "हमारे बढ़ते समुदाय में शामिल हों जहां लोगों ने मार्गदर्शन, स्पष्टता और परिवर्तन पाया है",
+    "stats.testimonials": "हमारे ग्राहक क्या कहते हैं",
+    "stats.users": "संतुष्ट ग्राहक",
+    "stats.astrologers": "विशेषज्ञ ज्योतिषी",
+    "stats.predictions": "सटीक भविष्यवाणियां",
+    "stats.rate": "सफलता दर",
+
+    "cta.title": "आज अपनी ब्रह्मांडीय यात्रा शुरू करें",
+    "cta.subtitle":
+      "हजारों जागृत आत्माओं में शामिल हों जिन्होंने हमारे दिव्य मार्गदर्शन और ब्रह्मांडीय अंतर्दृष्टि के माध्यम से अपना सच्चा मार्ग खोजा है",
+    "cta.trial": "मुफ्त ट्रायल शुरू करें",
+    "cta.consult": "विशेषज्ञ से परामर्श करें",
+    "cta.secure": "100% सुरक्षित",
+    "cta.available": "24/7 उपलब्ध",
+    "cta.trusted": "विश्वसनीय तब से",
+
+    // Mahurat Page
+    "mahurat.title": "मुहूर्त कैलकुलेटर",
+    "mahurat.subtitle": "अपने महत्वपूर्ण कार्यों के लिए सबसे शुभ समय खोजें",
+    "mahurat.subscriptionRequired": "सदस्यता आवश्यक",
+    "mahurat.subscriptionMessage": "अपने सभी महत्वपूर्ण कार्यों के लिए व्यक्तिगत मुहूर्त गणना तक पहुंच प्राप्त करें",
+    "mahurat.subscribeButton": "अभी सदस्यता लें - ₹999/वर्ष",
+    "mahurat.purpose": "उद्देश्य",
+    "mahurat.purposePlaceholder": "उद्देश्य चुनें",
+    "mahurat.startDate": "प्रारंभ तिथि",
+    "mahurat.endDate": "समाप्ति तिथि",
+    "mahurat.location": "स्थान (वैकल्पिक)",
+    "mahurat.locationPlaceholder": "जैसे, दिल्ली, भारत",
+    "mahurat.rashi": "आपकी राशि",
+    "mahurat.rashiPlaceholder": "अपनी राशि चुनें",
+    "mahurat.phoneNumber": "फोन नंबर (व्हाट्सएप)",
+    "mahurat.phoneNumberPlaceholder": "जैसे, +91 9876543210",
+    "mahurat.generateButton": "मुहूर्त बनाएं",
+    "mahurat.calculating": "गणना हो रही है...",
+    "mahurat.auspiciousTimings": "शुभ समय",
+    "mahurat.at": "पर",
+
+    // Mahurat Purposes
+    "mahurat.purpose.marriage": "विवाह",
+    "mahurat.purpose.businessOpening": "व्यापार उद्घाटन",
+    "mahurat.purpose.houseWarming": "गृह प्रवेश",
+    "mahurat.purpose.vehiclePurchase": "वाहन खरीद",
+    "mahurat.purpose.travel": "यात्रा",
+    "mahurat.purpose.education": "शिक्षा",
+    "mahurat.purpose.propertyPurchase": "संपत्ति खरीद",
+    "mahurat.purpose.nameCeremony": "नामकरण",
+    "mahurat.purpose.threadCeremony": "जनेऊ संस्कार",
+    "mahurat.purpose.other": "अन्य",
+
+    // Rashi (Zodiac Signs)
+    "mahurat.rashi.aries": "मेष",
+    "mahurat.rashi.taurus": "वृषभ",
+    "mahurat.rashi.gemini": "मिथुन",
+    "mahurat.rashi.cancer": "कर्क",
+    "mahurat.rashi.leo": "सिंह",
+    "mahurat.rashi.virgo": "कन्या",
+    "mahurat.rashi.libra": "तुला",
+    "mahurat.rashi.scorpio": "वृश्चिक",
+    "mahurat.rashi.sagittarius": "धनु",
+    "mahurat.rashi.capricorn": "मकर",
+    "mahurat.rashi.aquarius": "कुंभ",
+    "mahurat.rashi.pisces": "मीन",
+
+    // Auspiciousness Levels
+    "mahurat.highlyAuspicious": "अत्यंत शुभ",
+    "mahurat.auspicious": "शुभ",
+    "mahurat.moderate": "सामान्य",
+    "mahurat.inauspicious": "अशुभ",
+
+    // Messages
+    "mahurat.error.subscriptionRequired": "मुहूर्त सदस्यता आवश्यक है",
+    "mahurat.error.fillAllFields": "कृपया सभी आवश्यक फ़ील्ड भरें",
+    "mahurat.error.phoneRequired": "फोन नंबर आवश्यक है",
+    "mahurat.error.rashiRequired": "कृपया अपनी राशि चुनें",
+    "mahurat.success.calculated": "मुहूर्त सफलतापूर्वक गणना की गई",
+    "mahurat.success.whatsappSent": "परिणाम आपके व्हाट्सएप पर भेजे गए!",
+    "mahurat.error.failed": "मुहूर्त बनाने में विफल",
+
+    // Testimonials
+    "testimonial1.name": "प्रिया शर्मा",
+    "testimonial1.role": "सॉफ्टवेयर इंजीनियर",
+    "testimonial1.content":
+      "कुंडली विश्लेषण अविश्वसनीय रूप से सटीक था! इससे मेरी करियर पथ को समझने में मदद मिली।",
+    "testimonial2.name": "राजेश कुमार",
+    "testimonial2.role": "व्यापार मालिक",
+    "testimonial2.content":
+      "अंकशास्त्र पठन ने मेरे व्यापारिक निर्णयों को बदल दिया। अत्यधिक अनुशंसित!",
+    "testimonial3.name": "अनीता पटेल",
+    "testimonial3.role": "शिक्षक",
+    "testimonial3.content":
+      "एआई चैट सुविधा अद्भुत है! सभी ज्योतिष प्रश्नों के त्वरित उत्तर मिले।",
+
+    // Kundali Page
+    "kundali.title": "कुंडली जनरेटर",
+    "kundali.subtitle":
+      "विस्तृत ज्योतिषीय अंतर्दृष्टि के साथ अपनी व्यापक जन्म कुंडली तैयार करें",
+    "kundali.birthDetails": "जन्म विवरण",
+    "kundali.fullName": "पूरा नाम",
+    "kundali.gender": "लिंग",
+    "kundali.male": "पुरुष",
+    "kundali.female": "महिला",
+    "kundali.dateOfBirth": "जन्म तिथि",
+    "kundali.timeOfBirth": "जन्म का समय (24 घंटे)",
+    "kundali.timezoneOffset": "समय क्षेत्र ऑफसेट",
+    "kundali.localBirthTime": "स्थानीय जन्म समय",
+    "kundali.utcTime": "UTC समय",
+    "kundali.description":
+      "स्विस एफेमेरिस द्वारा संचालित सटीक लग्न (D1), चंद्र, नवमांश (D9) और दशमांश (D10) चार्ट की गणना करने के लिए अपनी जन्म जानकारी दर्ज करें।",
+    "kundali.awaitingTitle": "जन्म विवरण की प्रतीक्षा में",
+    "kundali.awaitingDesc":
+      "सभी प्रमुख विभागीय चार्ट के लिए उच्च-निष्ठा स्विस एफेमेरिस गणना को अनलॉक करने के लिए अपनी सटीक जन्म जानकारी दर्ज करें।",
+    "kundali.planetaryPositions": "ग्रहों की स्थिति",
+    "kundali.planet": "ग्रह",
+    "kundali.sign": "राशि",
+    "kundali.house": "घर",
+    "kundali.degree": "डिग्री",
+    "kundali.nakshatra": "नक्षत्र",
+    "kundali.status": "स्थिति",
+    "kundali.retrograde": "वक्री",
+    "kundali.direct": "सीधा",
+    "kundali.benefic": "शुभ",
+    "kundali.malefic": "अशुभ",
+    "kundali.houseCusps": "घर के शीर्ष (पूर्ण चिह्न)",
+    "kundali.nakshatraHighlights": "नक्षत्र मुख्य बातें",
+    "kundali.dashaTimeline": "विम्शोत्तरी दशा समयरेखा",
+    "kundali.currentMahadasha": "वर्तमान महादशा",
+    "kundali.pada": "पाद",
+    "kundali.houseLabel": "घर",
+    "kundali.sun": "सूर्य",
+    "kundali.moon": "चंद्र",
+    "kundali.to": "से",
+    "kundali.years": "वर्ष",
+    "kundali.duration": "अवधि",
+    "kundali.lagnaChart": "लग्न (D1)",
+    "kundali.chandraChart": "चंद्र",
+    "kundali.navamsaChart": "नवमांश (D9)",
+    "kundali.dashamsaChart": "दशमांश (D10)",
+    "kundali.lagnaKundaliTitle": "लग्न कुंडली (D1)",
+    "kundali.chandraKundaliTitle": "चंद्र कुंडली",
+    "kundali.navamsaTitle": "नवमांश (D9)",
+    "kundali.dashamsaTitle": "दशमांश (D10)",
+    "kundali.day": "दिन",
+    "kundali.month": "माह",
+    "kundali.year": "साल",
+    "kundali.hour": "घंटा",
+    "kundali.minute": "मिनट",
+    "kundali.ampm": "AM/PM",
+    "kundali.placeOfBirth": "जन्म स्थान",
+    "kundali.selectCity": "एक शहर चुनें",
+    "kundali.manualLocation": "स्थान मैन्युअल रूप से दर्ज करें",
+    "kundali.cityTown": "शहर/गाँव",
+    "kundali.latitude": "अक्षांश",
+    "kundali.longitude": "देशांतर",
+    "kundali.generateKundali": "कुंडली तैयार करें",
+    "kundali.generating": "तैयार हो रहा है...",
+    "kundali.saveKundali": "कुंडली सहेजें",
+    "kundali.saving": "सहेज रहा है...",
+    "kundali.exportPDF": "PDF के रूप में निर्यात करें",
+    "kundali.exporting": "निर्यात हो रहा है...",
+    "kundali.basicDetails": "मूल विवरण",
+    "kundali.sunSign": "सूर्य राशि",
+    "kundali.moonSign": "चंद्र राशि",
+    "kundali.ascendant": "लग्न",
+    "kundali.nakshatras": "नक्षत्र",
+    "kundali.sunNakshatra": "सूर्य नक्षत्र:",
+    "kundali.moonNakshatra": "चंद्र नक्षत्र:",
+    "kundali.ascendantNakshatra": "लग्न नक्षत्र:",
+    "kundali.padaLabel": "पदा:",
+    "kundali.characteristics": "विशेषताएँ:",
+    "kundali.beneficLabel": "हितकारी",  // Renamed/Kept unique
+    "kundali.maleficLabel": "अहितकारी", // Renamed/Kept unique
+    "kundali.degreeLabel": "डिग्री:",   // Renamed
+    "kundali.nakshatraLabel": "नक्षत्र:", // Renamed
+    "kundali.retrogradeLabel": "वक्री", // Renamed
+    "kundali.planetaryStrengths": "ग्रहों की शक्तियाँ",
+    "kundali.statusLabel": "स्थिति:",   // Renamed
+    "kundali.strengthPercent": "शक्ति प्रतिशत:",
+    "kundali.shadbala": "षड्बल:",
+    "kundali.currentDasha": "वर्तमान दशा अवधि",
+    "kundali.mahadasha": "महादशा",
+    "kundali.level": "स्तर:",
+    "kundali.period": "अवधि:",
+    "kundali.upcomingMahadashas": "आगामी महादशाएँ",
+    "kundali.auspiciousYogas": "शुभ योग",
+    "kundali.strengthLabel": "शक्ति:", // Renamed
+    "kundali.planetsLabel": "ग्रह:",   // Renamed
+    "kundali.doshasMalefic": "दोष और अहितकारी प्रभाव",
+    "kundali.present": "उपस्थित",
+    "kundali.absent": "अनुपस्थित",
+    "kundali.active": "सक्रिय",
+    "kundali.inactive": "निष्क्रिय",
+    "kundali.mangalDosha": "मंगल दोष",
+    "kundali.kalSarpDosha": "काल सर्प दोष",
+    "kundali.pitruDosha": "पितृ दोष",
+    "kundali.sadeSati": "साढ़े साती",
+    "kundali.lifePredictions": "जीवन भविष्यवाणियाँ",
+    "kundali.personality": "व्यक्तित्व",
+    "kundali.career": "करियर",
+    "kundali.finance": "वित्त",
+    "kundali.health": "स्वास्थ्य",
+    "kundali.marriage": "विवाह और संबंध",
+    "kundali.education": "शिक्षा",
+    "kundali.recommendedRemedies": "अनुशंसित उपाय",
+    "kundali.note": "नोट:",
+    "kundali.namePlaceholder": "अपना पूरा नाम दर्ज करें",
+    "kundali.dayPlaceholder": "DD",
+    "kundali.monthPlaceholder": "MM",
+    "kundali.yearPlaceholder": "YYYY",
+    "kundali.hourPlaceholder": "HH",
+    "kundali.minutePlaceholder": "MM",
+    "kundali.secondPlaceholder": "SS",
+    "kundali.cityPlaceholder": "एक शहर चुनें",
+    "kundali.manualCityPlaceholder": "शहर या गाँव का नाम दर्ज करें",
+    "kundali.mangalDoshaDesc":
+      "मंगल 1वें, 4वें, 7वें, 8वें या 12वें घर में स्थित है। विशेष उपाय अनुशंसित हैं।",
+    "kundali.mangalDoshaAbsent": "आपकी कुंडली में मंगल दोष उपस्थित नहीं है।",
+    "kundali.kalSarpDoshaDesc":
+      "सभी ग्रह राहु और केतु के बीच फंसे हुए हैं। विशेष पूजा अनुशंसित हैं।",
+    "kundali.kalSarpDoshaAbsent":
+      "आपकी कुंडली में काल सर्प दोष उपस्थित नहीं है।",
+    "kundali.pitruDoshaDesc":
+      "पूर्वजों से संबंधित मुद्दे वर्तमान जीवन को प्रभावित कर सकते हैं। नियमित तर्पण अनुशंसित है।",
+    "kundali.pitruDoshaAbsent": "आपकी कुंडली में पितृ दोष उपस्थित नहीं है।",
+    "kundali.sadeSatiDesc":
+      "शनि चंद्र राशि के माध्यम से पारगमन कर रहा है। परीक्षण और विकास की अवधि।",
+    "kundali.sadeSatiInactive": "साढ़े साती अवधि वर्तमान में निष्क्रिय है।",
+    "kundali.remedyNote":
+      "ये उपाय आपके जन्म कुंडली के आधार पर सामान्य सुझाव हैं। व्यक्तिगत मार्गदर्शन के लिए योग्य ज्योतिषी से परामर्श करें और इन उपायों को ठीक से लागू करें।",
+
+    // Extended Keys (Merged from duplicate block)
+    "kundali.languageToggle": "भाषा बदलें",
+    "kundali.languageEnglish": "English",
+    "kundali.languageHindi": "हिंदी",
+    "kundali.manualLocationText": "स्थान मैन्युअल रूप से दर्ज करें",
+    "kundali.generatingText": "तैयार हो रहा है...",
+    "kundali.generateText": "कुंडली तैयार करें",
+    "kundali.exportText": "PDF के रूप में निर्यात करें",
+    "kundali.exportingText": "निर्यात हो रहा है...",
+    "kundali.saveText": "कुंडली सहेजें",
+    "kundali.savingText": "सहेज रहा है...",
+    "kundali.basicDetailsTitle": "मूल विवरण",
+    "kundali.nakshatrasTitle": "नक्षत्र",
+    "kundali.planetaryPositionsTitle": "ग्रहों की स्थिति",
+    "kundali.planetaryStrengthsTitle": "ग्रहों की शक्तियाँ",
+    "kundali.currentDashaTitle": "वर्तमान दशा अवधि",
+    "kundali.auspiciousYogasTitle": "शुभ योग",
+    "kundali.doshasTitle": "दोष और अहितकारी प्रभाव",
+    "kundali.lifePredictionsTitle": "जीवन भविष्यवाणियाँ",
+    "kundali.remediesTitle": "अनुशंसित उपाय",
+    "kundali.strengthPercentLabel": "शक्ति प्रतिशत",
+    "kundali.shadbalaLabel": "षड्बल",
+    "kundali.levelLabel": "स्तर",
+    "kundali.periodLabel": "अवधि",
+    "kundali.upcomingLabel": "आगामी महादशाएँ",
+    "kundali.presentLabel": "उपस्थित",
+    "kundali.absentLabel": "अनुपस्थित",
+    "kundali.activeLabel": "सक्रिय",
+    "kundali.inactiveLabel": "निष्क्रिय",
+    "kundali.mangalDoshaLabel": "मंगल दोष",
+    "kundali.kalSarpDoshaLabel": "काल सर्प दोष",
+    "kundali.pitruDoshaLabel": "पितृ दोष",
+    "kundali.sadeSatiLabel": "साढ़े साती",
+    "kundali.personalityLabel": "व्यक्तित्व",
+    "kundali.careerLabel": "करियर",
+    "kundali.financeLabel": "वित्त",
+    "kundali.healthLabel": "स्वास्थ्य",
+    "kundali.marriageLabel": "विवाह और संबंध",
+    "kundali.educationLabel": "शिक्षा",
+    "kundali.noteLabel": "नोट:",
+
+    // Zodiac Signs
+    "sign.Aries": "मेष",
+    "sign.Taurus": "वृषभ",
+    "sign.Gemini": "मिथुन",
+    "sign.Cancer": "कर्क",
+    "sign.Leo": "सिंह",
+    "sign.Virgo": "कन्या",
+    "sign.Libra": "तुला",
+    "sign.Scorpio": "वृश्चिक",
+    "sign.Sagittarius": "धनु",
+    "sign.Capricorn": "मकर",
+    "sign.Aquarius": "कुंभ",
+    "sign.Pisces": "मीन",
+
+    // Planets
+    "planet.Sun": "सूर्य",
+    "planet.Moon": "चंद्र",
+    "planet.Mars": "मंगल",
+    "planet.Mercury": "बुध",
+    "planet.Jupiter": "गुरु",
+    "planet.Venus": "शुक्र",
+    "planet.Saturn": "शनि",
+    "planet.Rahu": "राहु",
+    "planet.Ketu": "केतु",
+    "planet.Uranus": "अरुण",
+    "planet.Neptune": "वरुण",
+    "planet.Pluto": "यम",
+
+    // Numerology Page
+    "numerology.title": "अंकशास्त्र कैलकुलेटर",
+    "numerology.subtitle": "अपने नाम और जन्म तिथि में छिपे अर्थों की खोज करें",
+    "numerology.enterDetails": "अपनी जानकारी दर्ज करें",
+
+    // Consultation Page
+    "consultation.title": "विशेषज्ञ ज्योतिषियों से बात करें",
+    "consultation.subtitle":
+      "चैट, कॉल या वीडियो परामर्श के माध्यम से प्रमाणित ज्योतिषियों से व्यक्तिगत मार्गदर्शन प्राप्त करें",
+    "consultation.bookNow": "अभी बुक करें",
+    "consultation.howItWorks.title": "यह कैसे काम करता है",
+    "consultation.howItWorks.subtitle":
+      "विशेषज्ञ ज्योतिषियों से जुड़ने के सरल चरण",
+    "consultation.steps.chooseService.title": "सेवा चुनें",
+    "consultation.steps.chooseService.desc": "चैट, कॉल या वीडियो परामर्श चुनें",
+    "consultation.steps.makePayment.title": "भुगतान करें",
+    "consultation.steps.makePayment.desc":
+      "रेजरपे या क्यूआर कोड के माध्यम से सुरक्षित भुगतान",
+    "consultation.steps.getConnected.title": "जुड़ें",
+    "consultation.steps.getConnected.desc":
+      "तुरंत एक विशेषज्ञ ज्योतिषी से जुड़ें",
+    "consultation.steps.receiveGuidance.title": "मार्गदर्शन प्राप्त करें",
+    "consultation.steps.receiveGuidance.desc":
+      "व्यक्तिगत ब्रह्मांडीय अंतर्दृष्टि और उपाय प्राप्त करें",
+    "consultation.sessionActive.title": "सत्र सक्रिय!",
+    "consultation.sessionActive.message":
+      "आपका सत्र अब सक्रिय है। एक ज्योतिषी जल्द ही जुड़ जाएगा।",
+    "consultation.sessionActive.enterSession": "सत्र में प्रवेश करें",
+    "consultation.sessionActive.close": "बंद करें",
+    "consultation.enterDetails": "अपनी जानकारी दर्ज करें",
+    "consultation.pageTitle": "अपना परामर्श बुक करें",
+    "consultation.pageSubtitle":
+      "विशेषज्ञ ज्योतिषियों से व्यक्तिगत ज्योतिषीय मार्गदर्शन प्राप्त करें",
+    "consultation.formTitle": "परामर्श विवरण",
+    "consultation.formSubtitle":
+      "सटीक ज्योतिषीय मार्गदर्शन के लिए कृपया अपना विवरण प्रदान करें",
+    "consultation.fullName": "पूरा नाम",
+    "consultation.namePlaceholder": "आयुष शर्मा",
+    "consultation.email": "ईमेल",
+    "consultation.emailPlaceholder": "aayushsharma2005@gmail.com",
+    "consultation.phoneNumber": "फोन नंबर",
+    "consultation.phonePlaceholder": "+91 9876543210",
+    "consultation.dateOfBirth": "जन्म तिथि",
+    "consultation.timeOfBirth": "जन्म का समय",
+    "consultation.placeOfBirth": "जन्म स्थान",
+    "consultation.placePlaceholder": "शहर, राज्य, देश",
+    "consultation.yourConcerns": "आपकी चिंताएं/प्रश्न",
+    "consultation.concernsPlaceholder":
+      "कृपया अपनी चिंताओं, प्रश्नों या जिस बारे में आप मार्गदर्शन चाहते हैं, उसका वर्णन करें...",
+    "consultation.bookNowButton": "अभी बुक करें - ₹299",
+    "consultation.creatingRequest": "अनुरोध बनाया जा रहा है...",
+
+    // Talk to Astrologer Page
+    "astrologer.loading": "ज्योतिषी लोड हो रहे हैं...",
+    "astrologer.tryAgain": "पुनः प्रयास करें",
+    "astrologer.chatLocked":
+      "चैट लॉक है। चैट अनलॉक करने के लिए परामर्श भुगतान पूरा करें।",
+    "astrologer.years": "वर्ष",
+    "astrologer.perHour": "/घंटा",
+    "astrologer.online": "ऑनलाइन",
+    "astrologer.offline": "ऑफलाइन",
+    "astrologer.chatNow": "अभी चैट करें",
+    "astrologer.continueChat": "चैट जारी रखें",
+    "astrologer.startChatLocked": "चैट शुरू करें (लॉक)",
+    "astrologer.call": "कॉल",
+    "astrologer.video": "वीडियो",
+    "astrologer.selectedMessage":
+      "परामर्श के लिए चयनित - भुगतान के लिए आगे बढ़ें",
+    "astrologer.clickToSelect":
+      "चयन करने और भुगतान के लिए आगे बढ़ने के लिए चैट/कॉल/वीडियो पर क्लिक करें",
+    "astrologer.noAstrologers": "इस समय कोई ज्योतिषी उपलब्ध नहीं हैं।",
+    "astrologer.noBio": "कोई जीवनी उपलब्ध नहीं है",
+
+    // Login Page
+    "login.welcomeBack": "वापसी पर स्वागत है",
+    "login.subtitle":
+      "अपनी ब्रह्मांडीय अंतर्दृष्टि तक पहुंचने के लिए साइन इन करें",
+    "login.email": "ईमेल",
+    "login.password": "पासवर्ड",
+    "login.signIn": "साइन इन",
+    "login.signingIn": "साइन इन हो रहा है...",
+    "login.noAccount": "कोई खाता नहीं है?",
+    "login.signUp": "साइन अप",
+    "login.backToHome": "← होम पर वापस जाएं",
+
+    // Consultation Page
+    // (Consolidated above)
+
+
+    // Palmistry Page
+    "palmistry.title": "हस्तरेखा विश्लेषण",
+    "palmistry.subtitle":
+      "अपनी हथेली की छवि अपलोड करें व्यापक एआई-संचालित अंतर्दृष्टि और भविष्यवाणियों के लिए",
+    "palmistry.uploadTitle": "हथेली छवि अपलोड करें",
+    "palmistry.uploadText": "अपलोड करने के लिए क्लिक करें",
+    "palmistry.uploadHint": "PNG, JPG 10MB तक",
+    "palmistry.changeImage": "छवि बदलने के लिए क्लिक करें",
+    "palmistry.tipsTitle": "सर्वोत्तम परिणामों के लिए युक्तियाँ:",
+    "palmistry.tips1": "• प्राकृतिक उज्ज्वल प्रकाश का उपयोग करें",
+    "palmistry.tips2": "• हथेली को सपाट और सीधा रखें",
+    "palmistry.tips3":
+      "• उंगलियों के साथ पूरी हथेली को स्पष्ट रूप से कैप्चर करें",
+    "palmistry.tips4": "• छाया और प्रतिबिंब से बचें",
+    "palmistry.tips5": "• Use clean, dry hands",
+    "palmistry.analyzing": "हथेली का विश्लेषण हो रहा है...",
+    "palmistry.analyze": "हथेली का विश्लेषण करें",
+    "palmistry.noAnalysis": "अभी तक कोई विश्लेषण नहीं",
+    "palmistry.noAnalysisDesc":
+      "विस्तृत परिणाम देखने के लिए हथेली की छवि अपलोड करें और विश्लेषण पर क्लिक करें",
+    "palmistry.lifeLine": "जीवन रेखा",
+    "palmistry.heartLine": "हृदय रेखा",
+    "palmistry.headLine": "मस्तिष्क रेखा",
+    "palmistry.fateLine": "भाग्य रेखा",
+    "palmistry.mountsAnalysis": "हथेली के पहाड़ियों का विश्लेषण",
+    "palmistry.recommendations": "सिफारिशें",
+    "palmistry.predictions": "भविष्यवाणियाँ:",
+    "palmistry.length": "लंबाई:",
+    "palmistry.depth": "गहराई:",
+    "palmistry.clarity": "स्पष्टता:",
+    "palmistry.shape": "आकार:",
+    "palmistry.presence": "उपस्थिति:",
+
+    // Palmistry Analysis Content
+    "palmistry.lifeLine.long": "लंबा (कलाई तक फैला हुआ)",
+    "palmistry.lifeLine.deep": "गहरा और अच्छी तरह से चिह्नित",
+    "palmistry.lifeLine.clear": "स्पष्ट बिना किसी ब्रेक के",
+    "palmistry.lifeLine.meaning":
+      "असाधारण जीवन शक्ति, मजबूत स्वास्थ्य और मजबूत जीवन शक्ति को दर्शाता है। आपके पास उल्लेखनीय लचीलापन है और आप लंबी, स्वस्थ जीवन का आनंद ले सकते हैं। गहराई शारीरिक स्टेमिना और सहनशक्ति का सुझाव देती है।",
+    "palmistry.lifeLine.prediction1": "जीवन भर अच्छा स्वास्थ्य",
+    "palmistry.lifeLine.prediction2": "मजबूत प्रतिरक्षा प्रणाली",
+    "palmistry.lifeLine.prediction3": "बीमारियों से त्वरित वसूली",
+    "palmistry.lifeLine.prediction4": "उच्च ऊर्जा स्तर",
+    "palmistry.heartLine.curved": "उंगलियों की ओर ऊपर मुड़ा हुआ",
+    "palmistry.heartLine.high": "हथेली पर उच्च",
+    "palmistry.heartLine.unbroken": "स्पष्ट और अटूट",
+    "palmistry.heartLine.meaning":
+      "गहरी भावनात्मक गहराई, मजबूत रोमांटिक झुकाव और भावुक प्रकृति दिखाता है। आप रिश्तों को गहराई से महत्व देते हैं और भावनाओं को स्वतंत्र रूप से व्यक्त करते हैं। उच्च स्थिति आदर्शवादी प्रेम दृष्टिकोण को दर्शाती है।",
+    "palmistry.heartLine.prediction1": "गहरे, सार्थक रिश्ते",
+    "palmistry.heartLine.prediction2": "मजबूत भावनात्मक बंधन",
+    "palmistry.heartLine.prediction3": "रोमांटिक और भावुक प्रकृति",
+    "palmistry.heartLine.prediction4": "साझेदारियों में वफादारी",
+    "palmistry.headLine.clear": "स्पष्ट और अच्छी तरह से परिभाषित",
+    "palmistry.headLine.long": "लंबा, हथेली के पार फैला हुआ",
+    "palmistry.headLine.curved": "थोड़ा मुड़ा हुआ",
+    "palmistry.headLine.meaning":
+      "तेज बुद्धि, विश्लेषणात्मक सोच क्षमताएं और मजबूत निर्णय लेने की क्षमताएं दर्शाता है। लंबाई व्यापक सोच और विवरण पर ध्यान का सुझाव देती है। थोड़ा मोड़ तर्क और रचनात्मकता के बीच संतुलन दिखाता है।",
+    "palmistry.headLine.prediction1": "उत्कृष्ट समस्या-समाधान क्षमताएं",
+    "palmistry.headLine.prediction2": "बौद्धिक प्रयासों में सफलता",
+    "palmistry.headLine.prediction3": "रणनीतिक सोच",
+    "palmistry.headLine.prediction4": "नेतृत्व क्षमता",
+    "palmistry.fateLine.present": "उपस्थित और मजबूत",
+    "palmistry.fateLine.wellDefined": "अच्छी तरह से परिभाषित",
+    "palmistry.fateLine.position": "कलाई से मध्य उंगली तक चलता है",
+    "palmistry.fateLine.meaning":
+      "स्पष्ट जीवन दिशा, करियर सफलता और मजबूत उद्देश्य की भावना का सुझाव देता है। आपका मार्ग अच्छी तरह से परिभाषित है और आपके पास लक्ष्यों को प्राप्त करने की स्वाभाविक क्षमता है। मजबूत भाग्य रेखा आत्मनिर्भर सफलता को दर्शाती है।",
+    "palmistry.fateLine.prediction1": "करियर में उन्नति",
+    "palmistry.fateLine.prediction2": "वित्तीय स्थिरता",
+    "palmistry.fateLine.prediction3": "लक्ष्यों की प्राप्ति",
+    "palmistry.fateLine.prediction4": "पेशे में मान्यता",
+    "palmistry.mount.jupiter": "नेतृत्व, महत्वाकांक्षा, आत्मविश्वास",
+    "palmistry.mount.saturn": "बुद्धिमत्ता, अनुशासन, जिम्मेदारी",
+    "palmistry.mount.apollo": "रचनात्मकता, सफलता, कलात्मक प्रतिभाएं",
+    "palmistry.mount.mercury": "संचार, व्यापारिक कौशल",
+    "palmistry.mount.venus": "प्रेम, जुनून, जीवन शक्ति",
+    "palmistry.mount.luna": "कल्पना, अंतर्ज्ञान, संवेदनशीलता",
+    "palmistry.thumb":
+      "मजबूत और अच्छी तरह से आनुपातिक - इच्छाशक्ति और दृढ़ता को दर्शाता है",
+    "palmistry.index": "लंबा - नेतृत्व और महत्वाकांक्षा दिखाता है",
+    "palmistry.middle": "संतुलित - स्थिरता और जिम्मेदारी का सुझाव देता है",
+    "palmistry.ring": "प्रमुख - रचनात्मकता और मान्यता की इच्छा को दर्शाता है",
+    "palmistry.pinky": "अच्छी लंबाई - संचार कौशल दिखाती है",
+    "palmistry.star": "तेजस्वी सफलता और मान्यता",
+    "palmistry.triangle": "असाधारण करियर उपलब्धि",
+    "palmistry.moneyLine": "वित्तीय समृद्धि",
+    "palmistry.overallAnalysis":
+      "आपका हस्तरेखा विश्लेषण असाधारण रूप से संतुलित और भाग्यशाली व्यक्तित्व को प्रकट करता है। मजबूत जीवन शक्ति के साथ भावनात्मक गहराई और बौद्धिक क्षमताएं सफलता के लिए एक शक्तिशाली आधार बनाती हैं। अच्छी तरह से परिभाषित भाग्य रेखा और प्रमुख पहाड़ियाँ स्पष्ट जीवन दिशा और कई प्रतिभाओं को दर्शाती हैं। आप स्वाभाविक रूप से नेतृत्व, रचनात्मक प्रयासों और गहरे रिश्तों के निर्माण के लिए सुसज्जित हैं। आपका हस्तरेखा उपलब्धि, अच्छा स्वास्थ्य और भावनात्मक संतुष्टि का जीवन सुझाव देता है।",
+    "palmistry.recommendation1": "अपने करियर में नेतृत्व भूमिकाओं पर ध्यान दें",
+    "palmistry.recommendation2": "अपनी रचनात्मक प्रतिभाओं को आगे विकसित करें",
+    "palmistry.recommendation3":
+      "इष्टतम स्वास्थ्य के लिए कार्य-जीवन संतुलन बनाए रखें",
+    "palmistry.recommendation4": "अपने भावनात्मक संबंधों को पोषित करें",
+    "palmistry.recommendation5":
+      "निर्णय लेने में अपनी अंतर्ज्ञान पर भरोसा करें",
+
+    // Palmistry Analysis Results (Mock Data)
+    "palmistry.analysis.lifeLine.length": "लंबा (कलाई तक फैला हुआ)",
+    "palmistry.analysis.lifeLine.depth": "गहरा और अच्छी तरह से चिह्नित",
+    "palmistry.analysis.lifeLine.clarity": "स्पष्ट बिना किसी ब्रेक के",
+    "palmistry.analysis.lifeLine.meaning":
+      "असाधारण जीवन शक्ति, मजबूत स्वास्थ्य और मजबूत जीवन शक्ति को दर्शाता है। आपके पास उल्लेखनीय लचीलापन है और आप लंबी, स्वस्थ जीवन का आनंद ले सकते हैं। गहराई शारीरिक स्टेमिना और सहनशक्ति का सुझाव देती है।",
+    "palmistry.analysis.lifeLine.prediction1": "जीवन भर अच्छा स्वास्थ्य",
+    "palmistry.analysis.lifeLine.prediction2": "मजबूत प्रतिरक्षा प्रणाली",
+    "palmistry.analysis.lifeLine.prediction3": "बीमारियों से त्वरित वसूली",
+    "palmistry.analysis.lifeLine.prediction4": "उच्च ऊर्जा स्तर",
+    "palmistry.analysis.heartLine.shape": "उंगलियों की ओर ऊपर मुड़ा हुआ",
+    "palmistry.analysis.heartLine.position": "हथेली पर उच्च",
+    "palmistry.analysis.heartLine.clarity": "स्पष्ट और अटूट",
+    "palmistry.analysis.heartLine.meaning":
+      "गहरी भावनात्मक गहराई, मजबूत रोमांटिक झुकाव और भावुक प्रकृति दिखाता है। आप रिश्तों को गहराई से महत्व देते हैं और भावनाओं को स्वतंत्र रूप से व्यक्त करते हैं। उच्च स्थिति आदर्शवादी प्रेम दृष्टिकोण को दर्शाती है।",
+    "palmistry.analysis.heartLine.prediction1": "गहरे, सार्थक रिश्ते",
+    "palmistry.analysis.heartLine.prediction2": "मजबूत भावनात्मक बंधन",
+    "palmistry.analysis.heartLine.prediction3": "रोमांटिक और भावुक प्रकृति",
+    "palmistry.analysis.heartLine.prediction4": "साझेदारियों में वफादारी",
+    "palmistry.analysis.headLine.clarity": "स्पष्ट और अच्छी तरह से परिभाषित",
+    "palmistry.analysis.headLine.length": "लंबा, हथेली के पार फैला हुआ",
+    "palmistry.analysis.headLine.curve": "थोड़ा मुड़ा हुआ",
+    "palmistry.analysis.headLine.meaning":
+      "तेज बुद्धि, विश्लेषणात्मक सोच क्षमताएं और मजबूत निर्णय लेने की क्षमताएं दर्शाता है। लंबाई व्यापक सोच और विवरण पर ध्यान का सुझाव देती है। थोड़ा मोड़ तर्क और रचनात्मकता के बीच संतुलन दिखाता है।",
+    "palmistry.analysis.headLine.prediction1":
+      "उत्कृष्ट समस्या-समाधान क्षमताएं",
+    "palmistry.analysis.headLine.prediction2": "बौद्धिक प्रयासों में सफलता",
+    "palmistry.analysis.headLine.prediction3": "रणनीतिक सोच",
+    "palmistry.analysis.headLine.prediction4": "नेतृत्व क्षमता",
+    "palmistry.analysis.fateLine.presence": "उपस्थित और मजबूत",
+    "palmistry.analysis.fateLine.clarity": "अच्छी तरह से परिभाषित",
+    "palmistry.analysis.fateLine.position": "कलाई से मध्य उंगली तक चलता है",
+    "palmistry.analysis.fateLine.meaning":
+      "स्पष्ट जीवन दिशा, करियर सफलता और मजबूत उद्देश्य की भावना का सुझाव देता है। आपका मार्ग अच्छी तरह से परिभाषित है और आपके पास लक्ष्यों को प्राप्त करने की स्वाभाविक क्षमता है। मजबूत भाग्य रेखा आत्मनिर्भर सफलता को दर्शाती है।",
+    "palmistry.analysis.fateLine.prediction1": "करियर में उन्नति",
+    "palmistry.analysis.fateLine.prediction2": "वित्तीय स्थिरता",
+    "palmistry.analysis.fateLine.prediction3": "लक्ष्यों की प्राप्ति",
+    "palmistry.analysis.fateLine.prediction4": "पेशे में मान्यता",
+    "palmistry.analysis.mounts.jupiter.prominence": "अच्छी तरह से विकसित",
+    "palmistry.analysis.mounts.jupiter.meaning":
+      "नेतृत्व, महत्वाकांक्षा, आत्मविश्वास",
+    "palmistry.analysis.mounts.saturn.prominence": "संतुलित",
+    "palmistry.analysis.mounts.saturn.meaning":
+      "बुद्धिमत्ता, अनुशासन, जिम्मेदारी",
+    "palmistry.analysis.mounts.apollo.prominence": "प्रमुख",
+    "palmistry.analysis.mounts.apollo.meaning":
+      "रचनात्मकता, सफलता, कलात्मक प्रतिभाएं",
+    "palmistry.analysis.mounts.mercury.prominence": "मध्यम",
+    "palmistry.analysis.mounts.mercury.meaning": "संचार, व्यापारिक कौशल",
+    "palmistry.analysis.mounts.venus.prominence": "पूर्ण",
+    "palmistry.analysis.mounts.venus.meaning": "प्रेम, जुनून, जीवन शक्ति",
+    "palmistry.analysis.mounts.luna.prominence": "विकसित",
+    "palmistry.analysis.mounts.luna.meaning": "कल्पना, अंतर्ज्ञान, संवेदनशीलता",
+    "palmistry.analysis.fingerAnalysis.thumb":
+      "मजबूत और अच्छी तरह से आनुपातिक - इच्छाशक्ति और दृढ़ता को दर्शाता है",
+    "palmistry.analysis.fingerAnalysis.index":
+      "लंबा - नेतृत्व और महत्वाकांक्षा दिखाता है",
+    "palmistry.analysis.fingerAnalysis.middle":
+      "संतुलित - स्थिरता और जिम्मेदारी का सुझाव देता है",
+    "palmistry.analysis.fingerAnalysis.ring":
+      "प्रमुख - रचनात्मकता और मान्यता की इच्छा को दर्शाता है",
+    "palmistry.analysis.fingerAnalysis.pinky":
+      "अच्छी लंबाई - संचार कौशल दिखाती है",
+    "palmistry.analysis.specialMarks.star": "तेजस्वी सफलता और मान्यता",
+    "palmistry.analysis.specialMarks.triangle": "असाधारण करियर उपलब्धि",
+    "palmistry.analysis.specialMarks.moneyLine": "वित्तीय समृद्धि",
+    "palmistry.analysis.overall":
+      "आपका हस्तरेखा विश्लेषण असाधारण रूप से संतुलित और भाग्यशाली व्यक्तित्व को प्रकट करता है। मजबूत जीवन शक्ति के साथ भावनात्मक गहराई और बौद्धिक क्षमताएं सफलता के लिए एक शक्तिशाली आधार बनाती हैं। अच्छी तरह से परिभाषित भाग्य रेखा और प्रमुख पहाड़ियाँ स्पष्ट जीवन दिशा और कई प्रतिभाओं को दर्शाती हैं। आप स्वाभाविक रूप से नेतृत्व, रचनात्मक प्रयासों और गहरे रिश्तों के निर्माण के लिए सुसज्जित हैं। आपका हस्तरेखा उपलब्धि, अच्छा स्वास्थ्य और भावनात्मक संतुष्टि का जीवन सुझाव देता है।",
+    "palmistry.analysis.recommendations.1":
+      "अपने करियर में नेतृत्व भूमिकाओं पर ध्यान दें",
+    "palmistry.analysis.recommendations.2":
+      "अपनी रचनात्मक प्रतिभाओं को आगे विकसित करें",
+    "palmistry.analysis.recommendations.3":
+      "इष्टतम स्वास्थ्य के लिए कार्य-जीवन संतुलन बनाए रखें",
+    "palmistry.analysis.recommendations.4":
+      "अपने भावनात्मक संबंधों को पोषित करें",
+    "palmistry.analysis.recommendations.5":
+      "निर्णय लेने में अपनी अंतर्ज्ञान पर भरोसा करें",
+
+
+    // About Page
+    "about.value1.title": "प्रामाणिकता",
+    "about.value1.desc":
+      "हम प्राचीन बुद्धिमत्ता और आधुनिक सटीकता के आधार पर वास्तविक वैदिक ज्योतिष सेवाएं प्रदान करते हैं।",
+    "about.value2.title": "समुदाय",
+    "about.value2.desc":
+      "हमारे बढ़ते समुदाय में शामिल हों जहां ज्योतिष के माध्यम से मार्गदर्शन और परिवर्तन पाने वाले खोजकर्ताओं ने भाग लिया है।",
+    "about.value3.title": "उत्कृष्टता",
+    "about.value3.desc":
+      "हम ज्योतिष अभ्यास में उच्चतम मानकों को बनाए रखते हैं, सटीक और विश्वसनीय भविष्यवाणियों को सुनिश्चित करते हैं।",
+    "about.value4.title": "सहानुभूति",
+    "about.value4.desc":
+      "हर परामर्श में सहानुभूति, समझ और आपके कल्याण के लिए वास्तविक देखभाल के साथ संपर्क किया जाता है।",
+    "about.value5.title": "विश्वास",
+    "about.value5.desc":
+      "आपकी गोपनीयता और सुरक्षा सर्वोपरि है, सभी परामर्श पूर्ण विश्वास में किए जाते हैं।",
+    "about.value6.title": "नवाचार",
+    "about.value6.desc":
+      "हम पारंपरिक बुद्धिमत्ता को आधुनिक तकनीक के साथ मिलाते हैं ताकि ज्योतिष सुलभ और सुविधाजनक हो सके।",
+    "about.stats1": "खुश उपयोगकर्ता",
+    "about.stats2": "विशेषज्ञ ज्योतिषी",
+    "about.stats3": "साल का अनुभव",
+    "about.stats4": "सटीकता दर",
+
+    // Contact Page
+    "contact.title": "संपर्क करें",
+    "contact.subtitle": "संपर्क में रहें",
+    "contact.description": "कोई प्रश्न है? हम आपसे सुनना पसंद करेंगे। हमें एक संदेश भेजें और हम जल्द से जल्द जवाब देंगे।",
+    "contact.form.title": "हमें एक संदेश भेजें",
+    "contact.form.name": "पूरा नाम",
+    "contact.form.email": "ईमेल",
+    "contact.form.phone": "फोन नंबर",
+    "contact.form.subject": "विषय",
+    "contact.form.message": "संदेश",
+    "contact.form.send": "संदेश भेजें",
+    "contact.form.sending": "भेजा जा रहा है...",
+    "contact.form.success": "धन्यवाद! आपका संदेश सफलतापूर्वक भेजा गया है। हम जल्द ही आपसे संपर्क करेंगे।",
+    "contact.info.email.title": "हमें ईमेल करें",
+    "contact.info.email.content": "support@kundali.com",
+    "contact.info.email.sub": "हम 24 घंटे के भीतर जवाब देते हैं",
+    "contact.info.phone.title": "हमें कॉल करें",
+    "contact.info.phone.content": "+91 98765 43210",
+    "contact.info.phone.sub": "सोम-शनि, सुबह 9 बजे - रात 9 बजे IST",
+    "contact.info.visit.title": "हमसे मिलें",
+    "contact.info.hours.title": "कार्यालय समय",
+    "contact.info.hours.content": "सुबह 9:00 - रात 9:00",
+    "contact.info.hours.sub": "सोमवार से शनिवार",
+
+    // Subscription Page
+    "subscription.title": "अपनी योजना चुनें",
+    "subscription.subtitle": "प्रीमियम सुविधाएं अनलॉक करें",
+    "subscription.description": "अपनी आध्यात्मिक यात्रा के लिए सही योजना चुनें",
+    "subscription.basic": "बेसिक योजना",
+    "subscription.premium": "प्रीमियम योजना",
+    "subscription.pro": "प्रो योजना",
+    "subscription.perMonth": "प्रति माह",
+    "subscription.perYear": "प्रति वर्ष",
+    "subscription.subscribe": "सब्स्क्राइब करें",
+    "subscription.current": "वर्तमान योजना",
+    "subscription.active": "सक्रिय सदस्यता",
+    "subscription.expires": "समाप्ति तिथि",
+    "subscription.renew": "सदस्यता नवीनीकरण",
+    "subscription.daysLeft": "दिन शेष",
+  },
+};
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // CRITICAL: Always start with 'en' to match server-side rendering
+  // This prevents hydration mismatches
+  const [language, setLanguage] = useState<Language>('en');
+  const [mounted, setMounted] = useState(false);
+
+  // After mount, load the saved language preference
+  useEffect(() => {
+    setMounted(true);
+
+    // Read from localStorage only on client after hydration
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('viprakarma-language') as Language;
+      if (saved === 'en' || saved === 'hi') {
+        setLanguage(saved);
+      }
+    }
+  }, []);
+
+  // Persist to localStorage whenever language changes (after mount)
+  useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      localStorage.setItem("viprakarma-language", language);
+      // Also set on document for global access
+      document.documentElement.setAttribute("data-language", language);
+    }
+  }, [language, mounted]);
+
+  const toggleLanguage = () => {
+    setLanguage((prevLang) => {
+      const newLang = prevLang === "en" ? "hi" : "en";
+      // Immediate localStorage update for synchronous access
+      if (typeof window !== "undefined") {
+        localStorage.setItem("viprakarma-language", newLang);
+        document.documentElement.setAttribute("data-language", newLang);
+      }
+      return newLang;
+    });
+  };
+
+  const t = (key: string): string => {
+    const currentTranslations = translations[language];
+    return (currentTranslations as Record<string, string>)[key] || key;
+  };
+
+  // Render children always to support SSR and prevent hydration mismatch crashes
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+}

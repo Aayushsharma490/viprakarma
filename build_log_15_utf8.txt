@@ -1,0 +1,129 @@
+﻿
+> viprakarma@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.3.5 (Turbopack)
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 37.0s
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/43) ...
+node.exe : Error: <Html> 
+should not be imported 
+outside of 
+pages/_document.
+At C:\Program 
+Files\nodejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo        
+      : NotSpe    cified: 
+(Error:     <Html> 
+s...ages/    
+_document.:Strin    g) 
+[], RemoteExc    eption
+    + FullyQualified    
+ErrorId : Native    
+CommandError
+ 
+Read more: https://nextjs.
+org/docs/messages/no-docum
+ent-import-in-page
+    at y (C:\Users\AAYUSH\
+viprakarma-main\viprakarma
+-main\viprakarma-main\vipr
+akarma-main\.next\server\c
+hunks\8548.js:6:1351)
+Error occurred 
+prerendering page "/500". 
+Read more: https://nextjs.
+org/docs/messages/prerende
+r-error
+Error: <Html> should not 
+be imported outside of 
+pages/_document.
+Read more: https://nextjs.
+org/docs/messages/no-docum
+ent-import-in-page
+    at K (C:\Users\AAYUSH\
+viprakarma-main\viprakarma
+-main\viprakarma-main\vipr
+akarma-main\node_modules\n
+ext\dist\compiled\next-ser
+ver\pages.runtime.prod.js:
+16:6526)
+    at y (C:\Users\AAYUSH\
+viprakarma-main\viprakarma
+-main\viprakarma-main\vipr
+akarma-main\.next\server\c
+hunks\8548.js:6:1351)
+    at renderWithHooks (C:
+\Users\AAYUSH\viprakarma-m
+ain\viprakarma-main\viprak
+arma-main\viprakarma-main\
+node_modules\react-dom\cjs
+\react-dom-server.edge.pro
+duction.js:4282:18)
+    at renderElement (C:\U
+sers\AAYUSH\viprakarma-mai
+n\viprakarma-main\viprakar
+ma-main\viprakarma-main\no
+de_modules\react-dom\cjs\r
+eact-dom-server.edge.produ
+ction.js:4420:14)
+    at retryNode (C:\Users
+\AAYUSH\viprakarma-main\vi
+prakarma-main\viprakarma-m
+ain\viprakarma-main\node_m
+odules\react-dom\cjs\react
+-dom-server.edge.productio
+n.js:5022:16)
+    at 
+renderNodeDestructive (C:\
+Users\AAYUSH\viprakarma-ma
+in\viprakarma-main\vipraka
+rma-main\viprakarma-main\n
+ode_modules\react-dom\cjs\
+react-dom-server.edge.prod
+uction.js:4835:7)
+    at renderElement (C:\U
+sers\AAYUSH\viprakarma-mai
+n\viprakarma-main\viprakar
+ma-main\viprakarma-main\no
+de_modules\react-dom\cjs\r
+eact-dom-server.edge.produ
+ction.js:4417:7)
+    at retryNode (C:\Users
+\AAYUSH\viprakarma-main\vi
+prakarma-main\viprakarma-m
+ain\viprakarma-main\node_m
+odules\react-dom\cjs\react
+-dom-server.edge.productio
+n.js:5022:16)
+    at 
+renderNodeDestructive (C:\
+Users\AAYUSH\viprakarma-ma
+in\viprakarma-main\vipraka
+rma-main\viprakarma-main\n
+ode_modules\react-dom\cjs\
+react-dom-server.edge.prod
+uction.js:4835:7)
+    at renderElement (C:\U
+sers\AAYUSH\viprakarma-mai
+n\viprakarma-main\viprakar
+ma-main\viprakarma-main\no
+de_modules\react-dom\cjs\r
+eact-dom-server.edge.produ
+ction.js:4769:11)
+Export encountered an 
+error on /_error: /500, 
+exiting the build.
+ Γ¿» Next.js build worker 
+exited with code: 1 and 
+signal: null
