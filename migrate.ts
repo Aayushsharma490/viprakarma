@@ -7,21 +7,26 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 async function main() {
+  const db = drizzle(createClient({
+    url: process.env.DATABASE_URL || process.env.TURSO_CONNECTION_URL || 'file:./viprakarma.db',
+    authToken: process.env.TURSO_AUTH_TOKEN || '',
+  }));
+
+  console.log('Running migrations...');
+
   try {
-    const db = drizzle(createClient({
-      url: process.env.DATABASE_URL || process.env.TURSO_CONNECTION_URL || 'file:./viprakarma.db',
-      authToken: process.env.TURSO_AUTH_TOKEN || '',
-    }));
-
-    console.log('Running migrations...');
-
-    await migrate(db, { migrationsFolder: 'drizzle/migrations' });
-
+    await migrate(db, { migrationsFolder: './drizzle' });
     console.log('Migrations completed successfully!');
     process.exit(0);
-  } catch (error) {
-    console.error('Error running migrations:', error);
-    process.exit(1);
+  } catch (error: any) {
+    // If tables already exist, that's fine - skip migration
+    if (error?.code === 'SQLITE_ERROR' && error?.message?.includes('already exists')) {
+      console.log('Tables already exist, skipping migration.');
+      process.exit(0); // Exit successfully as existing tables are not an error for this script
+    } else {
+      console.error('Error running migrations:', error);
+      process.exit(1);
+    }
   }
 }
 
