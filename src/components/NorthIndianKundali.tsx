@@ -213,6 +213,13 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
               // Format degree - ensure it's a number and format properly
               const degreeValue = planet.degree;
+
+              // Debug logging
+              if (i === 0 && houseNumber === 1) {
+                console.log('Planet data:', planet);
+                console.log('Degree value:', degreeValue, 'Type:', typeof degreeValue);
+              }
+
               const degree = (degreeValue !== undefined && degreeValue !== null)
                 ? Math.floor(degreeValue).toString().padStart(2, '0')
                 : '';

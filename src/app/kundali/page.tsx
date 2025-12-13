@@ -306,20 +306,26 @@ export default function KundaliPage() {
     }
   };
 
-  // Removed duplicate declarations of d1Planets and d1Houses
   // Use backend data directly for all charts
   const d1Planets = kundaliData?.charts?.d1
     ? Object.values(kundaliData.charts.d1)
       .sort((a: any, b: any) => a.house - b.house)
       .flatMap((house: any) =>
-        house.planets.map((planet: any) => ({
-          planet: planet.name,
-          name: planet.name,
-          house: house.house,
-          rashi: house.sign,
-          sign: house.sign,
-          isRetrograde: planet.retrograde,
-        }))
+        house.planets.map((planet: any) => {
+          // Find the planet in the main planets array to get the degree
+          const planetData = kundaliData.planets?.find(
+            (p) => p.name === planet.name && p.sign === house.sign
+          );
+          return {
+            planet: planet.name,
+            name: planet.name,
+            house: house.house,
+            rashi: house.sign,
+            sign: house.sign,
+            isRetrograde: planet.retrograde,
+            degree: planetData?.degreeInSign, // Add degree from planet data
+          };
+        })
       )
     : [];
   const d1Houses = kundaliData?.charts?.d1
