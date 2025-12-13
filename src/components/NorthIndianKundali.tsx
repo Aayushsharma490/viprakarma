@@ -217,39 +217,12 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
               const pPos = positions[i];
               if (!pPos) return null;
 
-              // Format degree - ensure it's a number and format properly
-              const degreeValue = planet.degree;
-
-              // Debug logging
-              if (i === 0 && houseNumber === 1) {
-                console.log('Planet data:', planet);
-                console.log('Degree value:', degreeValue, 'Type:', typeof degreeValue);
-              }
-
-              const degree = (degreeValue !== undefined && degreeValue !== null)
-                ? Math.floor(degreeValue).toString().padStart(2, '0')
-                : '';
-
               return (
                 <g key={`${houseNumber}-${rawName}-${i}`}>
-                  {/* Degree above planet name */}
-                  {degree && (
-                    <text
-                      x={pPos.x}
-                      y={pPos.y - (fontSize * 0.85)} // Increased spacing
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontSize={degreeSize}
-                      fontWeight={400}
-                      fill="#666"
-                    >
-                      {degree}°
-                    </text>
-                  )}
-                  {/* Planet name below degree */}
+                  {/* Planet name - centered */}
                   <text
                     x={pPos.x}
-                    y={pPos.y + (degree ? (fontSize * 0.4) : 0)} // Increased spacing
+                    y={pPos.y}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill={color}
