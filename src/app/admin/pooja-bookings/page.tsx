@@ -76,15 +76,56 @@ export default function AdminPoojaBookingsPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {booking.phone}
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-sm text-gray-500">{booking.phone}</div>
+                                                {booking.phone && (
+                                                    <a
+                                                        href={`https://wa.me/${booking.phone.replace(/[^0-9]/g, '')}?text=Namaste, we have received your booking request for ${booking.poojaName}.`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center text-xs text-green-600 hover:text-green-700 font-medium"
+                                                    >
+                                                        <img
+                                                            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                                            alt="WhatsApp"
+                                                            className="w-4 h-4 mr-1"
+                                                        />
+                                                        Connect on WhatsApp
+                                                    </a>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${booking.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-gray-100 text-gray-800'
-                                                }`}>
-                                                {booking.status}
-                                            </span>
+                                            <select
+                                                value={booking.status}
+                                                onChange={(e) => {
+                                                    const newStatus = e.target.value;
+                                                    // Optimistic update
+                                                    setBookings(bookings.map(b => b.id === booking.id ? { ...b, status: newStatus } : b));
+
+                                                    fetch(`/api/admin/pooja-bookings/${booking.id}/status`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ status: newStatus })
+                                                    }).then(res => {
+                                                        if (!res.ok) throw new Error('Failed to update status');
+                                                        // Ideally show toast here
+                                                    }).catch(err => {
+                                                        console.error(err);
+                                                        // Revert on error
+                                                        setBookings(bookings.map(b => b.id === booking.id ? { ...b, status: booking.status } : b));
+                                                    });
+                                                }}
+                                                className={`px-2 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer ${booking.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                        booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-gray-100 text-gray-800'
+                                                    }`}
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="approved">Approved</option>
+                                                <option value="completed">Completed</option>
+                                                <option value="cancelled">Cancelled</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 ))}

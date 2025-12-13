@@ -194,6 +194,75 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
+    // Send email to astrologer on FIRST user message
+    if (decoded.role === 'user') {
+      // Check if this is the first user message in the session
+      const messageCount = await db
+        .select()
+        .from(chatMessages)
+        .where(and(
+          eq(chatMessages.sessionId, parseInt(sessionId)),
+          eq(chatMessages.senderType, 'user')
+        ));
+
+      if (messageCount.length === 1) { // This is the first message
+        // Get astrologer and user details
+        const { astrologers, users } = await import('@/db/schema');
+
+        if (!foundSession.astrologerId) {
+          console.error('No astrologer assigned to session');
+        } else {
+          const astrologerData = await db
+            .select()
+            .from(astrologers)
+            .where(eq(astrologers.id, foundSession.astrologerId))
+            .limit(1);
+
+          const userData = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, foundSession.userId))
+            .limit(1);
+
+          if (astrologerData.length > 0 && userData.length > 0) {
+            const { sendNewChatRequestEmail } = await import('@/lib/email');
+            await sendNewChatRequestEmail(
+              astrologerData[0].email,
+              astrologerData[0].name,
+              userData[0].name
+            ).catch(err => console.error('Failed to send email to astrologer:', err));
+          }
+        }
+      }
+    }
+
+    // Send email to user when astrologer sends a message
+    if (decoded.role === 'astrologer') {
+      const { astrologers, users } = await import('@/db/schema');
+
+      const astrologerData = await db
+        .select()
+        .from(astrologers)
+        .where(eq(astrologers.id, decoded.userId))
+        .limit(1);
+
+      const userData = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, foundSession.userId))
+        .limit(1);
+
+      if (astrologerData.length > 0 && userData.length > 0) {
+        const { sendAstrologerMessageEmail } = await import('@/lib/email');
+        await sendAstrologerMessageEmail(
+          userData[0].email,
+          userData[0].name,
+          astrologerData[0].name,
+          content
+        ).catch(err => console.error('Failed to send message notification to user:', err));
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: newMessage[0]

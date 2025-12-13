@@ -224,6 +224,24 @@ export async function POST(request: NextRequest) {
         createdAt: now,
       });
 
+    // Send email to user when astrologer joins (only if astrologer is starting the session)
+    if (decoded.role === 'astrologer') {
+      const userData = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (userData.length > 0) {
+        const { sendAstrologerJoinedEmail } = await import('@/lib/email');
+        await sendAstrologerJoinedEmail(
+          userData[0].email,
+          userData[0].name,
+          assignedAstrologer.name
+        ).catch(err => console.error('Failed to send astrologer joined email:', err));
+      }
+    }
+
     return NextResponse.json({
       success: true,
       session: newSession[0]

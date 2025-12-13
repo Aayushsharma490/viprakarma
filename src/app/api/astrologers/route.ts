@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !email || !password || !phone || !specializations || !experience || !hourlyRate || !languages || !location) {
+    if (!name || !email || !password || !phone || !specializations || experience === undefined || !hourlyRate || !languages || !location) {
       return NextResponse.json({
         error: "Missing required fields",
         code: "MISSING_REQUIRED_FIELDS"

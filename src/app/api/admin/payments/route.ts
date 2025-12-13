@@ -7,7 +7,7 @@ import { createClient } from '@libsql/client';
 async function ensurePaymentVerificationsTable() {
   try {
     const client = createClient({
-      url: process.env.TURSO_CONNECTION_URL || 'file:./local.db',
+      url: process.env.TURSO_CONNECTION_URL || 'file:./viprakarma.db',
       authToken: process.env.TURSO_AUTH_TOKEN || '',
     });
     await client.execute(`
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       const pragma = await client.execute('PRAGMA table_info(payment_verifications)');
       const cols = Array.isArray(pragma.rows) ? pragma.rows : [];
       hasConsultationId = cols.some((r: any) => r.name === 'consultation_id');
-    } catch {}
+    } catch { }
 
     // Get payment verifications from database
     let whereConditions = [];

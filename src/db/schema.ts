@@ -1,18 +1,28 @@
 import { sqliteTable, integer, text, real } from 'drizzle-orm/sqlite-core';
 
-// Notifications table - User notifications
-export const notifications = sqliteTable('notifications', {
+// 1. Astrologers table - Consultants on the platform (No dependencies)
+export const astrologers = sqliteTable('astrologers', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id),
-  title: text('title').notNull(),
-  message: text('message').notNull(),
-  type: text('type').notNull().default('info'), // info, success, warning, error
-  isRead: integer('is_read', { mode: 'boolean' }).default(false),
-  link: text('link'),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  password: text('password').notNull(),
+  phone: text('phone').notNull(),
+  specializations: text('specializations', { mode: 'json' }).notNull(),
+  experience: integer('experience').notNull(),
+  rating: real('rating').default(0.0),
+  totalConsultations: integer('total_consultations').default(0),
+  hourlyRate: integer('hourly_rate').notNull(),
+  isApproved: integer('is_approved', { mode: 'boolean' }).default(false),
+  isDeleted: integer('is_deleted', { mode: 'boolean' }).default(false),
+  bio: text('bio'),
+  photo: text('photo'),
+  languages: text('languages'),
+  location: text('location'),
+  isOnline: integer('is_online', { mode: 'boolean' }).default(false),
   createdAt: text('created_at').notNull(),
 });
 
-// Update users table to include active consultation astrologer
+// 2. Users table (Depends on Astrologers for activeConsultationAstrologerId)
 export const users = sqliteTable('users', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   email: text('email').notNull().unique(),
@@ -35,35 +45,25 @@ export const users = sqliteTable('users', {
   updatedAt: text('updated_at').notNull(),
 });
 
-// Astrologers table - Consultants on the platform
-export const astrologers = sqliteTable('astrologers', {
+// 3. Notifications table (Depends on Users)
+export const notifications = sqliteTable('notifications', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  password: text('password').notNull(),
-  phone: text('phone').notNull(),
-  specializations: text('specializations', { mode: 'json' }).notNull(),
-  experience: integer('experience').notNull(),
-  rating: real('rating').default(0.0),
-  totalConsultations: integer('total_consultations').default(0),
-  hourlyRate: integer('hourly_rate').notNull(),
-  isApproved: integer('is_approved', { mode: 'boolean' }).default(false),
-  isDeleted: integer('is_deleted', { mode: 'boolean' }).default(false),
-  bio: text('bio'),
-  photo: text('photo'),
-  languages: text('languages'),
-  location: text('location'),
-  isOnline: integer('is_online', { mode: 'boolean' }).default(false),
+  userId: integer('user_id').notNull().references(() => users.id),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  type: text('type').notNull().default('info'), // info, success, warning, error
+  isRead: integer('is_read', { mode: 'boolean' }).default(false),
+  link: text('link'),
   createdAt: text('created_at').notNull(),
 });
 
-// Bookings table - Consultation bookings
+// 4. Bookings table (Depends on Users, Astrologers)
 export const bookings = sqliteTable('bookings', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
   astrologerId: integer('astrologer_id').references(() => astrologers.id),
   bookingType: text('booking_type').notNull(),
-  serviceType: text('service_type').notNull(),
+  serviceType: text('service_type').notNull().default('consultation'),
   scheduledDate: text('scheduled_date').notNull(),
   scheduledTime: text('scheduled_time').notNull(),
   duration: integer('duration').notNull(),
@@ -73,7 +73,7 @@ export const bookings = sqliteTable('bookings', {
   createdAt: text('created_at').notNull(),
 });
 
-// Subscriptions table - User subscription records
+// 5. Subscriptions table (Depends on Users)
 export const subscriptions = sqliteTable('subscriptions', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
@@ -87,29 +87,20 @@ export const subscriptions = sqliteTable('subscriptions', {
   createdAt: text('created_at').notNull(),
 });
 
-// Subscription Requests table - User subscription requests pending admin approval
-// TEMPORARILY COMMENTED OUT - CAUSING 500 ERRORS
-/*
-export const subscriptionRequests = sqliteTable('subscription_requests', {
+// 6. Consultations table (Depends on Users, Astrologers)
+export const consultations = sqliteTable('consultations', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
-  planId: text('plan_id').notNull(),
-  planName: text('plan_name').notNull(),
-  amount: integer('amount').notNull(),
-  duration: integer('duration').notNull(),
-  status: text('status').notNull().default('pending'),
-  paymentId: text('payment_id'),
-  paymentScreenshot: text('payment_screenshot'),
-  expiryDate: text('expiry_date'),
-  adminNotes: text('admin_notes'),
-  approvedBy: integer('approved_by').references(() => users.id),
-  processedAt: text('processed_at'),
+  astrologerId: integer('astrologer_id').references(() => astrologers.id),
+  mode: text('mode').notNull(), // "chat", "call", "video"
+  paymentStatus: text('payment_status').notNull().default('pending'), // "pending", "verified"
+  requestStatus: text('request_status').notNull().default('waiting_admin'), // "waiting_admin", "approved", "rejected"
+  details: text('details', { mode: 'json' }).notNull().default('{}'), // Form data: name, DOB, time, place, question
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
-*/
 
-// Chat Sessions table - AI and astrologer chat sessions
+// 7. Chat Sessions table (Depends on Users, Astrologers)
 export const chatSessions = sqliteTable('chat_sessions', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
@@ -122,7 +113,7 @@ export const chatSessions = sqliteTable('chat_sessions', {
   createdAt: text('created_at').notNull(),
 });
 
-// Chat Messages table - Individual messages with file support
+// 8. Chat Messages table (Depends on ChatSessions)
 export const chatMessages = sqliteTable('chat_messages', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   sessionId: integer('session_id').notNull().references(() => chatSessions.id),
@@ -137,7 +128,7 @@ export const chatMessages = sqliteTable('chat_messages', {
   createdAt: text('created_at').notNull(),
 });
 
-// Payments table - Payment records
+// 9. Payments table (Depends on Users, Bookings, Subscriptions)
 export const payments = sqliteTable('payments', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
@@ -152,7 +143,7 @@ export const payments = sqliteTable('payments', {
   createdAt: text('created_at').notNull(),
 });
 
-// Payment Verifications table - Manual payment verification requests
+// 10. Payment Verifications table (Depends on Users, Bookings, Subscriptions, Consultations)
 export const paymentVerifications = sqliteTable('payment_verifications', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
@@ -174,20 +165,7 @@ export const paymentVerifications = sqliteTable('payment_verifications', {
   updatedAt: text('updated_at').notNull(),
 });
 
-// Consultations table - Consultation requests with payment verification
-export const consultations = sqliteTable('consultations', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id),
-  astrologerId: integer('astrologer_id').references(() => astrologers.id),
-  mode: text('mode').notNull(), // "chat", "call", "video"
-  paymentStatus: text('payment_status').notNull().default('pending'), // "pending", "verified"
-  requestStatus: text('request_status').notNull().default('waiting_admin'), // "waiting_admin", "approved", "rejected"
-  details: text('details', { mode: 'json' }).notNull(), // Form data: name, DOB, time, place, question
-  createdAt: text('created_at').notNull(),
-  updatedAt: text('updated_at').notNull(),
-});
-
-// Add pandits table at the end
+// 11. Pandits table (No dependencies)
 export const pandits = sqliteTable('pandits', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
@@ -205,7 +183,7 @@ export const pandits = sqliteTable('pandits', {
   createdAt: text('created_at').notNull(),
 });
 
-// Subscription Requests table - Manual subscription payment verification
+// 12. Subscription Requests table (Depends on Users)
 export const subscriptionRequests = sqliteTable('subscription_requests', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),
@@ -228,7 +206,7 @@ export const subscriptionRequests = sqliteTable('subscription_requests', {
   updatedAt: text('updated_at').notNull(),
 });
 
-// Pooja Bookings table - Requests for pooja ceremonies
+// 13. Pooja Bookings table (Depends on Users)
 export const poojaBookings = sqliteTable('pooja_bookings', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: integer('user_id').notNull().references(() => users.id),

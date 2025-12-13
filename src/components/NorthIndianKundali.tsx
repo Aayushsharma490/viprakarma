@@ -23,39 +23,37 @@ const CENTER_Y = HEIGHT / 2;
 
 // House positions for PLANET/CONTENT placement (center of the cell).
 // REFINED CENTROIDS to ensure text does not touch lines. Based on 500x340 SVG.
+// Adjusted centroids to be more "inward" for the outer triangles to avoid border clipping.
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 70 },               // Top Center (moved down slightly)
-  2: { x: 160, y: 40 },                    // Top Left (Triangle)
-  3: { x: 60, y: 80 },                     // Left Top (Triangle)
-  4: { x: 80, y: CENTER_Y },               // Left Center (moved right slightly)
-  5: { x: 60, y: HEIGHT - 80 },            // Left Bottom (Triangle)
-  6: { x: 160, y: HEIGHT - 40 },           // Bottom Left (Triangle)
-  7: { x: CENTER_X, y: HEIGHT - 70 },      // Bottom Center (moved up slightly)
-  8: { x: WIDTH - 160, y: HEIGHT - 40 },   // Bottom Right (Triangle)
-  9: { x: WIDTH - 60, y: HEIGHT - 80 },    // Right Bottom (Triangle)
-  10: { x: WIDTH - 80, y: CENTER_Y },      // Right Center (moved left slightly)
-  11: { x: WIDTH - 60, y: 80 },            // Right Top (Triangle)
-  12: { x: WIDTH - 160, y: 40 },           // Top Right (Triangle)
+  1: { x: CENTER_X, y: 80 },               // Top Center (Square/Diamond)
+  2: { x: 135, y: 55 },                    // Top Left (Triangle) - Moved inward
+  3: { x: 65, y: 100 },                    // Left Top (Triangle) - Moved inward
+  4: { x: 90, y: CENTER_Y },               // Left Center (Square/Diamond)
+  5: { x: 65, y: HEIGHT - 100 },           // Left Bottom (Triangle) - Moved inward
+  6: { x: 135, y: HEIGHT - 55 },           // Bottom Left (Triangle) - Moved inward
+  7: { x: CENTER_X, y: HEIGHT - 80 },      // Bottom Center (Square/Diamond)
+  8: { x: WIDTH - 135, y: HEIGHT - 55 },   // Bottom Right (Triangle) - Moved inward
+  9: { x: WIDTH - 65, y: HEIGHT - 100 },   // Right Bottom (Triangle) - Moved inward
+  10: { x: WIDTH - 90, y: CENTER_Y },      // Right Center (Square/Diamond)
+  11: { x: WIDTH - 65, y: 100 },           // Right Top (Triangle) - Moved inward
+  12: { x: WIDTH - 135, y: 55 },           // Top Right (Triangle) - Moved inward
 };
 
-// Corner positions for RASHI NUMBER (1-12) and RASHI ABBREVIATION (3-letter label)
-// MIRRORED X COORDINATES
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X + 15, y: PADDING + 35 },      // Was -15
-  2: { x: CENTER_X - 45, y: PADDING + 35 },      // Was +45
-  3: { x: PADDING + 35, y: PADDING + 35 },       // Was WIDTH - 35
-  4: { x: PADDING + 35, y: CENTER_Y - 15 },      // Was WIDTH - 35
-  5: { x: PADDING + 35, y: HEIGHT - PADDING - 35 }, // Was WIDTH - 35
-  6: { x: CENTER_X - 45, y: HEIGHT - PADDING - 35 }, // Was +45
-  7: { x: CENTER_X - 15, y: HEIGHT - PADDING - 35 }, // Was +15
-  8: { x: CENTER_X + 45, y: HEIGHT - PADDING - 35 }, // Was -45
-  9: { x: WIDTH - PADDING - 35, y: HEIGHT - PADDING - 35 }, // Was PADDING + 35
-  10: { x: WIDTH - PADDING - 35, y: CENTER_Y + 15 }, // Was PADDING + 35
-  11: { x: WIDTH - PADDING - 35, y: PADDING + 35 },  // Was PADDING + 35
-  12: { x: CENTER_X + 45, y: PADDING + 35 },         // Was -45
+  1: { x: CENTER_X, y: 155 },        // Bottom-Center of Diamond 1
+  2: { x: 220, y: 20 },              // Top-Right corner of Triangle 2
+  3: { x: 20, y: 150 },              // Bottom-Left corner of Triangle 3
+  4: { x: 150, y: CENTER_Y },        // Right-Center of Diamond 4
+  5: { x: 20, y: HEIGHT - 150 },     // Top-Left corner of Triangle 5
+  6: { x: 220, y: HEIGHT - 20 },     // Bottom-Right corner of Triangle 6
+  7: { x: CENTER_X, y: HEIGHT - 155 },// Top-Center of Diamond 7
+  8: { x: WIDTH - 220, y: HEIGHT - 20 }, // Bottom-Left corner of Triangle 8
+  9: { x: WIDTH - 20, y: HEIGHT - 150 }, // Top-Right corner of Triangle 9
+  10: { x: WIDTH - 150, y: CENTER_Y },   // Left-Center of Diamond 10
+  11: { x: WIDTH - 20, y: 150 },         // Bottom-Right corner of Triangle 11
+  12: { x: WIDTH - 220, y: 20 },         // Top-Left corner of Triangle 12
 };
 
-// Zodiac Sign Index
 const SIGN_INDEX: Record<string, number> = {
   Aries: 1, Taurus: 2, Gemini: 3, Cancer: 4, Leo: 5, Virgo: 6,
   Libra: 7, Scorpio: 8, Sagittarius: 9, Capricorn: 10, Aquarius: 11, Pisces: 12,
@@ -87,17 +85,9 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
     const s = (raw || "").trim();
     if (!s) return "";
     const full = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-    return SIGN_INDEX[full] ? full : ""; // Simplified normalization
+    return SIGN_INDEX[full] ? full : "";
   };
 
-  const asc = normalizeSign((houses?.[0]?.sign || houses?.[0]?.rashi || "").toString()) || "Aries";
-  const ascIdx = SIGN_INDEX[asc] ?? 1;
-
-  // Standard North Indian: House 1 is always fixed at Top Center.
-  // No complex mapping needed. The "Sign" rotates, the "House" stays.
-
-
-  // House Number to Sign mapping
   const houseToSign: Record<number, string> = {};
   if (houses.length >= 12) {
     for (let i = 0; i < 12; i++) {
@@ -108,8 +98,10 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
   const drawChartGrid = () => (
     <g stroke="#f4a261" strokeWidth={1.5} fill="none">
       <rect x={PADDING} y={PADDING} width={WIDTH - PADDING * 2} height={HEIGHT - PADDING * 2} />
+      {/* Main Diagonals */}
       <line x1={PADDING} y1={PADDING} x2={WIDTH - PADDING} y2={HEIGHT - PADDING} />
       <line x1={WIDTH - PADDING} y1={PADDING} x2={PADDING} y2={HEIGHT - PADDING} />
+      {/* Inner Rhombus */}
       <line x1={CENTER_X} y1={PADDING} x2={WIDTH - PADDING} y2={CENTER_Y} />
       <line x1={WIDTH - PADDING} y1={CENTER_Y} x2={CENTER_X} y2={HEIGHT - PADDING} />
       <line x1={CENTER_X} y1={HEIGHT - PADDING} x2={PADDING} y2={CENTER_Y} />
@@ -124,101 +116,116 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
         const rashi = houseToSign[houseNumber];
         if (!rashi) return null;
 
-        // FIXED HOUSE LOGIC: House 1 is always in Cell 1, House 2 in Cell 2, etc.
         const pos = HOUSE_POSITIONS[houseNumber];
-        const cornerPos = RASHI_CORNER_POSITIONS[houseNumber];
-        if (!pos || !cornerPos) return null;
+        if (!pos) return null;
 
+        const cx = pos.x;
+        const cy = pos.y;
         const rashiIndex = SIGN_INDEX[rashi];
-        const { x: cx, y: cy } = pos;
 
-
-        // FIXED House Numbers (1, 4, 7, 10) REMOVED per user request
-
-
-        const planetsInHouse = planetsByHouse[houseNumber]
-          .filter(p => {
-            const name = p.name || p.planet || "";
-            return !name.toLowerCase().includes("lagna") && !name.toLowerCase().includes("ascendant") && name.toLowerCase() !== "asc";
-          });
+        const planetsInHouse = planetsByHouse[houseNumber].filter(p => {
+          const name = p.name || p.planet || "";
+          return !name.toLowerCase().includes("lagna") &&
+            !name.toLowerCase().includes("ascendants") &&
+            name.toLowerCase() !== "asc";
+        });
 
         const numPlanets = planetsInHouse.length;
 
-        // Optimized vertical placement for stacked text (Degree, Planet)
+        // Dynamic squishing logic for high planet counts
         const getPlanetStackPositions = (count: number) => {
           if (count === 0) return [];
-          const offsetStep = 18; // Vertical space for two lines (Degree + Planet)
-          // Shift planets down by 10px to make room for the larger House Number at center
-          const planetCenterY = cy + 10;
-          const startY = planetCenterY - ((count - 1) * offsetStep) / 2;
-          return planetsInHouse.map((_, i) => ({
-            x: cx,
-            y: startY + i * offsetStep,
-            degreeY: (startY + i * offsetStep) - 6, // Degree is slightly above planet
-            planetY: (startY + i * offsetStep) + 6, // Planet is slightly below center
-          }));
+
+          let offsetStep = 18;
+          let fontSize = 16;
+          let degreeSize = 12;
+
+          if (count >= 3) {
+            offsetStep = 15;
+            fontSize = 14;
+            degreeSize = 10;
+          }
+          if (count >= 5) {
+            offsetStep = 12;
+            fontSize = 12;
+            degreeSize = 9;
+          }
+
+          const totalHeight = (count - 1) * offsetStep;
+          // Center roughly around cy but slightly lower to account for Rashi number
+          const stackCenterY = cy + 5;
+          const startY = stackCenterY - (totalHeight / 2);
+
+          return {
+            positions: planetsInHouse.map((_, i) => ({
+              x: cx,
+              y: startY + i * offsetStep,
+              degreeY: (startY + i * offsetStep) - (degreeSize / 2),
+              planetY: (startY + i * offsetStep) + (degreeSize / 2),
+            })),
+            fontSize,
+            degreeSize
+          };
         };
-        const planetPositions = getPlanetStackPositions(numPlanets);
+
+        const { positions, fontSize, degreeSize } = getPlanetStackPositions(numPlanets);
 
         return (
           <g key={houseNumber}>
-            {/* RASHI NUMBER REMOVED per user request */}
-
-
-            {/* RASHI ABBREVIATION REMOVED per user request */}
-
-
-            {/* HOUSE NUMBER (1-12) - Bigger, Black, Centered, Not Bold */}
             <text
               x={cx}
-              y={cy - 20} // Moved up to avoid overlap with planets (now at cy+10)
+              y={cy - (numPlanets > 0 ? (numPlanets * 8 + 10) : 15)}
               textAnchor="middle"
               dominantBaseline="middle"
               fill="#000000"
-              fontSize={14} // Increased size
-              fontWeight={500} // Slight weight for readability, not bold
-              fontFamily="sans-serif"
-              opacity={0.9}
+              fontSize={14}
+              fontWeight={500}
+              opacity={0.8}
             >
               {rashiIndex}
             </text>
 
-            {/* Planets with Degrees (Stacked vertically) */}
             {planetsInHouse.map((planet, i) => {
-
               const rawName = planet.name || planet.planet || "";
               const display = HINDU_NAMES[rawName as keyof typeof HINDU_NAMES] || rawName;
               const retro = planet.isRetrograde ? "*" : "";
               const color = PLANET_COLORS[rawName as keyof typeof PLANET_COLORS] || "#000000";
-              const pos = planetPositions[i] || { x: cx, y: cy, degreeY: cy, planetY: cy };
+              const pPos = positions[i];
+              if (!pPos) return null;
+
               const degree = planet.degree ? planet.degree.toFixed(0).padStart(2, '0') : '';
 
               return (
                 <g key={`${houseNumber}-${rawName}-${i}`}>
-                  {/* Degree */}
                   {degree && (
                     <text
-                      x={pos.x} y={pos.degreeY} textAnchor="middle" dominantBaseline="middle"
-                      fontSize={12} fontWeight={400} fill="#000"
+                      x={pPos.x - (fontSize * 0.8)}
+                      y={pPos.y}
+                      textAnchor="end"
+                      dominantBaseline="middle"
+                      fontSize={degreeSize}
+                      fontWeight={400}
+                      fill="#555"
+                      dx="-2"
                     >
-                      {degree}
+                      {degree}°
                     </text>
                   )}
-                  {/* Planet Abbreviation + Retrograde */}
                   <text
-                    x={pos.x} y={pos.planetY} textAnchor="middle" dominantBaseline="middle"
-                    fill={color} fontSize={16} fontWeight={700}
+                    x={pPos.x}
+                    y={pPos.y}
+                    textAnchor={degree ? "start" : "middle"}
+                    dominantBaseline="middle"
+                    fill={color}
+                    fontSize={fontSize}
+                    fontWeight={700}
+                    dx={degree ? "2" : "0"}
                   >
-                    {display}
-                    {retro}
+                    {display}{retro}
                   </text>
                 </g>
               );
             })}
-
-
-            {/* HOUSE NUMBER REMOVED */}
-
           </g>
         );
       })}

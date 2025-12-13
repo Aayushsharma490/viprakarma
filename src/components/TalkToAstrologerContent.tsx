@@ -38,6 +38,7 @@ interface Astrologer {
     bio: string;
     photo?: string;
     isOnline: boolean;
+    isApproved: boolean;
     createdAt: string;
 }
 
@@ -78,7 +79,11 @@ export default function TalkToAstrologerContent() {
                 throw new Error("Failed to fetch astrologers");
             }
             const data = await response.json();
-            setAstrologers(data);
+            // Filter to show only approved and online astrologers
+            const filteredData = data.filter((astro: Astrologer) =>
+                astro.isApproved && astro.isOnline
+            );
+            setAstrologers(filteredData);
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred");
             toast.error("Failed to load astrologers");
@@ -302,57 +307,31 @@ export default function TalkToAstrologerContent() {
 
                                         {/* Consultation Buttons */}
                                         <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => handleConnect(astrologer.id, "chat")}
-                                                    className={`flex-1 ${activeSession && activeSession.astrologerId === astrologer.id && activeSession.status === "active" ? "bg-green-600 hover:bg-green-700" : chatStatus ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400"} text-white`}
-                                                    size="sm"
-                                                    disabled={!chatStatus}
-                                                >
-                                                    {activeSession &&
-                                                        activeSession.astrologerId === astrologer.id &&
-                                                        activeSession.status === "active" ? (
-                                                        <MessageCircle className="w-4 h-4 mr-1" />
-                                                    ) : chatStatus ? (
-                                                        <MessageCircle className="w-4 h-4 mr-1" />
-                                                    ) : (
-                                                        <Lock className="w-4 h-4 mr-1" />
-                                                    )}
-                                                    {activeSession &&
-                                                        activeSession.astrologerId === astrologer.id &&
-                                                        activeSession.status === "active"
-                                                        ? t("astrologer.continueChat")
-                                                        : chatStatus
-                                                            ? t("astrologer.chatNow")
-                                                            : t("astrologer.startChatLocked")}
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleConnect(astrologer.id, "call")}
-                                                    className={`flex-1 ${selectedAstrologer === astrologer.id ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"} text-white`}
-                                                    size="sm"
-                                                    disabled={selectedAstrologer !== astrologer.id}
-                                                >
-                                                    <Phone className="w-4 h-4 mr-1" />
-                                                    {t("astrologer.call")}
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleConnect(astrologer.id, "video")}
-                                                    className={`flex-1 ${selectedAstrologer === astrologer.id ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"} text-white`}
-                                                    size="sm"
-                                                    disabled={selectedAstrologer !== astrologer.id}
-                                                >
-                                                    <Video className="w-4 h-4 mr-1" />
-                                                    {t("astrologer.video")}
-                                                </Button>
-                                            </div>
-                                            {selectedAstrologer === astrologer.id && (
-                                                <p className="text-xs text-green-600 text-center font-medium">
-                                                    {t("astrologer.selectedMessage")}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-gray-600 text-center mt-2">
-                                                {t("astrologer.clickToSelect")}
-                                            </p>
+
+                                            <Button
+                                                onClick={() => handleConnect(astrologer.id, "chat")}
+                                                className={`w-full ${activeSession && activeSession.astrologerId === astrologer.id && activeSession.status === "active" ? "bg-green-600 hover:bg-green-700" : chatStatus ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400"} text-white`}
+                                                size="sm"
+                                                disabled={!chatStatus}
+                                            >
+                                                {activeSession &&
+                                                    activeSession.astrologerId === astrologer.id &&
+                                                    activeSession.status === "active" ? (
+                                                    <MessageCircle className="w-4 h-4 mr-1" />
+                                                ) : chatStatus ? (
+                                                    <MessageCircle className="w-4 h-4 mr-1" />
+                                                ) : (
+                                                    <Lock className="w-4 h-4 mr-1" />
+                                                )}
+                                                {activeSession &&
+                                                    activeSession.astrologerId === astrologer.id &&
+                                                    activeSession.status === "active"
+                                                    ? t("astrologer.continueChat")
+                                                    : chatStatus
+                                                        ? t("astrologer.chatNow")
+                                                        : t("astrologer.startChatLocked")}
+                                            </Button>
+
                                         </div>
                                     </div>
                                 </CardContent>

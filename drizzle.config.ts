@@ -6,7 +6,7 @@ const dbConfig: Config = defineConfig({
   out: './drizzle/migrations',
   dialect: 'sqlite',
   dbCredentials: {
-    url: './local.db',
+    url: './viprakarma.db',
   },
 });
 

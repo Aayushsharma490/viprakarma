@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { db } from '@/db';
 import { paymentVerifications, payments } from '@/db/schema';
 
+import { eq } from 'drizzle-orm';
+
 export async function POST(req: NextRequest) {
   try {
     const {
@@ -41,18 +43,18 @@ export async function POST(req: NextRequest) {
         .select()
         .from(paymentVerifications)
         .where(paymentVerificationId
-          ? paymentVerifications.id.eq(paymentVerificationId as number)
+          ? eq(paymentVerifications.id, paymentVerificationId)
           : consultationId
-            ? paymentVerifications.consultationId.eq(consultationId as number)
-            : paymentVerifications.userId.eq(userId as number))
+            ? eq(paymentVerifications.consultationId, consultationId)
+            : eq(paymentVerifications.userId, userId))
         .limit(1);
 
-      if (existing && existing.length > 0 && (existing[0] as any).status === 'pending') {
+      if (existing && existing.length > 0 && existing[0].status === 'pending') {
         await db.update(paymentVerifications)
           .set({
             bookingId,
             subscriptionId,
-            consultationId: consultationId || (existing[0] as any).consultationId || null,
+            consultationId: consultationId || existing[0].consultationId || null,
             amount,
             paymentMethod: paymentDetails.paymentMethod,
             payerName: paymentDetails.payerName,
@@ -62,7 +64,7 @@ export async function POST(req: NextRequest) {
             phoneNumber: paymentDetails.phoneNumber,
             updatedAt: now,
           })
-          .where(paymentVerifications.id.eq((existing[0] as any).id));
+          .where(eq(paymentVerifications.id, existing[0].id));
       } else {
         // Save new payment verification request
         await db.insert(paymentVerifications).values({

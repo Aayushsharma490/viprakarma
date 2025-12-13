@@ -45,7 +45,6 @@ interface PaymentVerification {
         astrologerId: number;
         astrologer?: {
             name: string;
-            name: string;
         };
     };
 }

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, UserCog, CreditCard, MessageSquare, LogOut, Languages } from 'lucide-react';
+import { LayoutDashboard, UserCog, CreditCard, MessageSquare, LogOut, Languages, ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -26,6 +26,7 @@ export default function AdminNavbar() {
         { icon: LayoutDashboard, label: t('admin.dashboard'), path: '/admin' },
         { icon: UserCog, label: t('admin.pandits'), path: '/admin/pandits' },
         { icon: CreditCard, label: t('admin.subscriptions'), path: '/admin/subscriptions' },
+        { icon: ScrollText, label: t('admin.pooja.title'), path: '/admin/pooja-bookings' },
         { icon: MessageSquare, label: t('admin.whatsapp'), path: '/admin/whatsapp' },
     ];
 

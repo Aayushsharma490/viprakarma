@@ -30,6 +30,7 @@ const translations = {
     "nav.contact": "Contact",
     "nav.subscribe": "Subscribe",
     "nav.login": "Login",
+    "nav.poojaBooking": "Pooja Booking",
 
     // Admin Panel
     "admin.title": "VipraKarma Admin",
@@ -870,6 +871,7 @@ const translations = {
     "nav.logout": "लॉगआउट",
     "nav.admin": "एडमिन पोर्टल",
     "nav.profile": "प्रोफाइल",
+    "nav.poojaBooking": "पूजा बुकिंग",
 
     // Footer
     "footer.brandDesc":

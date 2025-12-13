@@ -35,6 +35,7 @@ export default function Navbar() {
     { href: "/talk-to-astrologer", label: t("nav.talkToAstrologer") },
     { href: "/about", label: t("nav.about") },
     { href: "/contact", label: t("nav.contact") },
+    { href: "/pooja-booking", label: t("nav.poojaBooking") },
     { href: "/subscription", label: t("nav.subscribe") },
   ];
 
@@ -51,50 +52,51 @@ export default function Navbar() {
               </span>
             </Link>
             {/* Desktop Nav Links */}
-            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
-              {navLinks.slice(0, 8).map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-gray-700 hover:text-amber-700 dark:text-gray-200 dark:hover:text-amber-400 transition-all duration-300 font-semibold px-2 xl:px-3 py-2 rounded-md hover:bg-amber-100/50 dark:hover:bg-slate-800/50 text-xs xl:text-sm whitespace-nowrap"
+            <div className="hidden lg:flex items-center gap-1">
+              <div className="flex items-center gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-gray-700 hover:text-amber-700 dark:text-gray-200 dark:hover:text-amber-400 transition-all duration-300 font-medium px-2 py-1.5 rounded-md hover:bg-amber-100/50 dark:hover:bg-slate-800/50 text-xs whitespace-nowrap"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="w-px h-5 bg-amber-200 dark:bg-slate-600 mx-1"></div>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                  className="text-gray-600 hover:text-amber-700 hover:bg-amber-100/50 dark:text-gray-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 h-7 w-7"
                 >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="w-px h-6 bg-amber-200 dark:bg-slate-600 mx-1 xl:mx-2"></div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                className="text-gray-600 hover:text-amber-700 hover:bg-amber-100/50 dark:text-gray-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 h-8 w-8"
-              >
-                {theme === "light" ? (
-                  <Moon className="w-4 h-4" />
-                ) : (
-                  <Sun className="w-4 h-4" />
-                )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleLanguage}
-                title={`Switch to ${language === "en" ? "Hindi" : "English"}`}
-                className="text-gray-600 hover:text-amber-700 hover:bg-amber-100/50 dark:text-gray-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 h-8 w-8"
-              >
-                <Languages className="w-4 h-4" />
-                <span className="ml-1 text-xs font-bold">
-                  {language.toUpperCase()}
-                </span>
-              </Button>
+                  {theme === "light" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleLanguage}
+                  title={`Switch to ${language === "en" ? "Hindi" : "English"}`}
+                  className="text-gray-600 hover:text-amber-700 hover:bg-amber-100/50 dark:text-gray-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 h-7 w-7"
+                >
+                  <Languages className="w-3.5 h-3.5" />
+                  <span className="ml-0.5 text-[0.65rem] font-bold">{language.toUpperCase()}</span>
+                </Button>
+              </div>
+
               {user ? (
-                <div className="flex items-center gap-1 xl:gap-2">
+                <div className="flex items-center gap-1 ml-1">
                   <NotificationBell />
                   <Link href="/profile">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-700 hover:text-amber-700 hover:bg-amber-100 dark:text-gray-200 dark:hover:text-amber-400 dark:hover:bg-slate-800 text-xs h-8 px-2"
+                      className="text-gray-700 hover:text-amber-700 hover:bg-amber-100 dark:text-gray-200 dark:hover:text-amber-400 dark:hover:bg-slate-800 text-xs h-7 px-2"
                     >
                       {t("nav.profile")}
                     </Button>
@@ -102,7 +104,7 @@ export default function Navbar() {
                   <Link href="/subscription">
                     <Button
                       size="sm"
-                      className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md text-xs h-8 px-3"
+                      className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md text-xs h-7 px-2"
                     >
                       <Star className="w-3 h-3 mr-1" />
                       {t("nav.subscribe")}
@@ -112,19 +114,19 @@ export default function Navbar() {
                     onClick={isAdminLoggedIn ? adminLogout : logout}
                     variant="outline"
                     size="sm"
-                    className="border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800 text-xs h-8 px-2"
+                    className="border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800 text-xs h-7 px-2"
                   >
                     <LogOut className="w-3 h-3 mr-1" />
                     {t("nav.logout")}
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 xl:gap-2">
+                <div className="flex items-center gap-1 ml-1">
                   <Link href="/login">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800 text-xs h-8 px-2"
+                      className="border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800 text-xs h-7 px-2"
                     >
                       <User className="w-3 h-3 mr-1" />
                       {t("nav.login")}
@@ -133,7 +135,7 @@ export default function Navbar() {
                   <Link href="/signup">
                     <Button
                       size="sm"
-                      className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white shadow shadow-amber-600/30 text-xs h-8 px-2"
+                      className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white shadow shadow-amber-600/30 text-xs h-7 px-2"
                     >
                       {t("nav.signup")}
                     </Button>
@@ -142,10 +144,10 @@ export default function Navbar() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-gray-500 hover:text-amber-700 hover:bg-amber-100 dark:text-gray-400 dark:hover:text-amber-400 dark:hover:bg-slate-800 h-8 w-8"
+                      className="text-gray-500 hover:text-amber-700 hover:bg-amber-100 dark:text-gray-400 dark:hover:text-amber-400 dark:hover:bg-slate-800 h-7 w-7"
                       title={t("nav.admin")}
                     >
-                      <Shield className="w-4 h-4" />
+                      <Shield className="w-3.5 h-3.5" />
                     </Button>
                   </Link>
                 </div>
@@ -265,47 +267,6 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      {/* Floating Talk to Astrologer Button - bottom left */}
-      <Link
-        href="/talk-to-astrologer"
-        style={{
-          position: "fixed",
-          bottom: "1.5rem",
-          left: "1.5rem",
-          zIndex: 50,
-        }}
-      >
-        <Button
-          className="bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-600/30 rounded-full px-6 py-3 text-lg font-bold flex items-center gap-2 animate-bounce"
-          style={{ boxShadow: "0 4px 24px rgba(255,193,7,0.25)" }}
-          suppressHydrationWarning
-        >
-          <Sparkles className="w-6 h-6" />
-          <span
-            className={
-              "block " +
-              (language === "en"
-                ? "whitespace-normal leading-tight"
-                : "whitespace-nowrap")
-            }
-            style={
-              language === "en"
-                ? { lineHeight: "1.1", textAlign: "left" }
-                : {}
-            }
-          >
-            {language === "en" ? (
-              <>
-                Talk to
-                <br />
-                Astrologer
-              </>
-            ) : (
-              t("nav.talkToAstrologer")
-            )}
-          </span>
-        </Button>
-      </Link>
     </>
   );
 }

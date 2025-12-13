@@ -42,6 +42,7 @@ export default function AdminPanditsContent() {
         name: '',
         email: '',
         password: '',
+        phone: '',
         specializations: '',
         experience: 0,
         languages: '',
@@ -113,14 +114,26 @@ export default function AdminPanditsContent() {
                 .filter(s => s.length > 0);
 
             const payload = {
-                ...formData,
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                phone: formData.phone || '+910000000000', // Add default phone if missing
                 specializations: specializationsArray,
+                experience: formData.experience,
+                hourlyRate: formData.hourlyRate,
+                languages: formData.languages,
+                location: formData.location,
+                bio: formData.bio,
+                photo: formData.photo,
+                isOnline: formData.isOnline, // Add isOnline to payload
             };
 
             // Remove empty password if editing
             if (editingId && !payload.password) {
                 delete (payload as any).password;
             }
+
+            console.log('Sending payload:', payload);
 
             const response = await fetch(url, {
                 method,
@@ -133,6 +146,7 @@ export default function AdminPanditsContent() {
                 resetForm();
             } else {
                 const errorData = await response.json();
+                console.error('Error response:', errorData);
                 alert(`Error: ${errorData.error || 'Failed to save'}`);
             }
         } catch (error) {
@@ -148,14 +162,14 @@ export default function AdminPanditsContent() {
             name: astro.name,
             email: astro.email || '',
             password: '',
+            phone: (astro as any).phone || '',
             specializations: Array.isArray(astro.specializations) ? astro.specializations.join(', ') : '',
             experience: astro.experience,
             languages: astro.languages || '',
             rating: astro.rating || 0,
             hourlyRate: astro.hourlyRate,
             location: astro.location || '',
-            bio: astro.description || '', // Field mapping difference? Schema has bio, interface implies description? Let's check API. API returns 'bio' in GET but component interface said description. Wait, API POST uses 'bio'. GET returns what DB has. Schema has 'bio'.
-            // Checking API code... POST uses 'bio'. Schema uses 'bio'.
+            bio: astro.description || '',
             photo: astro.photo || '',
             isOnline: astro.isOnline || false,
         });
@@ -204,6 +218,7 @@ export default function AdminPanditsContent() {
             name: '',
             email: '',
             password: '',
+            phone: '',
             specializations: '',
             experience: 0,
             languages: '',
@@ -300,6 +315,17 @@ export default function AdminPanditsContent() {
                                         />
                                     </div>
                                     <div>
+                                        <Label htmlFor="phone">Phone *</Label>
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            value={formData.phone}
+                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                            placeholder="+919999999999"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
                                         <Label htmlFor="password">Password {editingId ? '(Leave blank to keep)' : '*'}</Label>
                                         <Input
                                             id="password"
@@ -326,7 +352,7 @@ export default function AdminPanditsContent() {
                                             type="number"
                                             min="0"
                                             value={formData.experience}
-                                            onChange={(e) => setFormData({ ...formData, experience: parseInt(e.target.value) })}
+                                            onChange={(e) => setFormData({ ...formData, experience: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                                             required
                                         />
                                     </div>
@@ -359,7 +385,7 @@ export default function AdminPanditsContent() {
                                             type="number"
                                             min="1"
                                             value={formData.hourlyRate}
-                                            onChange={(e) => setFormData({ ...formData, hourlyRate: parseInt(e.target.value) })}
+                                            onChange={(e) => setFormData({ ...formData, hourlyRate: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                                             required
                                         />
                                     </div>
