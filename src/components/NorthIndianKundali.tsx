@@ -1,10 +1,20 @@
 import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// --- CONSTANTS (UNCHANGED) ---
+// --- CONSTANTS ---
 const HINDU_NAMES: Record<string, string> = {
   Sun: "Su", Moon: "Mo", Mars: "Ma", Mercury: "Me", Jupiter: "Ju", Venus: "Ve",
   Saturn: "Sa", Rahu: "Ra", Ketu: "Ke", Uranus: "Ur", Neptune: "Ne", Pluto: "Pl",
 };
+
+// Hindi planet names (full names)
+const HINDI_NAMES: Record<string, string> = {
+  Sun: "सूर्य", Moon: "चंद्र", Mars: "मंगल", Mercury: "बुध",
+  Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि",
+  Rahu: "राहु", Ketu: "केतु", Uranus: "यूरेनस",
+  Neptune: "नेप्च्यून", Pluto: "प्लूटो",
+};
+
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#e63946", Moon: "#457b9d", Mars: "#2a9d8f", Mercury: "#457b9d", Jupiter: "#9d4edd",
   Venus: "#06a77d", Saturn: "#e63946", Rahu: "#e63946", Ketu: "#d4a574", Uranus: "#e63946",
@@ -71,6 +81,7 @@ type NorthIndianKundaliProps = {
 };
 
 export default function NorthIndianKundali({ planets = [], houses = [], title }: NorthIndianKundaliProps) {
+  const { language } = useLanguage();
 
   const planetsByHouse: Record<number, PlanetInput[]> = {};
   for (let i = 1; i <= 12; i++) planetsByHouse[i] = [];
@@ -133,8 +144,12 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
         const numPlanets = planetsInHouse.length;
 
         // Dynamic squishing logic for high planet counts
-        const getPlanetStackPositions = (count: number) => {
-          if (count === 0) return [];
+        const getPlanetStackPositions = (count: number): {
+          positions: Array<{ x: number; y: number; degreeY: number; planetY: number }>;
+          fontSize: number;
+          degreeSize: number;
+        } => {
+          if (count === 0) return { positions: [], fontSize: 16, degreeSize: 12 };
 
           let offsetStep = 18;
           let fontSize = 16;
@@ -187,39 +202,46 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
             {planetsInHouse.map((planet, i) => {
               const rawName = planet.name || planet.planet || "";
-              const display = HINDU_NAMES[rawName as keyof typeof HINDU_NAMES] || rawName;
+              // Use Hindi names if language is 'hi', otherwise use English abbreviations
+              const display = language === 'hi'
+                ? (HINDI_NAMES[rawName as keyof typeof HINDI_NAMES] || rawName)
+                : (HINDU_NAMES[rawName as keyof typeof HINDU_NAMES] || rawName);
               const retro = planet.isRetrograde ? "*" : "";
               const color = PLANET_COLORS[rawName as keyof typeof PLANET_COLORS] || "#000000";
               const pPos = positions[i];
               if (!pPos) return null;
 
-              const degree = planet.degree ? planet.degree.toFixed(0).padStart(2, '0') : '';
+              // Format degree - ensure it's a number and format properly
+              const degreeValue = planet.degree;
+              const degree = (degreeValue !== undefined && degreeValue !== null)
+                ? Math.floor(degreeValue).toString().padStart(2, '0')
+                : '';
 
               return (
                 <g key={`${houseNumber}-${rawName}-${i}`}>
+                  {/* Degree above planet name */}
                   {degree && (
                     <text
-                      x={pPos.x - (fontSize * 0.8)}
-                      y={pPos.y}
-                      textAnchor="end"
+                      x={pPos.x}
+                      y={pPos.y - (fontSize * 0.7)}
+                      textAnchor="middle"
                       dominantBaseline="middle"
                       fontSize={degreeSize}
                       fontWeight={400}
-                      fill="#555"
-                      dx="-2"
+                      fill="#666"
                     >
                       {degree}°
                     </text>
                   )}
+                  {/* Planet name below degree */}
                   <text
                     x={pPos.x}
-                    y={pPos.y}
-                    textAnchor={degree ? "start" : "middle"}
+                    y={pPos.y + (degree ? (fontSize * 0.3) : 0)}
+                    textAnchor="middle"
                     dominantBaseline="middle"
                     fill={color}
                     fontSize={fontSize}
                     fontWeight={700}
-                    dx={degree ? "2" : "0"}
                   >
                     {display}{retro}
                   </text>
