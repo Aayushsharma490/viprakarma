@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "tsx migrate.ts && next start",
+        "start": "next start",
         "lint": "next lint",
         "drizzle:generate": "drizzle-kit generate",
         "db:migrate": "tsx migrate.ts"
