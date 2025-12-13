@@ -180,7 +180,7 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
               fontFamily="sans-serif"
               opacity={0.9}
             >
-              {houseNumber}
+              {rashiIndex}
             </text>
 
             {/* Planets with Degrees (Stacked vertically) */}

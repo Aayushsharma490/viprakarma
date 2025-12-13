@@ -12,6 +12,7 @@ import { Search, UserCheck, UserX, Ban, CheckCircle, XCircle, Loader2, MessageSq
 import { toast } from 'sonner';
 import AdminNavbar from '@/components/AdminNavbar';
 import Footer from '@/components/Footer';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
     id: number;
@@ -32,6 +33,7 @@ interface User {
 
 export default function AdminUsersContent() {
     const router = useRouter();
+    const { t, language } = useLanguage();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -204,8 +206,8 @@ export default function AdminUsersContent() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-8"
                 >
-                    <h1 className="text-4xl font-bold mb-4 text-cosmic">User Management</h1>
-                    <p className="text-muted-foreground">Manage platform users, subscriptions, and permissions</p>
+                    <h1 className="text-4xl font-bold mb-4 text-cosmic">{t('admin.dashboard.userManagement')}</h1>
+                    <p className="text-muted-foreground">{t('admin.users.manageUsers')}</p>
                 </motion.div>
 
                 {/* Filters */}
@@ -213,7 +215,7 @@ export default function AdminUsersContent() {
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
-                            placeholder="Search users by name or email..."
+                            placeholder={t('admin.users.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"
@@ -221,10 +223,10 @@ export default function AdminUsersContent() {
                     </div>
                     <Select value={filterPlan} onValueChange={setFilterPlan}>
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Filter by plan" />
+                            <SelectValue placeholder={t('admin.users.filterPlan')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Plans</SelectItem>
+                            <SelectItem value="all">{t('admin.users.allPlans')}</SelectItem>
                             <SelectItem value="free">Free</SelectItem>
                             <SelectItem value="premium">Premium</SelectItem>
                             <SelectItem value="vip">VIP</SelectItem>
@@ -232,12 +234,12 @@ export default function AdminUsersContent() {
                     </Select>
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Filter by status" />
+                            <SelectValue placeholder={t('admin.users.filterStatus')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Users</SelectItem>
-                            <SelectItem value="admin">Admins</SelectItem>
-                            <SelectItem value="user">Regular Users</SelectItem>
+                            <SelectItem value="all">{t('admin.users.allUsers')}</SelectItem>
+                            <SelectItem value="admin">{t('admin.users.admins')}</SelectItem>
+                            <SelectItem value="user">{t('admin.users.regularUsers')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -264,11 +266,11 @@ export default function AdminUsersContent() {
                                             </div>
                                             <p className="text-primary mb-1">{user.email}</p>
                                             <p className="text-sm text-muted-foreground mb-2">
-                                                Phone: {user.phone || 'Not provided'} • Joined: {new Date(user.createdAt).toLocaleDateString()}
+                                                {t('admin.users.phone')} {user.phone || 'Not provided'} • {t('admin.users.joined')} {new Date(user.createdAt).toLocaleDateString()}
                                             </p>
                                             {user.paymentVerifications && user.paymentVerifications.length > 0 && (
                                                 <div className="flex items-center gap-2 mt-2">
-                                                    <span className="text-xs text-muted-foreground">Payments:</span>
+                                                    <span className="text-xs text-muted-foreground">{t('admin.dashboard.paymentsText')}:</span>
                                                     {user.paymentVerifications.slice(0, 2).map((pv: any) => (
                                                         <Badge
                                                             key={pv.id}
@@ -295,7 +297,7 @@ export default function AdminUsersContent() {
                                                     className="text-green-600 hover:text-green-700"
                                                 >
                                                     <UserCheck className="w-4 h-4 mr-1" />
-                                                    Make Admin
+                                                    {t('admin.users.makeAdmin')}
                                                 </Button>
                                             )}
                                             {user.isAdmin && (
@@ -306,7 +308,7 @@ export default function AdminUsersContent() {
                                                     className="text-orange-600 hover:text-orange-700"
                                                 >
                                                     <UserX className="w-4 h-4 mr-1" />
-                                                    Remove Admin
+                                                    {t('admin.users.removeAdmin')}
                                                 </Button>
                                             )}
                                             <Button
@@ -316,14 +318,14 @@ export default function AdminUsersContent() {
                                                 className="text-red-600 hover:text-red-700"
                                             >
                                                 <Ban className="w-4 h-4 mr-1" />
-                                                Ban User
+                                                {t('admin.users.ban')}
                                             </Button>
                                             <Badge
                                                 variant={user.canChatWithAstrologer ? 'default' : 'outline'}
                                                 className="flex items-center gap-1"
                                             >
                                                 <MessageSquare className="w-3 h-3" />
-                                                {user.canChatWithAstrologer ? 'Chat Enabled' : 'Chat Disabled'}
+                                                {user.canChatWithAstrologer ? t('admin.users.chatEnabled') : t('admin.users.chatDisabled')}
                                             </Badge>
                                             {user.canChatWithAstrologer ? (
                                                 <Button
@@ -332,7 +334,7 @@ export default function AdminUsersContent() {
                                                     onClick={() => handleStatusChange(user.id, 'disable_chat')}
                                                 >
                                                     <XCircle className="w-4 h-4 mr-1" />
-                                                    Disable Chat
+                                                    {t('admin.users.disableChat')}
                                                 </Button>
                                             ) : (
                                                 <Button
@@ -341,7 +343,7 @@ export default function AdminUsersContent() {
                                                     onClick={() => handleStatusChange(user.id, 'enable_chat')}
                                                 >
                                                     <CheckCircle className="w-4 h-4 mr-1" />
-                                                    Enable Chat
+                                                    {t('admin.users.enableChat')}
                                                 </Button>
                                             )}
                                         </div>
@@ -354,7 +356,7 @@ export default function AdminUsersContent() {
 
                 {!loading && filteredUsers.length === 0 && (
                     <div className="text-center py-12">
-                        <p className="text-muted-foreground">No users found matching your criteria</p>
+                        <p className="text-muted-foreground">{t('admin.users.noUsers')}</p>
                     </div>
                 )}
             </div>

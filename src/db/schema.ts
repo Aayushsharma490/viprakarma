@@ -227,3 +227,22 @@ export const subscriptionRequests = sqliteTable('subscription_requests', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+// Pooja Bookings table - Requests for pooja ceremonies
+export const poojaBookings = sqliteTable('pooja_bookings', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').notNull().references(() => users.id),
+  poojaName: text('pooja_name').notNull(), // e.g., "Satyanarayan Pooja", "Griha Pravesh"
+  description: text('description'),
+  date: text('date').notNull(),
+  time: text('time'),
+  location: text('location').notNull(),
+  purpose: text('purpose'), // Purpose of the pooja
+  phone: text('phone').notNull(),
+  email: text('email'),
+  occasion: text('occasion'), // e.g., "Birthday", "Anniversary"
+  status: text('status').notNull().default('pending'), // 'pending', 'approved', 'completed', 'cancelled'
+  adminNotes: text('admin_notes'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});

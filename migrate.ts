@@ -9,7 +9,7 @@ dotenv.config({ path: '.env.local' });
 async function main() {
   try {
     const db = drizzle(createClient({
-      url: process.env.TURSO_CONNECTION_URL || 'file:./local.db',
+      url: process.env.DATABASE_URL || process.env.TURSO_CONNECTION_URL || 'file:./viprakarma.db',
       authToken: process.env.TURSO_AUTH_TOKEN || '',
     }));
 

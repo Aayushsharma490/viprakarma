@@ -6,7 +6,7 @@ import { eq, and, desc } from 'drizzle-orm';
 // Helper function to validate message structure
 function validateMessages(messages: any): boolean {
   if (!Array.isArray(messages)) return false;
-  
+
   return messages.every(msg => {
     return (
       msg &&
@@ -236,6 +236,42 @@ export async function POST(request: NextRequest) {
       .insert(chatSessions)
       .values(insertData)
       .returning();
+
+    // Send email notification if it's an astrologer session
+    if (sessionType === 'astrologer' && astrologerId) {
+      // We already fetched astrologerExists and userExists above, but let's be safe and access them
+      // Since we validated them, we know they exist.
+      // However, the `astrologerExists` variable is scoped inside the `if (astrologerId)` block above.
+      // We need to fetch details again or restructure. 
+      // Actually, looking at the code structure:
+      // 'userExists' is available in higher scope.
+      // 'astrologerExists' is inside `if (astrologerId)`. 
+
+      // Let's refetch to be clean or move the logic. 
+      // Refetching is safer to avoid scope issues without major refactor.
+      const astrologerDetails = await db
+        .select()
+        .from(astrologers)
+        .where(eq(astrologers.id, parseInt(astrologerId)))
+        .limit(1);
+
+      if (astrologerDetails.length > 0) {
+        const astrologer = astrologerDetails[0];
+        const user = userExists[0];
+        const chatLink = `${process.env.NEXT_PUBLIC_APP_URL || 'https://viprakarma.com'}/admin/chat/${newSession[0].id}`;
+
+        // Import dynamically to avoid top-level simplified import issues if any
+        const { sendChatNotificationEmail } = await import('@/lib/email');
+
+        // Don't await the email so we don't block the response
+        sendChatNotificationEmail(
+          astrologer.email,
+          astrologer.name,
+          user.name,
+          chatLink
+        ).catch(err => console.error('Failed to send background email:', err));
+      }
+    }
 
     return NextResponse.json(newSession[0], { status: 201 });
   } catch (error) {

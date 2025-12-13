@@ -36,8 +36,24 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, phone, password, specializations, experience, hourlyRate, bio } = await request.json();
 
-    if (!name || !email || !phone || !password || !specializations || !experience || !hourlyRate || !bio) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    // Check for missing required fields (allow 0 for numbers)
+    const missingFields = [];
+    if (!name) missingFields.push('name');
+    if (!email) missingFields.push('email');
+    if (!phone) missingFields.push('phone');
+    if (!password) missingFields.push('password');
+    // Specializations is JSON array or string
+    if (!specializations) missingFields.push('specializations');
+
+    // Allow 0 for experience and hourlyRate
+    if (experience === undefined || experience === null) missingFields.push('experience');
+    if (hourlyRate === undefined || hourlyRate === null) missingFields.push('hourlyRate');
+
+    // Bio is optional
+    // if (!bio) missingFields.push('bio');
+
+    if (missingFields.length > 0) {
+      return NextResponse.json({ error: `Missing fields: ${missingFields.join(', ')}` }, { status: 400 });
     }
 
     // Check if astrologer already exists

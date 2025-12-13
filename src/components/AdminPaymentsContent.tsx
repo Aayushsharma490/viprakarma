@@ -15,6 +15,7 @@ import { Search, CheckCircle, XCircle, Eye, Loader2, CreditCard, User, Phone, Ba
 import { toast } from 'sonner';
 import AdminNavbar from '@/components/AdminNavbar';
 import Footer from '@/components/Footer';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PaymentVerification {
     id: number;
@@ -51,6 +52,7 @@ interface PaymentVerification {
 
 export default function AdminPaymentsContent() {
     const router = useRouter();
+    const { t, language } = useLanguage();
     const [payments, setPayments] = useState<PaymentVerification[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -128,11 +130,11 @@ export default function AdminPaymentsContent() {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'approved':
-                return <Badge variant="default" className="bg-green-600">Approved</Badge>;
+                return <Badge variant="default" className="bg-green-600">{t('admin.pandits.approved')}</Badge>;
             case 'rejected':
-                return <Badge variant="destructive">Rejected</Badge>;
+                return <Badge variant="destructive">{t('admin.pandits.disapprove')}</Badge>; // Using available key or fallback
             default:
-                return <Badge variant="secondary">Pending</Badge>;
+                return <Badge variant="secondary">{t('admin.pandits.pending')}</Badge>;
         }
     };
 
@@ -150,8 +152,8 @@ export default function AdminPaymentsContent() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-8"
                 >
-                    <h1 className="text-4xl font-bold mb-4 text-cosmic">Payment Verifications</h1>
-                    <p className="text-muted-foreground">Review and manage user payment verification requests</p>
+                    <h1 className="text-4xl font-bold mb-4 text-cosmic">{t('admin.payments.title')}</h1>
+                    <p className="text-muted-foreground">{t('admin.payments.subtitle')}</p>
                 </motion.div>
 
                 {/* Filters */}
@@ -159,7 +161,7 @@ export default function AdminPaymentsContent() {
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
-                            placeholder="Search by name, phone, or email..."
+                            placeholder={t('admin.payments.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"
@@ -167,13 +169,13 @@ export default function AdminPaymentsContent() {
                     </div>
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
                         <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Filter by status" />
+                            <SelectValue placeholder={t('admin.payments.filterStatus')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="approved">Approved</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
+                            <SelectItem value="all">{t('admin.payments.allStatus')}</SelectItem>
+                            <SelectItem value="pending">{t('admin.pandits.pending')}</SelectItem>
+                            <SelectItem value="approved">{t('admin.pandits.approved')}</SelectItem>
+                            <SelectItem value="rejected">{t('admin.subscriptions.rejected')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -200,10 +202,10 @@ export default function AdminPaymentsContent() {
                                             </div>
                                             <p className="text-primary mb-1">{payment.user?.email || 'N/A'}</p>
                                             <p className="text-sm text-muted-foreground mb-2">
-                                                Phone: {payment.phoneNumber} • Amount: ₹{payment.amount} • Method: {payment.paymentMethod}
+                                                {t('admin.users.phone')} {payment.phoneNumber} • {t('admin.payments.amount')}: ₹{payment.amount} • {t('admin.payments.method')}: {payment.paymentMethod}
                                                 {typeof payment.consultationId === 'number' && (
                                                     <span className="ml-2 px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-xs align-middle">
-                                                        Consultation #{payment.consultationId}
+                                                        {t('admin.payments.consultation')} #{payment.consultationId}
                                                     </span>
                                                 )}
                                                 {payment.consultation && (
@@ -213,7 +215,7 @@ export default function AdminPaymentsContent() {
                                                 )}
                                             </p>
                                             <p className="text-xs text-muted-foreground">
-                                                Submitted: {formatDate(payment.createdAt)}
+                                                {t('admin.payments.submitted')}: {formatDate(payment.createdAt)}
                                             </p>
                                         </div>
                                         <div className="flex gap-2">
@@ -226,7 +228,7 @@ export default function AdminPaymentsContent() {
                                                 }}
                                             >
                                                 <Eye className="w-4 h-4 mr-1" />
-                                                View Details
+                                                {t('admin.payments.viewDetails')}
                                             </Button>
                                             <Button
                                                 size="sm"
@@ -238,7 +240,7 @@ export default function AdminPaymentsContent() {
                                                 }}
                                             >
                                                 <MessageCircle className="w-4 h-4 mr-1" />
-                                                WhatsApp
+                                                {t('admin.payments.whatsapp')}
                                             </Button>
                                             {payment.status === 'pending' && (
                                                 <>
@@ -253,7 +255,7 @@ export default function AdminPaymentsContent() {
                                                         ) : (
                                                             <CheckCircle className="w-4 h-4 mr-1" />
                                                         )}
-                                                        Approve Payment
+                                                        {t('admin.payments.approve')}
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -266,7 +268,7 @@ export default function AdminPaymentsContent() {
                                                         ) : (
                                                             <XCircle className="w-4 h-4 mr-1" />
                                                         )}
-                                                        Reject
+                                                        {t('admin.subscriptions.reject')}
                                                     </Button>
                                                 </>
                                             )}
@@ -280,7 +282,7 @@ export default function AdminPaymentsContent() {
 
                 {!loading && filteredPayments.length === 0 && (
                     <div className="text-center py-12">
-                        <p className="text-muted-foreground">No payment verifications found matching your criteria</p>
+                        <p className="text-muted-foreground">{t('admin.payments.noPayments')}</p>
                     </div>
                 )}
             </div>
@@ -289,9 +291,9 @@ export default function AdminPaymentsContent() {
             <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
                 <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
-                        <DialogTitle className="golden-text">Payment Verification Details</DialogTitle>
+                        <DialogTitle className="golden-text">{t('admin.payments.detailsTitle')}</DialogTitle>
                         <DialogDescription>
-                            Review payment details submitted by the user
+                            {t('admin.payments.detailsSubtitle')}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -299,11 +301,11 @@ export default function AdminPaymentsContent() {
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label className="text-sm font-medium">Amount</Label>
+                                    <Label className="text-sm font-medium">{t('admin.payments.amount')}</Label>
                                     <p className="text-2xl font-bold text-amber-900">₹{selectedPayment.amount}</p>
                                 </div>
                                 <div>
-                                    <Label className="text-sm font-medium">Status</Label>
+                                    <Label className="text-sm font-medium">{t('admin.subscriptions.status')}</Label>
                                     <div className="mt-1">{getStatusBadge(selectedPayment.status)}</div>
                                 </div>
                             </div>
@@ -312,21 +314,21 @@ export default function AdminPaymentsContent() {
                                 <div className="flex items-center gap-2">
                                     <User className="w-4 h-4 text-muted-foreground" />
                                     <span className="text-sm">
-                                        <strong>Payer:</strong> {selectedPayment.payerName}
+                                        <strong>{t('admin.payments.payerName')}:</strong> {selectedPayment.payerName}
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                     <Phone className="w-4 h-4 text-muted-foreground" />
                                     <span className="text-sm">
-                                        <strong>Phone:</strong> {selectedPayment.phoneNumber}
+                                        <strong>{t('admin.users.phone')}</strong> {selectedPayment.phoneNumber}
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                     <CreditCard className="w-4 h-4 text-muted-foreground" />
                                     <span className="text-sm">
-                                        <strong>Method:</strong> {selectedPayment.paymentMethod}
+                                        <strong>{t('admin.payments.method')}:</strong> {selectedPayment.paymentMethod}
                                     </span>
                                 </div>
 
@@ -334,7 +336,7 @@ export default function AdminPaymentsContent() {
                                     <div className="flex items-center gap-2">
                                         <Banknote className="w-4 h-4 text-muted-foreground" />
                                         <span className="text-sm">
-                                            <strong>Bank:</strong> {selectedPayment.bankName}
+                                            <strong>{t('admin.payments.bank')}:</strong> {selectedPayment.bankName}
                                         </span>
                                     </div>
                                 )}
@@ -343,7 +345,7 @@ export default function AdminPaymentsContent() {
                                     <div className="flex items-center gap-2">
                                         <CreditCard className="w-4 h-4 text-muted-foreground" />
                                         <span className="text-sm">
-                                            <strong>Account/UPI:</strong> {selectedPayment.accountNumber}
+                                            <strong>{t('admin.payments.account')}:</strong> {selectedPayment.accountNumber}
                                         </span>
                                     </div>
                                 )}
@@ -352,7 +354,7 @@ export default function AdminPaymentsContent() {
                                     <div className="flex items-center gap-2">
                                         <CreditCard className="w-4 h-4 text-muted-foreground" />
                                         <span className="text-sm">
-                                            <strong>Transaction ID:</strong> {selectedPayment.transactionId}
+                                            <strong>{t('admin.payments.transactionId')}:</strong> {selectedPayment.transactionId}
                                         </span>
                                     </div>
                                 )}
@@ -361,7 +363,7 @@ export default function AdminPaymentsContent() {
                                     <div className="flex items-center gap-2">
                                         <MessageCircle className="w-4 h-4 text-muted-foreground" />
                                         <span className="text-sm">
-                                            <strong>Consultation ID:</strong> #{selectedPayment.consultationId}
+                                            <strong>{t('admin.payments.consultation')} ID:</strong> #{selectedPayment.consultationId}
                                         </span>
                                     </div>
                                 )}
@@ -369,7 +371,7 @@ export default function AdminPaymentsContent() {
                                     <div className="flex items-center gap-2">
                                         <MessageCircle className="w-4 h-4 text-muted-foreground" />
                                         <span className="text-sm">
-                                            <strong>Consultation:</strong> {selectedPayment.consultation.mode} with {selectedPayment.consultation.astrologer?.name || 'Astrologer'}
+                                            <strong>{t('admin.payments.consultation')}:</strong> {selectedPayment.consultation.mode} with {selectedPayment.consultation.astrologer?.name || 'Astrologer'}
                                         </span>
                                     </div>
                                 )}
@@ -377,10 +379,10 @@ export default function AdminPaymentsContent() {
 
                             {selectedPayment.status === 'pending' && (
                                 <div className="space-y-3 pt-4 border-t">
-                                    <Label htmlFor="adminNotes">Admin Notes (Optional)</Label>
+                                    <Label htmlFor="adminNotes">{t('admin.payments.adminNotes')}</Label>
                                     <Textarea
                                         id="adminNotes"
-                                        placeholder="Add notes about this payment verification..."
+                                        placeholder={t('admin.payments.adminNotesPlaceholder')}
                                         value={adminNotes}
                                         onChange={(e) => setAdminNotes(e.target.value)}
                                         rows={3}
@@ -397,7 +399,7 @@ export default function AdminPaymentsContent() {
                                             ) : (
                                                 <CheckCircle className="w-4 h-4 mr-2" />
                                             )}
-                                            Approve Payment
+                                            {t('admin.payments.approve')}
                                         </Button>
                                         <Button
                                             onClick={() => handleStatusUpdate(selectedPayment.id, 'approve_enable_chat')}
@@ -409,7 +411,7 @@ export default function AdminPaymentsContent() {
                                             ) : (
                                                 <CheckCircle className="w-4 h-4 mr-2" />
                                             )}
-                                            Approve + Enable Chat
+                                            {t('admin.payments.approveEnableChat')}
                                         </Button>
                                         <Button
                                             onClick={() => handleStatusUpdate(selectedPayment.id, 'reject')}
@@ -422,7 +424,7 @@ export default function AdminPaymentsContent() {
                                             ) : (
                                                 <XCircle className="w-4 h-4 mr-2" />
                                             )}
-                                            Reject Payment
+                                            {t('admin.subscriptions.reject')}
                                         </Button>
                                     </div>
                                 </div>
@@ -430,7 +432,7 @@ export default function AdminPaymentsContent() {
 
                             {selectedPayment.adminNotes && (
                                 <div className="pt-4 border-t">
-                                    <Label className="text-sm font-medium">Admin Notes</Label>
+                                    <Label className="text-sm font-medium">{t('admin.payments.adminNotes')}</Label>
                                     <p className="text-sm text-muted-foreground mt-1">{selectedPayment.adminNotes}</p>
                                 </div>
                             )}

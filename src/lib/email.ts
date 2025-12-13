@@ -135,3 +135,70 @@ export async function sendWelcomeEmail(email: string, name: string) {
     return { success: false, error };
   }
 }
+
+export async function sendChatNotificationEmail(
+  astrologerEmail: string,
+  astrologerName: string,
+  userName: string,
+  chatLink: string
+) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: EMAIL_FROM,
+      to: [astrologerEmail],
+      subject: 'New Chat Session Request - VipraKarma',
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+              .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+              .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+              .footer { text-align: center; margin-top: 20px; color: #6b7280; font-size: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>💬 New Chat Request</h1>
+              </div>
+              <div class="content">
+                <p>Namaste ${astrologerName},</p>
+                <p>You have a new chat session request from <strong>${userName}</strong>.</p>
+                
+                <p>Please join the session immediately to assist the user.</p>
+                
+                <div style="text-align: center;">
+                  <a href="${chatLink}" class="button">Join Chat Session</a>
+                </div>
+                
+                <p style="margin-top: 20px;">Or copy this link:</p>
+                <p style="word-break: break-all; color: #10b981;">${chatLink}</p>
+                
+                <p>Thank you,<br><strong>VipraKarma Team</strong></p>
+              </div>
+              <div class="footer">
+                <p>&copy; 2024 VipraKarma. All rights reserved.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('[Email] Resend error:', error);
+      return { success: false, error };
+    }
+
+    console.log('[Email] Chat notification email sent successfully:', data);
+    return { success: true, data };
+  } catch (error) {
+    console.error('[Email] Failed to send chat notification email:', error);
+    return { success: false, error };
+  }
+}
