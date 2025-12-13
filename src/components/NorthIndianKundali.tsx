@@ -151,19 +151,25 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
         } => {
           if (count === 0) return { positions: [], fontSize: 16, degreeSize: 12 };
 
-          let offsetStep = 18;
-          let fontSize = 16;
-          let degreeSize = 12;
+          // Increased spacing to prevent overlap
+          let offsetStep = 22; // Increased from 18
+          let fontSize = 15;
+          let degreeSize = 11;
 
           if (count >= 3) {
-            offsetStep = 15;
-            fontSize = 14;
+            offsetStep = 19; // Increased from 15
+            fontSize = 13;
             degreeSize = 10;
           }
           if (count >= 5) {
-            offsetStep = 12;
-            fontSize = 12;
+            offsetStep = 16; // Increased from 12
+            fontSize = 11;
             degreeSize = 9;
+          }
+          if (count >= 7) {
+            offsetStep = 14; // New tier for very crowded houses
+            fontSize = 10;
+            degreeSize = 8;
           }
 
           const totalHeight = (count - 1) * offsetStep;
@@ -230,7 +236,7 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
                   {degree && (
                     <text
                       x={pPos.x}
-                      y={pPos.y - (fontSize * 0.7)}
+                      y={pPos.y - (fontSize * 0.85)} // Increased spacing
                       textAnchor="middle"
                       dominantBaseline="middle"
                       fontSize={degreeSize}
@@ -243,7 +249,7 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
                   {/* Planet name below degree */}
                   <text
                     x={pPos.x}
-                    y={pPos.y + (degree ? (fontSize * 0.3) : 0)}
+                    y={pPos.y + (degree ? (fontSize * 0.4) : 0)} // Increased spacing
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill={color}
