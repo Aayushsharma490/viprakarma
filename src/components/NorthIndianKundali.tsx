@@ -25,43 +25,42 @@ const RASHI_ABBR: Record<string, string> = {
   Libra: "Lib", Scorpio: "Sco", Sagittarius: "Sag", Capricorn: "Cap", Aquarius: "Aqu", Pisces: "Pis",
 };
 
-const WIDTH = 500;
-const HEIGHT = 340;
+const WIDTH = 600;
+const HEIGHT = 600;
 const PADDING = 20;
 const CENTER_X = WIDTH / 2;
 const CENTER_Y = HEIGHT / 2;
 
 // House positions for PLANET/CONTENT placement (center of the cell).
-// REFINED CENTROIDS to ensure text does not touch lines. Based on 500x340 SVG.
-// Adjusted centroids to be more "inward" for the outer triangles to avoid border clipping.
+// REFINED CENTROIDS for 600x600 Square Layout
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 80 },               // Top Center (Square/Diamond)
-  2: { x: 135, y: 55 },                    // Top Left (Triangle) - Moved inward
-  3: { x: 65, y: 100 },                    // Left Top (Triangle) - Moved inward
-  4: { x: 90, y: CENTER_Y },               // Left Center (Square/Diamond)
-  5: { x: 65, y: HEIGHT - 100 },           // Left Bottom (Triangle) - Moved inward
-  6: { x: 135, y: HEIGHT - 55 },           // Bottom Left (Triangle) - Moved inward
-  7: { x: CENTER_X, y: HEIGHT - 80 },      // Bottom Center (Square/Diamond)
-  8: { x: WIDTH - 135, y: HEIGHT - 55 },   // Bottom Right (Triangle) - Moved inward
-  9: { x: WIDTH - 65, y: HEIGHT - 100 },   // Right Bottom (Triangle) - Moved inward
-  10: { x: WIDTH - 90, y: CENTER_Y },      // Right Center (Square/Diamond)
-  11: { x: WIDTH - 65, y: 100 },           // Right Top (Triangle) - Moved inward
-  12: { x: WIDTH - 135, y: 55 },           // Top Right (Triangle) - Moved inward
+  1: { x: CENTER_X, y: 150 },              // Top Diamond
+  2: { x: 200, y: 60 },                    // Top Left Triangle
+  3: { x: 60, y: 200 },                    // Left Top Triangle
+  4: { x: 150, y: CENTER_Y },              // Left Diamond
+  5: { x: 60, y: HEIGHT - 200 },           // Left Bottom Triangle
+  6: { x: 200, y: HEIGHT - 60 },           // Bottom Left Triangle
+  7: { x: CENTER_X, y: HEIGHT - 150 },     // Bottom Diamond
+  8: { x: WIDTH - 200, y: HEIGHT - 60 },   // Bottom Right Triangle
+  9: { x: WIDTH - 60, y: HEIGHT - 200 },   // Right Bottom Triangle
+  10: { x: WIDTH - 150, y: CENTER_Y },     // Right Diamond
+  11: { x: WIDTH - 60, y: 200 },           // Right Top Triangle
+  12: { x: WIDTH - 200, y: 60 },           // Top Right Triangle
 };
 
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 155 },        // Bottom-Center of Diamond 1
-  2: { x: 220, y: 20 },              // Top-Right corner of Triangle 2
-  3: { x: 20, y: 150 },              // Bottom-Left corner of Triangle 3
-  4: { x: 150, y: CENTER_Y },        // Right-Center of Diamond 4
-  5: { x: 20, y: HEIGHT - 150 },     // Top-Left corner of Triangle 5
-  6: { x: 220, y: HEIGHT - 20 },     // Bottom-Right corner of Triangle 6
-  7: { x: CENTER_X, y: HEIGHT - 155 },// Top-Center of Diamond 7
-  8: { x: WIDTH - 220, y: HEIGHT - 20 }, // Bottom-Left corner of Triangle 8
-  9: { x: WIDTH - 20, y: HEIGHT - 150 }, // Top-Right corner of Triangle 9
-  10: { x: WIDTH - 150, y: CENTER_Y },   // Left-Center of Diamond 10
-  11: { x: WIDTH - 20, y: 150 },         // Bottom-Right corner of Triangle 11
-  12: { x: WIDTH - 220, y: 20 },         // Top-Left corner of Triangle 12
+  1: { x: CENTER_X, y: 240 },             // Bottom of H1
+  2: { x: 280, y: 30 },                   // Top Right of H2
+  3: { x: 30, y: 280 },                   // Bottom Left of H3
+  4: { x: 240, y: CENTER_Y },             // Right of H4
+  5: { x: 30, y: HEIGHT - 280 },          // Top Left of H5
+  6: { x: 280, y: HEIGHT - 30 },          // Bottom Right of H6
+  7: { x: CENTER_X, y: HEIGHT - 240 },    // Top of H7
+  8: { x: WIDTH - 280, y: HEIGHT - 30 },  // Bottom Left of H8
+  9: { x: WIDTH - 30, y: HEIGHT - 280 },  // Top Right of H9
+  10: { x: WIDTH - 240, y: CENTER_Y },    // Left of H10
+  11: { x: WIDTH - 30, y: 280 },          // Bottom Right of H11
+  12: { x: WIDTH - 280, y: 30 },          // Top Left of H12
 };
 
 const SIGN_INDEX: Record<string, number> = {
@@ -145,44 +144,41 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
         // Dynamic squishing logic for high planet counts
         const getPlanetStackPositions = (count: number): {
-          positions: Array<{ x: number; y: number; degreeY: number; planetY: number }>;
+          positions: Array<{ x: number; y: number }>;
           fontSize: number;
           degreeSize: number;
         } => {
-          if (count === 0) return { positions: [], fontSize: 16, degreeSize: 12 };
+          if (count === 0) return { positions: [], fontSize: 16, degreeSize: 10 };
 
-          // Increased spacing to prevent overlap
-          let offsetStep = 22; // Increased from 18
-          let fontSize = 15;
-          let degreeSize = 11;
+          // Default spacing
+          let itemHeight = 28; // Height for one planet block (degree + name)
+          let fontSize = 14;
+          let degreeSize = 10;
 
           if (count >= 3) {
-            offsetStep = 19; // Increased from 15
-            fontSize = 13;
-            degreeSize = 10;
-          }
-          if (count >= 5) {
-            offsetStep = 16; // Increased from 12
-            fontSize = 11;
+            itemHeight = 24;
+            fontSize = 12;
             degreeSize = 9;
           }
-          if (count >= 7) {
-            offsetStep = 14; // New tier for very crowded houses
+          if (count >= 5) {
+            itemHeight = 20;
             fontSize = 10;
             degreeSize = 8;
           }
+          if (count >= 7) {
+            itemHeight = 18;
+            fontSize = 9;
+            degreeSize = 7;
+          }
 
-          const totalHeight = (count - 1) * offsetStep;
-          // Center roughly around cy but slightly lower to account for Rashi number
-          const stackCenterY = cy + 5;
-          const startY = stackCenterY - (totalHeight / 2);
+          const totalHeight = (count * itemHeight);
+          // Center vertically around cy
+          const startY = cy - (totalHeight / 2) + (itemHeight / 2);
 
           return {
             positions: planetsInHouse.map((_, i) => ({
               x: cx,
-              y: startY + i * offsetStep,
-              degreeY: (startY + i * offsetStep) - (degreeSize / 2),
-              planetY: (startY + i * offsetStep) + (degreeSize / 2),
+              y: startY + i * itemHeight,
             })),
             fontSize,
             degreeSize
@@ -193,15 +189,16 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
         return (
           <g key={houseNumber}>
+            {/* Rashi Number - Moved slightly to avoid overlap if crowded */}
             <text
               x={cx}
-              y={cy - (numPlanets > 0 ? (numPlanets * 8 + 10) : 15)}
+              y={numPlanets > 0 ? cy - (numPlanets * 12 + 20) : cy}
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="#000000"
+              fill="#d90429" // Red color for Rashi Number
               fontSize={14}
-              fontWeight={500}
-              opacity={0.8}
+              fontWeight={600}
+              opacity={0.6}
             >
               {rashiIndex}
             </text>
@@ -213,16 +210,38 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
                 ? (HINDI_NAMES[rawName as keyof typeof HINDI_NAMES] || rawName)
                 : (HINDU_NAMES[rawName as keyof typeof HINDU_NAMES] || rawName);
               const retro = planet.isRetrograde ? "*" : "";
+              // Format degree: e.g., 23.45 -> 23°27' (approx) or just 23.5°
+              // Using simple fixed decimal for clarity: 23.5°
+              const degDisplay = planet.degree !== undefined
+                ? `${planet.degree.toFixed(1)}°`
+                : "";
+
               const color = PLANET_COLORS[rawName as keyof typeof PLANET_COLORS] || "#000000";
               const pPos = positions[i];
               if (!pPos) return null;
 
               return (
                 <g key={`${houseNumber}-${rawName}-${i}`}>
+                  {/* Degree - centered above name */}
+                  {degDisplay && (
+                    <text
+                      x={pPos.x}
+                      y={pPos.y - (fontSize * 0.85)} // Shifted up further
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#374151" // Dark Gray for Degree
+                      fontSize={degreeSize}
+                      fontWeight={500}
+                      opacity={0.9}
+                    >
+                      {degDisplay}
+                    </text>
+                  )}
+
                   {/* Planet name - centered */}
                   <text
                     x={pPos.x}
-                    y={pPos.y}
+                    y={pPos.y + (degreeSize * 0.4)} // Shifted down further
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill={color}

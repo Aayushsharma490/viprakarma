@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { indianCities } from "@/lib/locations";
 import NorthIndianKundali from "@/components/NorthIndianKundali";
 import ChandraKundaliChart from "@/components/ChandraKundaliChart";
@@ -104,6 +105,12 @@ interface AstroEngineResponse {
       startDate: string;
       endDate: string;
       years: number;
+      antardashas?: Array<{
+        planet: string;
+        startDate: string;
+        endDate: string;
+        years: number;
+      }>;
     }>;
   };
 }
@@ -198,10 +205,13 @@ export default function KundaliPage() {
   const [kundaliData, setKundaliData] = useState<AstroEngineResponse | null>(
     null
   );
+  const [gocharData, setGocharData] = useState<AstroEngineResponse | null>(null);
+  const [isLoadingGochar, setIsLoadingGochar] = useState(false);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const [selectedChart, setSelectedChart] = useState<
-    "d1" | "chandra" | "d9" | "d10"
+    "d1" | "chandra" | "d9" | "d10" | "gochar"
   >("d1");
+  const [expandedDasha, setExpandedDasha] = useState<string | null>(null);
 
   const handleLocationChange = (cityName: string) => {
     const city = indianCities.find((entry) => entry.city === cityName);
@@ -303,6 +313,55 @@ export default function KundaliPage() {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Fetch real-time Gochar (transit) data
+  const fetchGocharData = async () => {
+    if (!kundaliData) {
+      toast.error("Please generate your Kundali first");
+      return;
+    }
+
+    setIsLoadingGochar(true);
+    try {
+      const now = new Date();
+      const payload = {
+        name: "Current Transit",
+        gender: "male",
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        day: now.getDate(),
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+        timezone: formData.timezone.trim() || "+05:30",
+        city: formData.place.trim() || "Current Location",
+      };
+
+      const response = await fetch("/api/kundali/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch Gochar data");
+      }
+
+      setGocharData(data as AstroEngineResponse);
+      toast.success("Gochar data updated with current planetary positions!");
+    } catch (error) {
+      console.error("Gochar fetch error:", error);
+      toast.error("Unable to fetch current transit data");
+    } finally {
+      setIsLoadingGochar(false);
     }
   };
 
@@ -795,56 +854,83 @@ export default function KundaliPage() {
                   </Card>
 
                   <div className="space-y-4">
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      <Button
-                        variant={selectedChart === "d1" ? "default" : "outline"}
-                        className={
-                          selectedChart === "d1"
-                            ? "bg-amber-600 hover:bg-amber-700 text-white"
-                            : "border-amber-200 text-amber-800"
-                        }
-                        onClick={() => setSelectedChart("d1")}
-                      >
-                        {t("kundali.lagnaChart")}
-                      </Button>
-                      <Button
-                        variant={
-                          selectedChart === "chandra" ? "default" : "outline"
-                        }
-                        className={
-                          selectedChart === "chandra"
-                            ? "bg-blue-600 hover:bg-blue-700 text-white"
-                            : "border-blue-200 text-blue-800"
-                        }
-                        onClick={() => setSelectedChart("chandra")}
-                      >
-                        {t("kundali.chandraChart")}
-                      </Button>
-                      <Button
-                        variant={selectedChart === "d9" ? "default" : "outline"}
-                        className={
-                          selectedChart === "d9"
-                            ? "bg-purple-600 hover:bg-purple-700 text-white"
-                            : "border-purple-200 text-purple-800"
-                        }
-                        onClick={() => setSelectedChart("d9")}
-                      >
-                        {t("kundali.navamsaChart")}
-                      </Button>
-                      <Button
-                        variant={
-                          selectedChart === "d10" ? "default" : "outline"
-                        }
-                        className={
-                          selectedChart === "d10"
-                            ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                            : "border-indigo-200 text-indigo-800"
-                        }
-                        onClick={() => setSelectedChart("d10")}
-                      >
-                        {t("kundali.dashamsaChart")}
-                      </Button>
-                    </div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex flex-wrap gap-3 justify-center"
+                    >
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant={selectedChart === "d1" ? "default" : "outline"}
+                          className={
+                            selectedChart === "d1"
+                              ? "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg"
+                              : "border-2 border-amber-300 text-amber-800 hover:bg-amber-50"
+                          }
+                          onClick={() => setSelectedChart("d1")}
+                        >
+                          ✨ {t("kundali.lagnaChart")}
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant={
+                            selectedChart === "chandra" ? "default" : "outline"
+                          }
+                          className={
+                            selectedChart === "chandra"
+                              ? "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white shadow-lg"
+                              : "border-2 border-blue-300 text-blue-800 hover:bg-blue-50"
+                          }
+                          onClick={() => setSelectedChart("chandra")}
+                        >
+                          🌙 {t("kundali.chandraChart")}
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant={selectedChart === "d9" ? "default" : "outline"}
+                          className={
+                            selectedChart === "d9"
+                              ? "bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white shadow-lg"
+                              : "border-2 border-purple-300 text-purple-800 hover:bg-purple-50"
+                          }
+                          onClick={() => setSelectedChart("d9")}
+                        >
+                          💫 {t("kundali.navamsaChart")}
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant={
+                            selectedChart === "d10" ? "default" : "outline"
+                          }
+                          className={
+                            selectedChart === "d10"
+                              ? "bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white shadow-lg"
+                              : "border-2 border-indigo-300 text-indigo-800 hover:bg-indigo-50"
+                          }
+                          onClick={() => setSelectedChart("d10")}
+                        >
+                          ⭐ {t("kundali.dashamsaChart")}
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant={
+                            selectedChart === "gochar" ? "default" : "outline"
+                          }
+                          className={
+                            selectedChart === "gochar"
+                              ? "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg"
+                              : "border-2 border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+                          }
+                          onClick={() => setSelectedChart("gochar")}
+                        >
+                          🌍 {t("kundali.gocharChart") || "Gochar (Transit)"}
+                        </Button>
+                      </motion.div>
+                    </motion.div>
 
                     {selectedChart === "d1" && (
                       <Card className="p-4 shadow-sm border border-amber-100">
@@ -899,77 +985,261 @@ export default function KundaliPage() {
                         />
                       </Card>
                     )}
+
+                    {selectedChart === "gochar" && (
+                      <Card className="p-6 shadow-lg border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50">
+                        <div className="flex items-center justify-between mb-4">
+                          <motion.h3
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600"
+                          >
+                            🌍 {t("kundali.gocharTitle") || "Gochar Kundali (Current Transits)"}
+                          </motion.h3>
+                          <Button
+                            onClick={fetchGocharData}
+                            disabled={isLoadingGochar || !kundaliData}
+                            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
+                          >
+                            {isLoadingGochar ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                {language === "hi" ? "लोड हो रहा है..." : "Loading..."}
+                              </>
+                            ) : (
+                              <>
+                                <Star className="w-4 h-4 mr-2" />
+                                {language === "hi" ? "ताज़ा करें" : "Refresh Transit"}
+                              </>
+                            )}
+                          </Button>
+                        </div>
+
+                        {!gocharData ? (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white bg-opacity-60 rounded-xl p-8 text-center"
+                          >
+                            <Compass className="w-16 h-16 mx-auto mb-4 text-emerald-600" />
+                            <p className="text-lg font-semibold text-emerald-900 mb-2">
+                              {language === "hi" ? "गोचर चार्ट देखने के लिए क्लिक करें" : "Click to View Current Transit Chart"}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {language === "hi"
+                                ? "वर्तमान ग्रह स्थिति और उनके प्रभाव देखें"
+                                : "See current planetary positions and their effects"}
+                            </p>
+                          </motion.div>
+                        ) : (
+                          <>
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.1 }}
+                              className="bg-white bg-opacity-60 rounded-xl p-6 mb-4"
+                            >
+                              <div className="text-center space-y-2">
+                                <p className="text-lg font-semibold text-emerald-900">
+                                  {language === "hi" ? "वर्तमान ग्रह स्थिति" : "Current Planetary Positions"}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {new Date().toLocaleDateString(language === "hi" ? 'hi-IN' : 'en-IN', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </motion.div>
+
+                            {/* Gochar Chart */}
+                            <div className="bg-gradient-to-br from-white to-emerald-50 rounded-xl p-6 border-2 border-emerald-200 mb-4">
+                              <NorthIndianKundali
+                                key={`gochar-${gocharData.ayanamsa}`}
+                                planets={gocharData.planets.map((planet) => ({
+                                  planet: planet.name,
+                                  name: planet.name,
+                                  house: planet.house,
+                                  rashi: planet.sign,
+                                  sign: planet.sign,
+                                  degree: planet.degreeInSign,
+                                  isRetrograde: planet.isRetrograde,
+                                }))}
+                                houses={gocharData.houses.map((house) => ({
+                                  rashi: house.sign,
+                                  sign: house.sign
+                                }))}
+                              />
+                            </div>
+
+                            {/* Nakshatra Highlights */}
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.3 }}
+                              className="bg-gradient-to-r from-yellow-100 to-amber-100 border-2 border-yellow-300 rounded-xl p-5 mb-4"
+                            >
+                              <h4 className="font-bold text-amber-900 mb-3 flex items-center gap-2">
+                                <Star className="w-5 h-5" />
+                                {language === "hi" ? "नक्षत्र स्थिति" : "Nakshatra Positions"}
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {gocharData.planets?.slice(0, 9).map((planet, idx) => (
+                                  <motion.div
+                                    key={planet.name}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.4 + idx * 0.05 }}
+                                    className="bg-white bg-opacity-80 rounded-lg p-3 border border-amber-200"
+                                  >
+                                    <div className="flex justify-between items-center">
+                                      <span className="font-semibold text-amber-900">
+                                        {language === "hi" ? t(`planet.${planet.name}`) : planet.name}
+                                      </span>
+                                      <span className="text-sm text-amber-700 font-medium">
+                                        {planet.nakshatra.name} ({language === "hi" ? "पद" : "Pada"} {planet.nakshatra.pada})
+                                      </span>
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            </motion.div>
+
+                            {/* Information */}
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.5 }}
+                              className="bg-emerald-100 border-2 border-emerald-300 rounded-xl p-5"
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="text-3xl">ℹ️</div>
+                                <div>
+                                  <p className="font-bold text-emerald-900 mb-2">
+                                    {language === "hi" ? "गोचर के बारे में" : "About Gochar (Transits)"}
+                                  </p>
+                                  <p className="text-sm text-emerald-800">
+                                    {language === "hi"
+                                      ? "गोचर आकाश में ग्रहों की वर्तमान स्थिति दिखाता है और वे आपके जन्म कुंडली के विभिन्न घरों से कैसे गुजरते हैं। ये गोचर आपके जीवन के विभिन्न पहलुओं को प्रभावित करते हैं और अनुकूल या चुनौतीपूर्ण अवधि का संकेत दे सकते हैं।"
+                                      : "Gochar shows the current positions of planets in the sky and how they transit through different houses of your birth chart. These transits influence various aspects of your life and can indicate favorable or challenging periods."}
+                                  </p>
+                                  <p className="text-xs text-emerald-700 mt-2 italic">
+                                    {language === "hi"
+                                      ? "नोट: सटीक गोचर भविष्यवाणियों के लिए, हमारे विशेषज्ञ ज्योतिषियों से परामर्श करें जो आपके जन्म कुंडली और वर्तमान गोचर के संयुक्त प्रभावों का विश्लेषण कर सकते हैं।"
+                                      : "Note: For accurate transit predictions, consult with our expert astrologers who can analyze the combined effects of your birth chart and current transits."}
+                                  </p>
+                                </div>
+                              </div>
+                            </motion.div>
+                          </>
+                        )}
+                      </Card>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <Card className="p-6 shadow-sm border border-gray-100 overflow-x-auto">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        {t("kundali.planetaryPositions")}
-                      </h3>
+                    <Card className="p-6 shadow-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 overflow-x-auto">
+                      <motion.h3
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600 mb-4"
+                      >
+                        🪐 {t("kundali.planetaryPositions")}
+                      </motion.h3>
                       <table className="min-w-full text-sm text-left">
                         <thead>
-                          <tr className="text-gray-600 uppercase tracking-widest text-xs">
-                            <th className="pb-2">{t("kundali.planet")}</th>
-                            <th className="pb-2">{t("kundali.sign")}</th>
-                            <th className="pb-2">{t("kundali.house")}</th>
-                            <th className="pb-2">{t("kundali.degree")}</th>
-                            <th className="pb-2">{t("kundali.nakshatra")}</th>
-                            <th className="pb-2">{t("kundali.status")}</th>
+                          <tr className="text-gray-600 uppercase tracking-widest text-xs bg-white bg-opacity-50">
+                            <th className="pb-3 pt-2 px-2">{t("kundali.planet")}</th>
+                            <th className="pb-3 pt-2 px-2">{t("kundali.sign")}</th>
+                            <th className="pb-3 pt-2 px-2">{t("kundali.house")}</th>
+                            <th className="pb-3 pt-2 px-2">{t("kundali.degree")}</th>
+                            <th className="pb-3 pt-2 px-2">{t("kundali.nakshatra")}</th>
+                            <th className="pb-3 pt-2 px-2">{t("kundali.status")}</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {kundaliData.planets.map((planet) => (
-                            <tr
+                          {kundaliData.planets.map((planet, index) => (
+                            <motion.tr
                               key={planet.name}
-                              className="border-t border-dashed border-gray-100 text-gray-800"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                              whileHover={{ backgroundColor: "rgba(255,255,255,0.8)", scale: 1.01 }}
+                              className="border-t-2 border-dashed border-indigo-100 text-gray-800 transition-all"
                             >
-                              <td className="py-2 font-semibold">
+                              <td className="py-3 px-2 font-bold text-indigo-900">
                                 {t(`planet.${planet.name}`) || planet.name}
                               </td>
-                              <td className="py-2">
+                              <td className="py-3 px-2 font-semibold text-blue-800">
                                 {t(`sign.${planet.sign}`) || planet.sign}
                               </td>
-                              <td className="py-2">{planet.house}</td>
-                              <td className="py-2">
+                              <td className="py-3 px-2">
+                                <span className="bg-indigo-100 px-2 py-1 rounded-full text-indigo-900 font-semibold">
+                                  {planet.house}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2 font-mono text-purple-700 font-semibold">
                                 {planet.degreeInSign.toFixed(2)}°
                               </td>
-                              <td className="py-2">
-                                {planet.nakshatra.name} ({t("kundali.pada")}{" "}
-                                {planet.nakshatra.pada})
+                              <td className="py-3 px-2 text-gray-700">
+                                {planet.nakshatra.name} ({t("kundali.pada")} {planet.nakshatra.pada})
                               </td>
-                              <td className="py-2 text-sm">
-                                {planet.isRetrograde
-                                  ? t("kundali.retrograde")
-                                  : t("kundali.direct")}{" "}
-                                ·{" "}
-                                {planet.benefic
-                                  ? t("kundali.benefic")
-                                  : t("kundali.malefic")}
+                              <td className="py-3 px-2 text-xs">
+                                <div className="flex flex-col gap-1">
+                                  <span className={`px-2 py-0.5 rounded-full font-semibold ${planet.isRetrograde
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-green-100 text-green-700'
+                                    }`}>
+                                    {planet.isRetrograde
+                                      ? t("kundali.retrograde")
+                                      : t("kundali.direct")}
+                                  </span>
+                                  <span className={`px-2 py-0.5 rounded-full font-semibold ${planet.benefic
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : 'bg-orange-100 text-orange-700'
+                                    }`}>
+                                    {planet.benefic
+                                      ? t("kundali.benefic")
+                                      : t("kundali.malefic")}
+                                  </span>
+                                </div>
                               </td>
-                            </tr>
+                            </motion.tr>
                           ))}
                         </tbody>
                       </table>
                     </Card>
 
                     <div className="space-y-6">
-                      <Card className="p-5 shadow-sm border border-gray-100">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                          {t("kundali.houseCusps")}
-                        </h3>
+                      <Card className="p-6 shadow-lg border-2 border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50">
+                        <motion.h3
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600 mb-4"
+                        >
+                          🏠 {t("kundali.houseCusps")}
+                        </motion.h3>
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                          {kundaliData.houses.map((house) => (
-                            <div
+                          {kundaliData.houses.map((house, index) => (
+                            <motion.div
                               key={house.house}
-                              className="flex items-center justify-between border border-gray-100 rounded-lg px-3 py-2"
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: index * 0.03 }}
+                              whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.9)" }}
+                              className="flex items-center justify-between border-2 border-teal-200 bg-white bg-opacity-60 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all"
                             >
-                              <span className="text-gray-600">
+                              <span className="font-bold text-teal-900">
                                 {t("kundali.houseLabel")} {house.house}
                               </span>
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-semibold text-cyan-800">
                                 {t(`sign.${house.sign}`) || house.sign} — {formatDegree(house.cusp)}
                               </span>
-                            </div>
+                            </motion.div>
                           ))}
                         </div>
                       </Card>
@@ -985,8 +1255,7 @@ export default function KundaliPage() {
                             </span>
                             <span className="font-semibold text-gray-900">
                               {kundaliData.nakshatras.sun
-                                ? `${kundaliData.nakshatras.sun.name} ({t("kundali.pada")} ${kundaliData.nakshatras.sun.pada
-                                })`
+                                ? `${kundaliData.nakshatras.sun.name} (${t("kundali.pada")} ${kundaliData.nakshatras.sun.pada})`
                                 : "—"}
                             </span>
                           </div>
@@ -996,8 +1265,7 @@ export default function KundaliPage() {
                             </span>
                             <span className="font-semibold text-gray-900">
                               {kundaliData.nakshatras.moon
-                                ? `${kundaliData.nakshatras.moon.name} ({t("kundali.pada")} ${kundaliData.nakshatras.moon.pada
-                                })`
+                                ? `${kundaliData.nakshatras.moon.name} (${t("kundali.pada")} ${kundaliData.nakshatras.moon.pada})`
                                 : "—"}
                             </span>
                           </div>
@@ -1006,9 +1274,7 @@ export default function KundaliPage() {
                               {t("kundali.ascendant")}
                             </span>
                             <span className="font-semibold text-gray-900">
-                              {kundaliData.nakshatras.ascendant.name} (
-                              {t("kundali.pada")}{" "}
-                              {kundaliData.nakshatras.ascendant.pada})
+                              {kundaliData.nakshatras.ascendant.name} ({t("kundali.pada")} {kundaliData.nakshatras.ascendant.pada})
                             </span>
                           </div>
                         </div>
@@ -1016,40 +1282,148 @@ export default function KundaliPage() {
                     </div>
                   </div>
 
-                  <Card className="p-6 shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      {t("kundali.dashaTimeline")}
-                    </h3>
-                    <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
-                      <p className="text-sm font-semibold text-emerald-800">
-                        {t("kundali.currentMahadasha")} —{" "}
-                        {kundaliData.dashas.current.planet}
-                      </p>
-                      <p className="text-xs text-emerald-700">
-                        {kundaliData.dashas.current.startDate} {t("kundali.to")}{" "}
-                        {kundaliData.dashas.current.endDate} (
-                        {kundaliData.dashas.current.years.toFixed(2)}{" "}
-                        {t("kundali.years")})
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {kundaliData.dashas.mahadashas.map((dasha) => (
-                        <div
-                          key={`${dasha.planet}-${dasha.startDate}`}
-                          className="border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                  <Card className="p-6 shadow-lg border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+                    <motion.h3
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-6 text-center"
+                    >
+                      ✨ {t("kundali.dashaTimeline")} ✨
+                    </motion.h3>
+
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="mb-6 rounded-xl border-2 border-emerald-300 bg-gradient-to-r from-emerald-100 to-teal-100 px-6 py-4 shadow-lg"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                          className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold shadow-md"
                         >
-                          <p className="font-semibold text-gray-900">
-                            {dasha.planet}
+                          ✦
+                        </motion.div>
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-emerald-700 font-semibold">
+                            {t("kundali.currentMahadasha")}
                           </p>
-                          <p className="text-gray-600">
-                            {dasha.startDate} → {dasha.endDate}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {t("kundali.duration")}: {dasha.years.toFixed(2)}{" "}
-                            {t("kundali.years")}
+                          <p className="text-xl font-bold text-emerald-900">
+                            {kundaliData.dashas.current.planet}
                           </p>
                         </div>
-                      ))}
+                      </div>
+                      <p className="text-sm text-emerald-800 font-medium flex items-center gap-2">
+                        📅 {kundaliData.dashas.current.startDate} {t("kundali.to")} {kundaliData.dashas.current.endDate}
+                        <span className="text-xs bg-emerald-200 px-2 py-1 rounded-full">
+                          {kundaliData.dashas.current.years.toFixed(2)} {t("kundali.years")}
+                        </span>
+                      </p>
+                    </motion.div>
+
+                    <div className="space-y-3">
+                      {kundaliData.dashas.mahadashas.map((dasha, index) => {
+                        const planetColors: Record<string, { bg: string; border: string; text: string; gradient: string }> = {
+                          'Sun': { bg: 'bg-orange-100', border: 'border-orange-400', text: 'text-orange-900', gradient: 'from-orange-400 to-red-500' },
+                          'Moon': { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-900', gradient: 'from-blue-400 to-cyan-500' },
+                          'Mars': { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-900', gradient: 'from-red-500 to-pink-600' },
+                          'Mercury': { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-900', gradient: 'from-green-400 to-emerald-500' },
+                          'Jupiter': { bg: 'bg-yellow-100', border: 'border-yellow-400', text: 'text-yellow-900', gradient: 'from-yellow-400 to-amber-500' },
+                          'Venus': { bg: 'bg-pink-100', border: 'border-pink-400', text: 'text-pink-900', gradient: 'from-pink-400 to-rose-500' },
+                          'Saturn': { bg: 'bg-indigo-100', border: 'border-indigo-400', text: 'text-indigo-900', gradient: 'from-indigo-500 to-purple-600' },
+                          'Rahu': { bg: 'bg-purple-100', border: 'border-purple-400', text: 'text-purple-900', gradient: 'from-purple-500 to-violet-600' },
+                          'Ketu': { bg: 'bg-gray-100', border: 'border-gray-400', text: 'text-gray-900', gradient: 'from-gray-500 to-slate-600' },
+                        };
+                        const colors = planetColors[dasha.planet] || { bg: 'bg-gray-100', border: 'border-gray-400', text: 'text-gray-900', gradient: 'from-gray-400 to-gray-600' };
+                        const isCurrent = dasha.planet === kundaliData.dashas.current.planet;
+
+                        // Auto-expand if current - logic here using separate variable or relying on state
+                        // To fix "gove that not showing", I'll force it to be expanded if it's the current one AND expandedDasha is null (initial state handling)
+                        // But I can't easily change state during render.
+                        // I will use a different Condition: checked expandedDasha OR isCurrent (to force expand current) based on user request.
+                        // However, collapsing it might become impossible if I always force true.
+                        // Better: Initialize state correctly.
+
+                        // For now, I will leave the state logic but ensure the toggle works.
+                        const isExpanded = expandedDasha === `${dasha.planet}-${dasha.startDate}` || (expandedDasha === null && isCurrent);
+
+                        return (
+                          <motion.div
+                            key={`${dasha.planet}-${dasha.startDate}`}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(0,0,0,0.15)" }}
+                            className={`border-2 ${colors.border} ${colors.bg} rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${isCurrent ? 'ring-4 ring-emerald-400 ring-opacity-50' : ''}`}
+                            onClick={() => setExpandedDasha(isExpanded ? "collapsed" : `${dasha.planet}-${dasha.startDate}`)}
+                          >
+                            <div className="px-5 py-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <motion.div
+                                    animate={isCurrent ? { scale: [1, 1.1, 1] } : {}}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                    className={`w-12 h-12 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center text-white font-bold text-lg shadow-lg`}
+                                  >
+                                    {dasha.planet.charAt(0)}
+                                  </motion.div>
+                                  <div>
+                                    <p className={`text-lg font-bold ${colors.text} flex items-center gap-2`}>
+                                      {dasha.planet}
+                                      {isCurrent && <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">ACTIVE</span>}
+                                    </p>
+                                    <p className="text-sm text-gray-700 font-medium">
+                                      {dasha.startDate} → {dasha.endDate}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className={`text-xs font-semibold ${colors.text} bg-white px-3 py-1 rounded-full shadow-sm`}>
+                                    {dasha.years.toFixed(2)} {t("kundali.years")}
+                                  </p>
+                                  <motion.div
+                                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="mt-2 text-2xl"
+                                  >
+                                    {isExpanded ? '▲' : '▼'}
+                                  </motion.div>
+                                </div>
+                              </div>
+
+                              {isExpanded && dasha.antardashas && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="mt-4 pt-4 border-t-2 border-dashed border-gray-300"
+                                >
+                                  <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                    <span className="text-lg">🔮</span> Antardasha Periods:
+                                  </p>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    {dasha.antardashas.map((antardasha: any, idx: number) => (
+                                      <motion.div
+                                        key={idx}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className="bg-white bg-opacity-70 rounded-lg px-3 py-2 text-xs border border-gray-200 hover:shadow-md transition-shadow"
+                                      >
+                                        <p className="font-semibold text-gray-800">{antardasha.planet}</p>
+                                        <p className="text-gray-600">{antardasha.startDate} → {antardasha.endDate}</p>
+                                        <p className="text-gray-500">{antardasha.years.toFixed(2)} yrs</p>
+                                      </motion.div>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   </Card>
                 </div>

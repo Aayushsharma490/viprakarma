@@ -119,14 +119,14 @@ export async function generateKundali(birthDetails: BirthDetails): Promise<Kunda
   }
 
   if (!birthDetails.day || !birthDetails.month || !birthDetails.year ||
-      birthDetails.day < 1 || birthDetails.day > 31 ||
-      birthDetails.month < 1 || birthDetails.month > 12 ||
-      birthDetails.year < 1900 || birthDetails.year > new Date().getFullYear()) {
+    birthDetails.day < 1 || birthDetails.day > 31 ||
+    birthDetails.month < 1 || birthDetails.month > 12 ||
+    birthDetails.year < 1900 || birthDetails.year > new Date().getFullYear()) {
     throw new Error('Invalid birth date provided');
   }
 
   if (birthDetails.hour < 0 || birthDetails.hour > 23 ||
-      birthDetails.minute < 0 || birthDetails.minute > 59) {
+    birthDetails.minute < 0 || birthDetails.minute > 59) {
     throw new Error('Invalid birth time provided');
   }
 
@@ -342,7 +342,7 @@ export async function generateKundali(birthDetails: BirthDetails): Promise<Kunda
     if (strengthPercent > 75) status = 'Very Strong';
     else if (strengthPercent > 60) status = 'Strong';
     else if (strengthPercent > 40) status = 'Average';
-    
+
     return {
       planet: planet.name,
       shadbala: Math.round(shadbala),
@@ -353,7 +353,7 @@ export async function generateKundali(birthDetails: BirthDetails): Promise<Kunda
 
   // Enhanced numerology-based prediction system with user-specific seeding
   const userSeed = birthDetails.name.toLowerCase().split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) +
-                  birthDetails.day + birthDetails.month + birthDetails.year + birthDetails.hour + birthDetails.minute;
+    birthDetails.day + birthDetails.month + birthDetails.year + birthDetails.hour + birthDetails.minute;
 
   const seedFromNumerology = (numerology.destiny + numerology.soulUrge + numerology.personality + numerology.lifePath + numerology.driverNumber + numerology.conductorNumber + userSeed) % 1000;
 
@@ -466,7 +466,7 @@ export async function generateKundali(birthDetails: BirthDetails): Promise<Kunda
   // Doshas
   const marsHouses = [1, 4, 7, 8, 12];
   const mangalDosha = marsHouses.includes(planets.find(p => p.name === 'Mars')?.house || 0);
-  
+
   return {
     sunSign,
     moonSign,
@@ -506,6 +506,11 @@ export interface NumerologyData {
   personality: number;
   driverNumber: number;
   conductorNumber: number;
+  mobileSuggestions?: {
+    lucky: number[];
+    avoid: number[];
+    description: string;
+  };
   insights: {
     lifePathMeaning: string;
     destinyMeaning: string;
@@ -528,7 +533,7 @@ export function calculateNumerology(name: string, dateOfBirth: string): Numerolo
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  
+
   const lifePath = reduceToSingleDigit(
     reduceToSingleDigit(day) + reduceToSingleDigit(month) + reduceToSingleDigit(year)
   );
@@ -624,6 +629,36 @@ export function calculateNumerology(name: string, dateOfBirth: string): Numerolo
     33: "You appear as a master teacher, healer, and someone with profound wisdom."
   };
 
+  // Calculate lucky mobile numbers based on Driver and Conductor
+  const getLuckyMobileNumbers = (driver: number, conductor: number): {
+    lucky: number[];
+    avoid: number[];
+    description: string;
+  } => {
+    // Basic Vedic Numerology compatibility table
+    const compatibility: Record<number, { lucky: number[]; avoid: number[]; desc: string }> = {
+      1: { lucky: [1, 2, 3, 9], avoid: [8], desc: "Sun rules 1. Numbers adding to 1, 2, 3, or 9 are powerful for you. 4 and 8 may bring struggles." },
+      2: { lucky: [1, 2, 5], avoid: [4, 8, 9], desc: "Moon rules 2. 1, 2, 5 are harmonious. Avoid 8 (Saturn) and 9 (Mars) for peace of mind." },
+      3: { lucky: [1, 2, 3, 9], avoid: [6], desc: "Jupiter rules 3. 1, 2, 3, 9 support growth. 6 (Venus) can be conflicting." },
+      4: { lucky: [1, 5, 6, 7], avoid: [2, 4, 8], desc: "Rahu rules 4. 1, 5, 6, 7 are good. Avoid 2, 4, 8 to reduce sudden ups and downs." },
+      5: { lucky: [1, 5, 6], avoid: [], desc: "Mercury rules 5. Friendly with almost everyone (1, 5, 6). Adaptable and lucky." },
+      6: { lucky: [1, 5, 6, 7], avoid: [3], desc: "Venus rules 6. 1, 5, 6, 7 bring luxury and comfort. 3 (Jupiter) is neutral/opposing." },
+      7: { lucky: [1, 4, 6], avoid: [2], desc: "Ketu rules 7. Spiritual number. 1, 4, 6 suit you well. Avoid purely material vibrations." },
+      8: { lucky: [1, 3, 5, 6], avoid: [4, 8], desc: "Saturn rules 8. 1, 3, 5, 6 bring stability. Avoid 4 and 8 to reduce delays/struggles." },
+      9: { lucky: [1, 3, 5], avoid: [2], desc: "Mars rules 9. 1, 3, 5 channel energy well. 2 can be too emotional." },
+    };
+
+    // Use Driver as primary, Conductor as secondary modifier
+    const primary = compatibility[driver] || { lucky: [1, 5], avoid: [], desc: "General lucky numbers are 1 and 5." };
+    return {
+      lucky: primary.lucky,
+      avoid: primary.avoid,
+      description: primary.desc
+    };
+  };
+
+  const mobileSuggestions = getLuckyMobileNumbers(driverNumber, conductorNumber);
+
   return {
     lifePath,
     destiny,
@@ -631,6 +666,7 @@ export function calculateNumerology(name: string, dateOfBirth: string): Numerolo
     personality,
     driverNumber,
     conductorNumber,
+    mobileSuggestions,
     insights: {
       lifePathMeaning: lifePathMeanings[lifePath] || "Your unique path is filled with growth and discovery.",
       destinyMeaning: destinyMeanings[destiny] || "Your destiny unfolds through your choices and actions.",

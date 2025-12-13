@@ -39,6 +39,7 @@ export default function PaymentModal({
 }: PaymentModalProps) {
   const [loading, setLoading] = useState(false);
   const [qrCode, setQrCode] = useState<string>('');
+  const [upiUrl, setUpiUrl] = useState<string>('');
   const [verifying, setVerifying] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({
@@ -61,6 +62,7 @@ export default function PaymentModal({
 
       const data = await response.json();
       setQrCode(data.qrCode);
+      setUpiUrl(data.upiString);
       setLoading(false);
     } catch (error) {
       toast.error('Failed to generate QR code');
@@ -304,6 +306,24 @@ export default function PaymentModal({
                     height={200}
                     style={{ width: 'auto', height: 'auto' }}
                   />
+                </div>
+
+                <div className="flex flex-col gap-3 w-full max-w-xs">
+                  {upiUrl && (
+                    <>
+                      <Button
+                        onClick={() => window.location.href = upiUrl}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Open with Google Pay / PhonePe
+                      </Button>
+                      <p className="text-xs text-center text-gray-500">
+                        Tap above to open your installed UPI app automatically, or scan QR.
+                        <br />
+                        <b>Note:</b> You can also upload the QR screenshot in your UPI app.
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 <p className="text-sm text-gray-600 text-center font-medium">

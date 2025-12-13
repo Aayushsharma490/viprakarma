@@ -167,6 +167,10 @@ const translations = {
     "admin.whatsapp.clickReconnect": "Click Reconnect to start",
     "admin.whatsapp.scanInstructions": "Open WhatsApp → Settings → Linked Devices → Link a Device",
     "admin.whatsapp.senderName": "Sender Name",
+    "admin.whatsapp.selectRecipients": "Select Recipients",
+    "admin.whatsapp.allUsers": "All Users",
+    "admin.whatsapp.regularUsersOnly": "Regular Users Only",
+    "admin.whatsapp.astrologersOnly": "Astrologers Only",
 
     // Admin User Management
     "admin.users.ban": "Ban User",
@@ -223,7 +227,6 @@ const translations = {
     "admin.payments.detailsTitle": "Payment Verification Details",
     "admin.payments.detailsSubtitle": "Review payment details submitted by the user",
 
-    "admin.whatsapp.senderNamePlaceholder": "e.g., VipraKarma Support",
     "admin.whatsapp.senderNamePlaceholder": "e.g., VipraKarma Support",
     "admin.whatsapp.senderPhone": "Sender Phone (WhatsApp)",
     "admin.whatsapp.senderPhonePlaceholder": "e.g., +91 9876543210",
@@ -481,6 +484,8 @@ const translations = {
     "kundali.chandraChart": "Chandra",
     "kundali.navamsaChart": "Navamsa (D9)",
     "kundali.dashamsaChart": "Dashamsa (D10)",
+    "kundali.gocharChart": "Gochar (Transit)",
+    "kundali.gocharTitle": "Gochar Kundali (Current Transits)",
     "kundali.lagnaKundaliTitle": "Lagna Kundali (D1)",
     "kundali.chandraKundaliTitle": "Chandra Kundali",
     "kundali.navamsaTitle": "Navamsa (D9)",
@@ -555,6 +560,10 @@ const translations = {
     "numerology.dateOfBirth": "Date of Birth",
     "numerology.calculateNumbers": "Calculate Numbers",
     "numerology.calculating": "Calculating...",
+    "numerology.mobileTitle": "Lucky Mobile Number Suggestions",
+    "numerology.mobileSubtitle": "Choose a number that resonates with your vibrations",
+    "numerology.luckyDigits": "Your Lucky Digits",
+    "numerology.suggestion": "Suggested Totals",
 
     // Palmistry Page
     "palmistry.title": "Palmistry Analysis",
@@ -854,6 +863,11 @@ const translations = {
     "subscription.feature.remedialSolutions": "Remedial Solutions",
     "subscription.feature.familyCompatibility": "Family Compatibility",
     "subscription.feature.allPremium": "All Premium Features",
+
+    // Missing Keys - Mahurat
+    "mahurat.phoneUsageNote": "📱 Enter 10-digit mobile number. Results will be sent via WhatsApp in Hindi & English.",
+    "mahurat.at": "at",
+    "mahurat.timeRange": "to",
   },
   hi: {
     // Navigation
@@ -1025,6 +1039,10 @@ const translations = {
     "admin.whatsapp.clickReconnect": "शुरू करने के लिए पुनः कनेक्ट पर क्लिक करें",
     "admin.whatsapp.scanInstructions": "व्हाट्सएप खोलें → सेटिंग्स → लिंक किए गए डिवाइस → एक डिवाइस लिंक करें",
     "admin.whatsapp.senderName": "भेजने वाले का नाम",
+    "admin.whatsapp.selectRecipients": "प्राप्तकर्ताओं का चयन करें",
+    "admin.whatsapp.allUsers": "सभी उपयोगकर्ता",
+    "admin.whatsapp.regularUsersOnly": "केवल सामान्य उपयोगकर्ता",
+    "admin.whatsapp.astrologersOnly": "केवल ज्योतिषी",
 
     // Admin User Management
     "admin.users.ban": "उपयोगकर्ता को प्रतिबंधित करें",
@@ -1081,7 +1099,6 @@ const translations = {
     "admin.payments.detailsTitle": "भुगतान सत्यापन विवरण",
     "admin.payments.detailsSubtitle": "उपयोगकर्ता द्वारा जमा किए गए भुगतान विवरण की समीक्षा करें",
 
-    "admin.whatsapp.senderNamePlaceholder": "जैसे, विप्रकर्म सपोर्ट",
     "admin.whatsapp.senderNamePlaceholder": "जैसे, विप्रकर्म सपोर्ट",
     "admin.whatsapp.senderPhone": "भेजने वाले का फोन (व्हाट्सएप)",
     "admin.whatsapp.senderPhonePlaceholder": "जैसे, +91 9876543210",
@@ -1300,6 +1317,8 @@ const translations = {
     "kundali.chandraChart": "चंद्र",
     "kundali.navamsaChart": "नवमांश (D9)",
     "kundali.dashamsaChart": "दशमांश (D10)",
+    "kundali.gocharChart": "गोचर (पारगमन)",
+    "kundali.gocharTitle": "गोचर कुंडली (वर्तमान पारगमन)",
     "kundali.lagnaKundaliTitle": "लग्न कुंडली (D1)",
     "kundali.chandraKundaliTitle": "चंद्र कुंडली",
     "kundali.navamsaTitle": "नवमांश (D9)",
@@ -1432,6 +1451,11 @@ const translations = {
     "kundali.marriageLabel": "विवाह और संबंध",
     "kundali.educationLabel": "शिक्षा",
     "kundali.noteLabel": "नोट:",
+
+    "numerology.mobileTitle": "लकी मोबाइल नंबर सुझाव",
+    "numerology.mobileSubtitle": "एक ऐसा नंबर चुनें जो आपके कंपन के साथ गूंजता हो",
+    "numerology.luckyDigits": "आपके लकी अंक",
+    "numerology.suggestion": "सुझाए गए योग",
 
     // Zodiac Signs
     "sign.Aries": "मेष",
@@ -1823,6 +1847,15 @@ const translations = {
     "subscription.feature.remedialSolutions": "उपचारात्मक समाधान",
     "subscription.feature.familyCompatibility": "पारिवारिक अनुकूलता",
     "subscription.feature.allPremium": "सभी प्रीमियम फीचर्स",
+
+    // Missing Keys - Numerology & Mahurat Hindi
+    "numerology.luckyDigits": "आपके शुभ अंक",
+    "numerology.suggestion": "सुझाए गए योग",
+    "numerology.mobileTitle": "शुभ मोबाइल नंबर सुझाव",
+    "numerology.mobileSubtitle": "अपने कंपन के अनुसार नंबर चुनें",
+    "mahurat.phoneUsageNote": "📱 10-अंकीय मोबाइल नंबर दर्ज करें। परिणाम व्हाट्सएप पर भेजे जाएंगे।",
+    "mahurat.at": "को",
+    "mahurat.timeRange": "से",
   },
 };
 

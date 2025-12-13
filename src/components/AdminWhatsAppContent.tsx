@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +22,8 @@ export default function AdminWhatsAppContent() {
         senderName: '',
         senderPhone: '',
         message: '',
-        messageLanguage: 'en' as 'en' | 'hi'
+        messageLanguage: 'en' as 'en' | 'hi',
+        recipients: 'all' as 'all' | 'users' | 'astrologers'
     });
     const [stats, setStats] = useState<{ success: number; failed: number } | null>(null);
 
@@ -148,7 +150,8 @@ export default function AdminWhatsAppContent() {
                     senderName: formData.senderName,
                     senderPhone: formData.senderPhone,
                     message: formData.message,
-                    messageLanguage: formData.messageLanguage
+                    messageLanguage: formData.messageLanguage,
+                    recipients: formData.recipients
                 })
             });
 
@@ -219,7 +222,12 @@ export default function AdminWhatsAppContent() {
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6 space-y-6"
+        >
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                     <MessageSquare className="w-8 h-8 text-green-600" />
@@ -272,6 +280,44 @@ export default function AdminWhatsAppContent() {
             {/* Bulk Messaging Form */}
             <Card className="p-6">
                 <div className="space-y-6">
+                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 mb-6">
+                        <Label className="text-amber-900 font-semibold mb-3 block">{t('admin.whatsapp.selectRecipients') || "Select Recipients"}</Label>
+                        <div className="flex gap-6">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="recipients"
+                                    value="all"
+                                    checked={formData.recipients === 'all'}
+                                    onChange={(e) => setFormData({ ...formData, recipients: e.target.value as any })}
+                                    className="w-4 h-4 text-amber-600 focus:ring-amber-500"
+                                />
+                                <span className="text-gray-700">{t('admin.whatsapp.allUsers') || "All Users"}</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="recipients"
+                                    value="users"
+                                    checked={formData.recipients === 'users'}
+                                    onChange={(e) => setFormData({ ...formData, recipients: e.target.value as any })}
+                                    className="w-4 h-4 text-amber-600 focus:ring-amber-500"
+                                />
+                                <span className="text-gray-700">{t('admin.whatsapp.regularUsersOnly') || "Regular Users Only"}</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="recipients"
+                                    value="astrologers"
+                                    checked={formData.recipients === 'astrologers'}
+                                    onChange={(e) => setFormData({ ...formData, recipients: e.target.value as any })}
+                                    className="w-4 h-4 text-amber-600 focus:ring-amber-500"
+                                />
+                                <span className="text-gray-700">{t('admin.whatsapp.astrologersOnly') || "Astrologers Only"}</span>
+                            </label>
+                        </div>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <Label htmlFor="senderName">{t('admin.whatsapp.senderName')} *</Label>
@@ -402,6 +448,6 @@ export default function AdminWhatsAppContent() {
                     <li>QR scan needed only once - stays connected</li>
                 </ul>
             </Card>
-        </div>
+        </motion.div>
     );
 }

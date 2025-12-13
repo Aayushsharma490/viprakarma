@@ -139,11 +139,14 @@ export async function calculateMahurat(
     // Generate mahurats for each day in the range
     while (currentDate <= endDate) {
         // Check multiple times per day (morning, afternoon, evening)
+        // Check multiple time slots for ranges
         const timesToCheck = [
-            { hour: 6, minute: 0 },   // Morning
-            { hour: 10, minute: 30 }, // Late morning
-            { hour: 14, minute: 0 },  // Afternoon
-            { hour: 17, minute: 30 }, // Evening
+            { hour: 6, minute: 0, label: "06:00 AM to 08:00 AM" },
+            { hour: 8, minute: 30, label: "08:30 AM to 10:30 AM" },
+            { hour: 11, minute: 0, label: "11:00 AM to 01:00 PM" },
+            { hour: 14, minute: 0, label: "02:00 PM to 04:00 PM" },
+            { hour: 17, minute: 0, label: "05:00 PM to 07:00 PM" },
+            { hour: 19, minute: 30, label: "07:30 PM to 09:30 PM" }
         ];
 
         for (const timeSlot of timesToCheck) {
@@ -174,7 +177,7 @@ export async function calculateMahurat(
 
                     results.push({
                         date: currentDate.toISOString().split('T')[0],
-                        time: `${timeSlot.hour.toString().padStart(2, '0')}:${timeSlot.minute.toString().padStart(2, '0')}`,
+                        time: timeSlot.label, // Use range label
                         nakshatra,
                         tithi,
                         yoga,

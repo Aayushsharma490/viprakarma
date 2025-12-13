@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -250,7 +251,12 @@ export default function AdminSubscriptionsContent() {
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6 space-y-6"
+        >
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">{t('admin.subscriptions.title')}</h1>
             </div>
@@ -525,6 +531,6 @@ export default function AdminSubscriptionsContent() {
                     )}
                 </DialogContent>
             </Dialog>
-        </div>
+        </motion.div>
     );
 }

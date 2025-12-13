@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { users } from '@/db/schema';
+import { users, astrologers } from '@/db/schema';
 import { eq, isNotNull } from 'drizzle-orm';
 import { verifyToken } from '@/lib/jwt';
 import { sendBulkWhatsApp } from '@/lib/wahaService';
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
             }, { status: 403 });
         }
 
-        const { senderName, senderPhone, message, messageLanguage } = await request.json();
+        const { senderName, senderPhone, message, messageLanguage, recipients } = await request.json();
 
         if (!senderName || !senderPhone || !message) {
             return NextResponse.json({
@@ -52,27 +52,49 @@ export async function POST(request: NextRequest) {
             }, { status: 400 });
         }
 
-        // Fetch all users with phone numbers
-        const allUsers = await db
-            .select({
-                name: users.name,
-                phone: users.phone
-            })
-            .from(users)
-            .where(isNotNull(users.phone));
+        let targets: { name: string; phone: string }[] = [];
 
-        if (allUsers.length === 0) {
+        // Fetch Users
+        if (recipients === 'all' || recipients === 'users') {
+            const userRecipients = await db
+                .select({
+                    name: users.name,
+                    phone: users.phone
+                })
+                .from(users)
+                .where(isNotNull(users.phone));
+
+            targets = [...targets, ...userRecipients.map(u => ({ name: u.name, phone: u.phone || '' }))];
+        }
+
+        // Fetch Astrologers
+        if (recipients === 'all' || recipients === 'astrologers') {
+            const astrologerRecipients = await db
+                .select({
+                    name: astrologers.name,
+                    phone: astrologers.phone
+                })
+                .from(astrologers)
+                .where(isNotNull(astrologers.phone));
+
+            targets = [...targets, ...astrologerRecipients.map(a => ({ name: a.name, phone: a.phone || '' }))];
+        }
+
+        // Remove duplicates based on phone
+        const uniqueTargets = Array.from(new Map(targets.map(item => [item.phone, item])).values());
+
+        if (uniqueTargets.length === 0) {
             return NextResponse.json({
                 success: false,
-                error: 'No users with phone numbers found'
+                error: 'No valid recipients found'
             }, { status: 404 });
         }
 
-        console.log(`[bulk-send] Sending to ${allUsers.length} users`);
+        console.log(`[bulk-send] Sending to ${uniqueTargets.length} recipients`);
 
         // Send bulk WhatsApp messages with language support
         const result = await sendBulkWhatsApp(
-            allUsers.map(u => ({ name: u.name, phone: u.phone || '' })),
+            uniqueTargets,
             message,
             { name: senderName, phone: senderPhone },
             messageLanguage || 'en'
@@ -82,7 +104,7 @@ export async function POST(request: NextRequest) {
             success: true,
             sent: result.success,
             failed: result.failed,
-            totalUsers: allUsers.length
+            totalRecipients: uniqueTargets.length
         });
 
     } catch (error) {

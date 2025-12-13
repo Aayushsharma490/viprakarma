@@ -19,12 +19,26 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import NotificationBell from "@/components/NotificationBell";
+import LogoutConfirmModal from "@/components/LogoutConfirmModal";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { user, logout, adminLogout, isAdminLoggedIn } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { language, toggleLanguage, t } = useLanguage();
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    if (isAdminLoggedIn) {
+      adminLogout();
+    } else {
+      logout();
+    }
+  };
 
   const navLinks = [
     { href: "/kundali", label: t("nav.kundali") },
@@ -111,7 +125,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
                   <Button
-                    onClick={isAdminLoggedIn ? adminLogout : logout}
+                    onClick={handleLogoutClick}
                     variant="outline"
                     size="sm"
                     className="border-amber-600 text-amber-700 hover:bg-amber-100 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800 text-xs h-7 px-2"
@@ -220,10 +234,7 @@ export default function Navbar() {
                     </Button>
                   </Link>
                   <Button
-                    onClick={() => {
-                      isAdminLoggedIn ? adminLogout() : logout();
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleLogoutClick}
                     variant="outline"
                     size="sm"
                     className="w-full border-amber-600 text-amber-700 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-slate-800"
@@ -267,6 +278,12 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
+      <LogoutConfirmModal
+        open={showLogoutModal}
+        onOpenChange={setShowLogoutModal}
+        onConfirm={handleLogoutConfirm}
+      />
     </>
   );
 }
