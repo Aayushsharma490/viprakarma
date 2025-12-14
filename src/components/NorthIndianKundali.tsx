@@ -25,27 +25,27 @@ const RASHI_ABBR: Record<string, string> = {
   Libra: "Lib", Scorpio: "Sco", Sagittarius: "Sag", Capricorn: "Cap", Aquarius: "Aqu", Pisces: "Pis",
 };
 
-const WIDTH = 600;
-const HEIGHT = 600;
-const PADDING = 20;
+const WIDTH = 700;
+const HEIGHT = 700;
+const PADDING = 40;  // Increased from 20 to 40
 const CENTER_X = WIDTH / 2;
 const CENTER_Y = HEIGHT / 2;
 
 // House positions for PLANET/CONTENT placement (center of the cell).
-// REFINED CENTROIDS for 600x600 Square Layout
+// ADJUSTED for larger chart with more padding
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 150 },              // Top Diamond
-  2: { x: 200, y: 60 },                    // Top Left Triangle
-  3: { x: 60, y: 200 },                    // Left Top Triangle
-  4: { x: 150, y: CENTER_Y },              // Left Diamond
-  5: { x: 60, y: HEIGHT - 200 },           // Left Bottom Triangle
-  6: { x: 200, y: HEIGHT - 60 },           // Bottom Left Triangle
-  7: { x: CENTER_X, y: HEIGHT - 150 },     // Bottom Diamond
-  8: { x: WIDTH - 200, y: HEIGHT - 60 },   // Bottom Right Triangle
-  9: { x: WIDTH - 60, y: HEIGHT - 200 },   // Right Bottom Triangle
-  10: { x: WIDTH - 150, y: CENTER_Y },     // Right Diamond
-  11: { x: WIDTH - 60, y: 200 },           // Right Top Triangle
-  12: { x: WIDTH - 200, y: 60 },           // Top Right Triangle
+  1: { x: CENTER_X, y: 180 },              // Top Diamond
+  2: { x: 220, y: 80 },                    // Top Left Triangle
+  3: { x: 80, y: 220 },                    // Left Top Triangle
+  4: { x: 180, y: CENTER_Y },              // Left Diamond
+  5: { x: 80, y: HEIGHT - 220 },           // Left Bottom Triangle
+  6: { x: 220, y: HEIGHT - 80 },           // Bottom Left Triangle
+  7: { x: CENTER_X, y: HEIGHT - 180 },     // Bottom Diamond
+  8: { x: WIDTH - 220, y: HEIGHT - 80 },   // Bottom Right Triangle
+  9: { x: WIDTH - 80, y: HEIGHT - 220 },   // Right Bottom Triangle
+  10: { x: WIDTH - 180, y: CENTER_Y },     // Right Diamond
+  11: { x: WIDTH - 80, y: 220 },           // Right Top Triangle
+  12: { x: WIDTH - 220, y: 80 },           // Top Right Triangle
 };
 
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {
@@ -148,31 +148,30 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
           fontSize: number;
           degreeSize: number;
         } => {
-          if (count === 0) return { positions: [], fontSize: 16, degreeSize: 10 };
+          if (count === 0) return { positions: [], fontSize: 22, degreeSize: 16 };
 
-          // Default spacing
-          let itemHeight = 28; // Height for one planet block (degree + name)
-          let fontSize = 14;
-          let degreeSize = 10;
+          // LARGER font sizes for better visibility
+          let itemHeight = 38; // More spacing
+          let fontSize = 20;   // Larger planet names
+          let degreeSize = 15; // Larger degrees
 
           if (count >= 3) {
-            itemHeight = 24;
-            fontSize = 12;
-            degreeSize = 9;
+            itemHeight = 32;
+            fontSize = 18;
+            degreeSize = 14;
           }
           if (count >= 5) {
-            itemHeight = 20;
-            fontSize = 10;
-            degreeSize = 8;
+            itemHeight = 28;
+            fontSize = 16;
+            degreeSize = 12;
           }
           if (count >= 7) {
-            itemHeight = 18;
-            fontSize = 9;
-            degreeSize = 7;
+            itemHeight = 24;
+            fontSize = 14;
+            degreeSize = 11;
           }
 
           const totalHeight = (count * itemHeight);
-          // Center vertically around cy
           const startY = cy - (totalHeight / 2) + (itemHeight / 2);
 
           return {
@@ -189,16 +188,16 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
         return (
           <g key={houseNumber}>
-            {/* Rashi Number - Moved slightly to avoid overlap if crowded */}
+            {/* Rashi Number - MOVED INSIDE HOUSE */}
             <text
               x={cx}
-              y={numPlanets > 0 ? cy - (numPlanets * 12 + 20) : cy}
+              y={numPlanets > 0 ? cy - (numPlanets * 14 + 30) : cy - 35}
               textAnchor="middle"
               dominantBaseline="middle"
               fill="#d90429" // Red color for Rashi Number
-              fontSize={14}
-              fontWeight={600}
-              opacity={0.6}
+              fontSize={18}  // Increased from 14 to 18
+              fontWeight={700}  // Increased from 600 to 700
+              opacity={0.75}    // Increased from 0.6 to 0.75
             >
               {rashiIndex}
             </text>
@@ -266,8 +265,8 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
           {title}
         </h3>
       )}
-      <div className="rounded-xl w-[520px] max-w-full bg-[#ffffff] border-2 border-[#ddd] p-3">
-        <div className="w-full h-[340px] relative">
+      <div className="rounded-xl w-full max-w-[700px] bg-[#ffffff] border-2 border-[#ddd] p-4">
+        <div className="w-full h-[500px] relative">
           <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" height="100%">
             <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="#fef6e4" />
             {drawChartGrid()}

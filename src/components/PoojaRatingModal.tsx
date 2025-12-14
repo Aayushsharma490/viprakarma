@@ -23,7 +23,7 @@ export default function PoojaRatingModal({ isOpen, onClose, poojaName }: PoojaRa
 
     const handleSubmit = async () => {
         if (rating === 0) {
-            toast.error("Please select a rating");
+            toast.error(t("pooja.rating.selectError") || "Please select a rating");
             return;
         }
 
@@ -43,13 +43,13 @@ export default function PoojaRatingModal({ isOpen, onClose, poojaName }: PoojaRa
                 throw new Error('Failed to submit rating');
             }
 
-            toast.success("Thank you for your feedback!");
+            toast.success(t("pooja.rating.thankYou") || "Thank you for your feedback!");
             onClose();
             // Reset form
             setRating(0);
             setReview('');
         } catch (error) {
-            toast.error("Failed to submit rating. Please try again.");
+            toast.error(t("pooja.rating.error") || "Failed to submit rating. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -73,8 +73,8 @@ export default function PoojaRatingModal({ isOpen, onClose, poojaName }: PoojaRa
                             >
                                 <X className="w-6 h-6" />
                             </button>
-                            <h2 className="text-2xl font-bold mb-2">Rate Your Experience</h2>
-                            <p className="text-orange-100">How was your {poojaName}?</p>
+                            <h2 className="text-2xl font-bold mb-2">{t("pooja.rating.title") || "Rate Your Experience"}</h2>
+                            <p className="text-orange-100">{t("pooja.rating.question")} {poojaName}?</p>
                         </div>
 
                         {/* Content */}
@@ -92,31 +92,31 @@ export default function PoojaRatingModal({ isOpen, onClose, poojaName }: PoojaRa
                                         >
                                             <Star
                                                 className={`w-8 h-8 ${star <= (hoveredStar || rating)
-                                                        ? 'fill-yellow-400 text-yellow-400'
-                                                        : 'text-gray-300'
+                                                    ? 'fill-yellow-400 text-yellow-400'
+                                                    : 'text-gray-300'
                                                     }`}
                                             />
                                         </button>
                                     ))}
                                 </div>
                                 <span className="text-sm font-medium text-gray-500">
-                                    {rating === 0 ? 'Select a rating' :
-                                        rating === 5 ? 'Excellent' :
-                                            rating === 4 ? 'Good' :
-                                                rating === 3 ? 'Average' :
-                                                    rating === 2 ? 'Poor' : 'Very Poor'}
+                                    {rating === 0 ? t("pooja.rating.selectRating") :
+                                        rating === 5 ? t("pooja.rating.excellent") :
+                                            rating === 4 ? t("pooja.rating.good") :
+                                                rating === 3 ? t("pooja.rating.average") :
+                                                    rating === 2 ? t("pooja.rating.poor") : t("pooja.rating.veryPoor")}
                                 </span>
                             </div>
 
                             {/* Review Textarea */}
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Write a review (optional)
+                                    {t("pooja.rating.writeReview") || "Write a review (optional)"}
                                 </label>
                                 <Textarea
                                     value={review}
                                     onChange={(e) => setReview(e.target.value)}
-                                    placeholder="Share your experience..."
+                                    placeholder={t("pooja.rating.placeholder") || "Share your experience..."}
                                     className="resize-none h-24 focus:ring-orange-500"
                                 />
                             </div>
@@ -128,14 +128,14 @@ export default function PoojaRatingModal({ isOpen, onClose, poojaName }: PoojaRa
                                     onClick={onClose}
                                     className="flex-1"
                                 >
-                                    Cancel
+                                    {t("pooja.rating.cancel") || "Cancel"}
                                 </Button>
                                 <Button
                                     onClick={handleSubmit}
                                     disabled={isSubmitting}
                                     className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
                                 >
-                                    {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                                    {isSubmitting ? (t("pooja.rating.submitting") || 'Submitting...') : (t("pooja.rating.submit") || 'Submit Review')}
                                 </Button>
                             </div>
                         </div>

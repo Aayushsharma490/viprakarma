@@ -31,52 +31,15 @@ export default function LogoutConfirmModal({
                 </DialogHeader>
 
                 <div className="space-y-6 py-4">
-                    {/* Animated GIF Section */}
+                    {/* Simplified Icon Section */}
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.3 }}
                         className="flex justify-center"
                     >
-                        <div className="relative">
-                            <motion.div
-                                animate={{ rotate: [0, -5, 5, -5, 0] }}
-                                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
-                                className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl border-4 border-white"
-                            >
-                                <img
-                                    src="https://media.giphy.com/media/l4FGGafcOHmrlQxG0/giphy.gif"
-                                    alt="No no no"
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        // Fallback to a different GIF if the first one fails
-                                        e.currentTarget.src = "https://media.giphy.com/media/STfLOU6iRBRunMciZv/giphy.gif";
-                                    }}
-                                />
-                            </motion.div>
-
-                            {/* Floating hearts animation */}
-                            {[...Array(5)].map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ y: 0, opacity: 1 }}
-                                    animate={{
-                                        y: -100,
-                                        opacity: 0,
-                                        x: Math.random() * 40 - 20
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        delay: i * 0.4,
-                                        ease: "easeOut"
-                                    }}
-                                    className="absolute bottom-0 left-1/2 text-2xl"
-                                    style={{ left: `${20 + i * 15}%` }}
-                                >
-                                    💔
-                                </motion.div>
-                            ))}
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-2xl">
+                            <LogOut className="w-12 h-12 text-white" />
                         </div>
                     </motion.div>
 
@@ -88,10 +51,10 @@ export default function LogoutConfirmModal({
                         className="text-center space-y-2"
                     >
                         <p className="text-xl font-semibold text-gray-800">
-                            Don't leave us! 😢
+                            Confirm Logout
                         </p>
                         <p className="text-gray-600">
-                            We'll miss you! Are you absolutely sure you want to logout?
+                            Are you sure you want to logout from your account?
                         </p>
                     </motion.div>
 
@@ -103,16 +66,10 @@ export default function LogoutConfirmModal({
                         >
                             <Button
                                 onClick={() => onOpenChange(false)}
-                                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-6 text-lg shadow-lg"
+                                className="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-6 text-lg shadow-lg"
                             >
-                                <motion.span
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ duration: 1, repeat: Infinity }}
-                                    className="mr-2"
-                                >
-                                    ❤️
-                                </motion.span>
-                                No, Stay!
+                                <X className="w-5 h-5 mr-2" />
+                                Cancel
                             </Button>
                         </motion.div>
 
@@ -122,24 +79,13 @@ export default function LogoutConfirmModal({
                         >
                             <Button
                                 onClick={handleLogout}
-                                variant="outline"
-                                className="w-full border-2 border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold py-6 text-lg"
+                                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-6 text-lg shadow-lg"
                             >
                                 <LogOut className="w-5 h-5 mr-2" />
-                                Yes, Logout
+                                Logout
                             </Button>
                         </motion.div>
                     </div>
-
-                    {/* Pleading message */}
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="text-center text-sm text-gray-500 italic"
-                    >
-                        Please don't go... 🥺👉👈
-                    </motion.p>
                 </div>
             </DialogContent>
         </Dialog>

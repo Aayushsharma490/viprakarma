@@ -304,7 +304,10 @@ export default function MahuratPage() {
                                             <div className="flex items-center gap-2 mb-2">
                                                 <Calendar className="w-5 h-5 text-purple-600" />
                                                 <span className="font-semibold text-lg">
-                                                    {result.date} {t('mahurat.at')} {result.time}
+                                                    {result.date}
+                                                </span>
+                                                <span className="text-purple-600 font-bold">
+                                                    {result.time}
                                                 </span>
                                             </div>
                                             <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getAuspiciousnessColor(result.auspiciousness)}`}>

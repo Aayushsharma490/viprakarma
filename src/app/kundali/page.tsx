@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { indianCities } from "@/lib/locations";
 import NorthIndianKundali from "@/components/NorthIndianKundali";
 import ChandraKundaliChart from "@/components/ChandraKundaliChart";
@@ -407,14 +407,20 @@ export default function KundaliPage() {
     ? Object.values(kundaliData.charts.chandra)
       .sort((a: any, b: any) => a.house - b.house)
       .flatMap((house: any) =>
-        house.planets.map((planet: any) => ({
-          planet: planet.name,
-          name: planet.name,
-          house: house.house,
-          rashi: house.sign,
-          sign: house.sign,
-          isRetrograde: planet.retrograde,
-        }))
+        house.planets.map((planet: any) => {
+          const planetData = kundaliData.planets?.find(
+            (p) => p.name === planet.name && p.sign === house.sign
+          );
+          return {
+            planet: planet.name,
+            name: planet.name,
+            house: house.house,
+            rashi: house.sign,
+            sign: house.sign,
+            isRetrograde: planet.retrograde,
+            degree: planetData?.degreeInSign,
+          };
+        })
       )
     : [];
   const chandraHouses = kundaliData?.charts?.chandra
@@ -426,28 +432,52 @@ export default function KundaliPage() {
     ? Object.values(kundaliData.charts.d9)
       .sort((a: any, b: any) => a.house - b.house)
       .flatMap((house: any) =>
-        house.planets.map((planet: any) => ({
-          planet: planet.name,
-          name: planet.name,
-          house: house.house,
-          rashi: house.sign,
-          sign: house.sign,
-          isRetrograde: planet.retrograde,
-        }))
+        house.planets.map((planet: any) => {
+          // Find planet in main planets array (only match by name, not sign)
+          const mainPlanet = kundaliData.planets?.find(
+            (p: any) => p.name === planet.name
+          );
+
+          // Debug: Log first planet to see structure
+          if (planet.name === 'Sun') {
+            console.log('[D9 Debug] Sun planet data:', {
+              mainPlanet,
+              degreeInSign: mainPlanet?.degreeInSign,
+              allProps: Object.keys(mainPlanet || {})
+            });
+          }
+
+          return {
+            planet: planet.name,
+            name: planet.name,
+            house: house.house,
+            rashi: house.sign,
+            sign: house.sign,
+            isRetrograde: planet.retrograde,
+            degree: mainPlanet?.degreeInSign || mainPlanet?.degree || 0,
+          };
+        })
       )
     : [];
   const d10Planets = kundaliData?.charts?.d10
     ? Object.values(kundaliData.charts.d10)
       .sort((a: any, b: any) => a.house - b.house)
       .flatMap((house: any) =>
-        house.planets.map((planet: any) => ({
-          planet: planet.name,
-          name: planet.name,
-          house: house.house,
-          rashi: house.sign,
-          sign: house.sign,
-          isRetrograde: planet.retrograde,
-        }))
+        house.planets.map((planet: any) => {
+          // Find planet in main planets array (only match by name, not sign)
+          const mainPlanet = kundaliData.planets?.find(
+            (p: any) => p.name === planet.name
+          );
+          return {
+            planet: planet.name,
+            name: planet.name,
+            house: house.house,
+            rashi: house.sign,
+            sign: house.sign,
+            isRetrograde: planet.retrograde,
+            degree: mainPlanet?.degreeInSign || mainPlanet?.degree || 0,
+          };
+        })
       )
     : [];
 
@@ -818,7 +848,7 @@ export default function KundaliPage() {
                         <Target className="h-5 w-5 text-green-600" />
                         <div>
                           <p className="text-xs uppercase tracking-widest text-gray-500">
-                            Ayanamsa (Lahiri)
+                            {t("kundali.ayanamsa") || "Ayanamsa (Lahiri)"}
                           </p>
                           <p className="text-base font-semibold text-gray-900">
                             {kundaliData.ayanamsa?.toFixed(6) ?? 'N/A'}°
@@ -847,7 +877,7 @@ export default function KundaliPage() {
                       <div className="flex items-center gap-3 text-sm text-gray-700">
                         <Compass className="h-4 w-4 text-emerald-600" />
                         <span>
-                          Timezone {kundaliData.basicDetails.timezone}
+                          {t("kundali.timezone") || "Timezone"} {kundaliData.basicDetails.timezone}
                         </span>
                       </div>
                     </div>
@@ -1310,7 +1340,7 @@ export default function KundaliPage() {
                             {t("kundali.currentMahadasha")}
                           </p>
                           <p className="text-xl font-bold text-emerald-900">
-                            {kundaliData.dashas.current.planet}
+                            {t(`planet.${kundaliData.dashas.current.planet}`) || kundaliData.dashas.current.planet}
                           </p>
                         </div>
                       </div>
@@ -1338,15 +1368,18 @@ export default function KundaliPage() {
                         const colors = planetColors[dasha.planet] || { bg: 'bg-gray-100', border: 'border-gray-400', text: 'text-gray-900', gradient: 'from-gray-400 to-gray-600' };
                         const isCurrent = dasha.planet === kundaliData.dashas.current.planet;
 
-                        // Auto-expand if current - logic here using separate variable or relying on state
-                        // To fix "gove that not showing", I'll force it to be expanded if it's the current one AND expandedDasha is null (initial state handling)
-                        // But I can't easily change state during render.
-                        // I will use a different Condition: checked expandedDasha OR isCurrent (to force expand current) based on user request.
-                        // However, collapsing it might become impossible if I always force true.
-                        // Better: Initialize state correctly.
-
-                        // For now, I will leave the state logic but ensure the toggle works.
                         const isExpanded = expandedDasha === `${dasha.planet}-${dasha.startDate}` || (expandedDasha === null && isCurrent);
+
+                        // Debug logging
+                        if (index === 0) {
+                          console.log('Dasha Debug:', {
+                            planet: dasha.planet,
+                            hasAntardashas: !!dasha.antardashas,
+                            antardashasLength: dasha.antardashas?.length,
+                            isExpanded,
+                            expandedDasha
+                          });
+                        }
 
                         return (
                           <motion.div
@@ -1356,7 +1389,7 @@ export default function KundaliPage() {
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(0,0,0,0.15)" }}
                             className={`border-2 ${colors.border} ${colors.bg} rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${isCurrent ? 'ring-4 ring-emerald-400 ring-opacity-50' : ''}`}
-                            onClick={() => setExpandedDasha(isExpanded ? "collapsed" : `${dasha.planet}-${dasha.startDate}`)}
+                            onClick={() => setExpandedDasha(isExpanded ? null : `${dasha.planet}-${dasha.startDate}`)}
                           >
                             <div className="px-5 py-4">
                               <div className="flex items-center justify-between">
@@ -1370,8 +1403,8 @@ export default function KundaliPage() {
                                   </motion.div>
                                   <div>
                                     <p className={`text-lg font-bold ${colors.text} flex items-center gap-2`}>
-                                      {dasha.planet}
-                                      {isCurrent && <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">ACTIVE</span>}
+                                      {t(`planet.${dasha.planet}`) || dasha.planet}
+                                      {isCurrent && <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">{t("kundali.active") || "ACTIVE"}</span>}
                                     </p>
                                     <p className="text-sm text-gray-700 font-medium">
                                       {dasha.startDate} → {dasha.endDate}
@@ -1385,41 +1418,45 @@ export default function KundaliPage() {
                                   <motion.div
                                     animate={{ rotate: isExpanded ? 180 : 0 }}
                                     transition={{ duration: 0.3 }}
-                                    className="mt-2 text-2xl"
+                                    className="mt-2 text-gray-600"
                                   >
-                                    {isExpanded ? '▲' : '▼'}
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
                                   </motion.div>
                                 </div>
                               </div>
 
-                              {isExpanded && dasha.antardashas && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.3 }}
-                                  className="mt-4 pt-4 border-t-2 border-dashed border-gray-300"
-                                >
-                                  <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                                    <span className="text-lg">🔮</span> Antardasha Periods:
-                                  </p>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    {dasha.antardashas.map((antardasha: any, idx: number) => (
-                                      <motion.div
-                                        key={idx}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className="bg-white bg-opacity-70 rounded-lg px-3 py-2 text-xs border border-gray-200 hover:shadow-md transition-shadow"
-                                      >
-                                        <p className="font-semibold text-gray-800">{antardasha.planet}</p>
-                                        <p className="text-gray-600">{antardasha.startDate} → {antardasha.endDate}</p>
-                                        <p className="text-gray-500">{antardasha.years.toFixed(2)} yrs</p>
-                                      </motion.div>
-                                    ))}
-                                  </div>
-                                </motion.div>
-                              )}
+                              <AnimatePresence mode="wait">
+                                {isExpanded && dasha.antardashas && Array.isArray(dasha.antardashas) && dasha.antardashas.length > 0 && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="mt-4 pt-4 border-t-2 border-dashed border-gray-300"
+                                  >
+                                    <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                      <span className="text-lg">🔮</span> {t("kundali.antardashas") || "Antardasha Periods:"}
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                      {dasha.antardashas.map((antardasha: any, idx: number) => (
+                                        <motion.div
+                                          key={idx}
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          transition={{ delay: idx * 0.05 }}
+                                          className="bg-white bg-opacity-70 rounded-lg px-3 py-2 text-xs border border-gray-200 hover:shadow-md transition-shadow"
+                                        >
+                                          <p className="font-semibold text-gray-800">{t(`planet.${antardasha.planet}`) || antardasha.planet}</p>
+                                          <p className="text-gray-600">{antardasha.startDate} → {antardasha.endDate}</p>
+                                          <p className="text-gray-500">{antardasha.years.toFixed(2)} {t("kundali.yrs") || "yrs"}</p>
+                                        </motion.div>
+                                      ))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </div>
                           </motion.div>
                         );

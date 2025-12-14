@@ -196,10 +196,10 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold golden-text">
-                                                Life Path Number
+                                                {t("numerology.lifePath.title")}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                Your life's journey
+                                                {t("numerology.lifePath.subtitle")}
                                             </p>
                                         </div>
                                     </div>
@@ -218,17 +218,15 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold text-purple-900">
-                                                Driver Number
+                                                {t("numerology.driver.title")}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                Your core motivation
+                                                {t("numerology.driver.subtitle")}
                                             </p>
                                         </div>
                                     </div>
                                     <p className="text-gray-700 leading-relaxed text-sm">
-                                        Your driver number represents your primary driving force and
-                                        how you approach life's challenges. It shapes your natural
-                                        instincts and immediate reactions.
+                                        {t("numerology.driver.description")}
                                     </p>
                                 </Card>
 
@@ -242,17 +240,15 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold text-pink-900">
-                                                Conductor Number
+                                                {t("numerology.conductor.title")}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                Your guiding energy
+                                                {t("numerology.conductor.subtitle")}
                                             </p>
                                         </div>
                                     </div>
                                     <p className="text-gray-700 leading-relaxed text-sm">
-                                        Your conductor number guides and supports your driver
-                                        number. It represents the underlying energy that helps you
-                                        navigate through life's path.
+                                        {t("numerology.conductor.description")}
                                     </p>
                                 </Card>
                             </div>
@@ -268,9 +264,9 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold text-blue-900">
-                                                Destiny Number
+                                                {t("numerology.destiny.title")}
                                             </h3>
-                                            <p className="text-sm text-gray-600">Your life purpose</p>
+                                            <p className="text-sm text-gray-600">{t("numerology.destiny.subtitle")}</p>
                                         </div>
                                     </div>
                                     <p className="text-gray-700 leading-relaxed text-sm">
@@ -287,10 +283,10 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold text-red-900">
-                                                Soul Urge Number
+                                                {t("numerology.soulUrge.title")}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                Your inner desires
+                                                {t("numerology.soulUrge.subtitle")}
                                             </p>
                                         </div>
                                     </div>
@@ -308,10 +304,10 @@ export default function NumerologyContent() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold text-green-900">
-                                                Personality Number
+                                                {t("numerology.personality.title")}
                                             </h3>
                                             <p className="text-sm text-gray-600">
-                                                How others see you
+                                                {t("numerology.personality.subtitle")}
                                             </p>
                                         </div>
                                     </div>
@@ -326,12 +322,11 @@ export default function NumerologyContent() {
                                 <div className="flex items-center gap-2 mb-6">
                                     <Sparkles className="w-7 h-7 text-amber-600" />
                                     <h3 className="text-2xl font-semibold golden-text">
-                                        Your Complete Numerological Profile
+                                        {t("numerology.completeProfile")}
                                     </h3>
                                 </div>
                                 <p className="text-gray-700 leading-relaxed mb-6">
-                                    Your numbers reveal a unique cosmic blueprint that shapes your
-                                    personality, life path, and destiny. Life Path{" "}
+                                    {t("numerology.introText")}{" "}
                                     <strong className="text-amber-900">
                                         {numerologyData.lifePath}
                                     </strong>{" "}
@@ -358,14 +353,14 @@ export default function NumerologyContent() {
                                     <div className="bg-white rounded-lg p-4 border border-amber-200">
                                         <div className="flex items-center gap-2 mb-2">
                                             <TrendingUp className="w-5 h-5 text-green-600" />
-                                            <h4 className="font-semibold text-gray-900">Strengths</h4>
+                                            <h4 className="font-semibold text-gray-900">{t("numerology.strengths")}</h4>
                                         </div>
                                         <ul className="text-sm text-gray-700 space-y-1">
-                                            <li>• Natural leadership and confidence</li>
-                                            <li>• Strong determination and willpower</li>
-                                            <li>• Creative problem-solving abilities</li>
-                                            <li>• Excellent communication skills</li>
-                                            <li>• Balanced emotional intelligence</li>
+                                            <li>{t("numerology.strength1")}</li>
+                                            <li>{t("numerology.strength2")}</li>
+                                            <li>{t("numerology.strength3")}</li>
+                                            <li>{t("numerology.strength4")}</li>
+                                            <li>{t("numerology.strength5")}</li>
                                         </ul>
                                     </div>
 
@@ -373,15 +368,15 @@ export default function NumerologyContent() {
                                         <div className="flex items-center gap-2 mb-2">
                                             <Star className="w-5 h-5 text-amber-600" />
                                             <h4 className="font-semibold text-gray-900">
-                                                Life Recommendations
+                                                {t("numerology.lifeRecommendations")}
                                             </h4>
                                         </div>
                                         <ul className="text-sm text-gray-700 space-y-1">
-                                            <li>• Pursue leadership opportunities</li>
-                                            <li>• Develop creative talents</li>
-                                            <li>• Build meaningful connections</li>
-                                            <li>• Trust your intuition</li>
-                                            <li>• Maintain work-life balance</li>
+                                            <li>{t("numerology.recommendation1")}</li>
+                                            <li>{t("numerology.recommendation2")}</li>
+                                            <li>{t("numerology.recommendation3")}</li>
+                                            <li>{t("numerology.recommendation4")}</li>
+                                            <li>{t("numerology.recommendation5")}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -390,12 +385,10 @@ export default function NumerologyContent() {
                                     <CheckCircle className="w-6 h-6 flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="font-semibold mb-1">
-                                            💫 Expert Guidance Available
+                                            {t("numerology.expertGuidance")}
                                         </p>
                                         <p className="text-sm text-amber-50">
-                                            Book a consultation with our expert numerologists for a
-                                            personalized deep-dive reading and detailed guidance
-                                            tailored to your unique numbers.
+                                            {t("numerology.expertDescription")}
                                         </p>
                                     </div>
                                 </div>
@@ -405,27 +398,27 @@ export default function NumerologyContent() {
                                 <Card className="classical-card p-4 text-center">
                                     <Heart className="w-8 h-8 text-red-600 mx-auto mb-2" />
                                     <h4 className="font-semibold text-gray-900 mb-1">
-                                        Love Compatibility
+                                        {t("numerology.loveCompatibility")}
                                     </h4>
                                     <p className="text-xs text-gray-600">
-                                        Best matches: Numbers 2, 6, 9
+                                        {t("numerology.bestMatches")}
                                     </p>
                                 </Card>
                                 <Card className="classical-card p-4 text-center">
                                     <Brain className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                                     <h4 className="font-semibold text-gray-900 mb-1">
-                                        Lucky Days
+                                        {t("numerology.luckyDays")}
                                     </h4>
                                     <p className="text-xs text-gray-600">
-                                        Sunday, Tuesday, Thursday
+                                        {t("numerology.luckyDaysValue")}
                                     </p>
                                 </Card>
                                 <Card className="classical-card p-4 text-center">
                                     <Sparkles className="w-8 h-8 text-amber-600 mx-auto mb-2" />
                                     <h4 className="font-semibold text-gray-900 mb-1">
-                                        Lucky Colors
+                                        {t("numerology.luckyColors")}
                                     </h4>
-                                    <p className="text-xs text-gray-600">Gold, Orange, Red</p>
+                                    <p className="text-xs text-gray-600">{t("numerology.luckyColorsValue")}</p>
                                 </Card>
                             </div>
                         </motion.div>
@@ -464,7 +457,7 @@ export default function NumerologyContent() {
                                             ))}
                                         </div>
                                         <div className="mt-2 text-xs text-gray-600">
-                                            Based on your Driver ({numerologyData.driverNumber}) & Conductor ({numerologyData.conductorNumber})
+                                            {t("numerology.basedOn")} ({numerologyData.driverNumber}) & {t("numerology.conductor.title")} ({numerologyData.conductorNumber})
                                         </div>
                                     </div>
 
@@ -479,7 +472,7 @@ export default function NumerologyContent() {
 
                                         {numerologyData.mobileSuggestions?.avoid && numerologyData.mobileSuggestions.avoid.length > 0 && (
                                             <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100 text-sm text-red-800">
-                                                <p className="font-medium mb-1">Ideally avoid totals:</p>
+                                                <p className="font-medium mb-1">{t("numerology.avoidTotals")}</p>
                                                 <p>{numerologyData.mobileSuggestions.avoid.join(", ")}</p>
                                             </div>
                                         )}
