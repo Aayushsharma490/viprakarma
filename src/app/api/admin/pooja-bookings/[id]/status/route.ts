@@ -5,7 +5,9 @@ import { eq } from 'drizzle-orm';
 import { verifyToken } from '@/lib/jwt';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY
+    ? new Resend(process.env.RESEND_API_KEY)
+    : { emails: { send: async () => ({ data: null, error: new Error('Missing RESEND_API_KEY') }) } } as any;
 const EMAIL_FROM = process.env.EMAIL_FROM || 'VipraKarma <onboarding@resend.dev>';
 
 // PUT - Update booking status
