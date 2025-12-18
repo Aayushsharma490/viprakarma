@@ -100,20 +100,32 @@ export default function PaymentModal({
       let consultationId: number | null = null;
       let paymentVerificationId: number | null = null;
       if (consultationMode && consultationDetails) {
-        const consultationResponse = await fetch('/api/consultations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId,
-            type: consultationMode,
-            formData: consultationDetails,
-          }),
-        });
+        try {
+          const consultationResponse = await fetch('/api/consultations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId,
+              type: consultationMode,
+              formData: consultationDetails,
+            }),
+          });
 
-        if (consultationResponse.ok) {
-          const consultationData = await consultationResponse.json();
-          consultationId = consultationData.consultationId;
-          paymentVerificationId = consultationData.paymentId;
+          if (consultationResponse.ok) {
+            const consultationData = await consultationResponse.json();
+            consultationId = consultationData.consultationId;
+            paymentVerificationId = consultationData.paymentId;
+          } else {
+            const errorData = await consultationResponse.json();
+            toast.error(errorData.error || 'Failed to create consultation request. Please try again.');
+            setVerifying(false);
+            return;
+          }
+        } catch (error) {
+          console.error('Consultation creation error:', error);
+          toast.error('Failed to connect to the server. Please check your connection.');
+          setVerifying(false);
+          return;
         }
       }
 
@@ -131,21 +143,22 @@ export default function PaymentModal({
           amount,
           paymentDetails,
           paymentVerificationId,
-          // request server to auto-enable chat if admin chooses combined action later
         }),
       });
 
       if (response.ok) {
-        toast.success('Payment details submitted successfully! Admin will verify your payment and activate your consultation.', {
+        toast.success('Payment details submitted successfully! Admin will verify your payment soon.', {
           icon: <CheckCircle className="w-5 h-5 text-green-500" />,
           duration: 5000,
         });
         onSuccess('qr_payment_' + Date.now());
         onOpenChange(false);
       } else {
-        toast.error('Failed to submit payment details. Please contact support.');
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to submit payment details. Please contact support.');
       }
     } catch (error) {
+      console.error('Payment submission error:', error);
       toast.error('Failed to submit payment details. Please contact support.');
     } finally {
       setVerifying(false);

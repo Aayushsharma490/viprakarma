@@ -269,7 +269,7 @@ export default function ConsultationContent() {
                                         onClick={handleBookConsultation}
                                         className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                                         size="lg"
-                                        disabled={submitting}
+                                        disabled={submitting || paymentModalOpen}
                                     >
                                         {submitting
                                             ? t("consultation.creatingRequest")

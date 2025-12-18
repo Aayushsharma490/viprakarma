@@ -73,6 +73,10 @@ export default function AdminSubscriptionsContent() {
             if (response.ok) {
                 const data = await response.json();
                 setRequests(data.requests || []);
+            } else if (response.status === 401) {
+                toast.error('Session expired. Please re-login to the admin panel.');
+                // Optionally redirect to admin login
+                // window.location.href = '/admin/login';
             } else {
                 toast.error('Failed to fetch subscription requests');
             }

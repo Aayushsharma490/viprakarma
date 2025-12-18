@@ -303,7 +303,8 @@ export default function SubscriptionPage() {
                     <Button
                       onClick={() => handleSubscribe(plan)}
                       disabled={loading === plan.id}
-                      className={`w-full ${plan.popular ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-800'} text-white`}
+                      className={`w-full ${plan.popular ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-800'
+                        } text-white shadow-lg transition-all duration-200 hover:scale-[1.02]`}
                     >
                       {loading === plan.id ? (
                         <>
