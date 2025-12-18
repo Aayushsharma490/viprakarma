@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
 
         try {
             decoded = await verifyToken(token);
-        } catch (err) {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        } catch (err: any) {
+            return NextResponse.json({ error: err.message || 'Invalid token' }, { status: 401 });
         }
 
         const userId = decoded.userId;

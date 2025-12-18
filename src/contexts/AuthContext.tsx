@@ -105,9 +105,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
+    // Ensure we always write a string token to localStorage.
+    let safeToken: string;
+    if (typeof newToken === 'string') safeToken = newToken;
+    else if (newToken && typeof newToken === 'object' && 'token' in (newToken as any)) safeToken = String((newToken as any).token);
+    else safeToken = String(newToken);
+
+    localStorage.setItem('token', safeToken);
     localStorage.setItem('user', JSON.stringify(newUser));
-    setToken(newToken);
+    setToken(safeToken);
     setUser(newUser);
   };
 

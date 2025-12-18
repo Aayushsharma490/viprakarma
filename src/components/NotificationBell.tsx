@@ -56,6 +56,14 @@ export default function NotificationBell() {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
 
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                // Component will re-render and hide because user is now null (in next cycle)
+                // or we can force it
+                return;
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 setNotifications(data.notifications || []);

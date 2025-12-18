@@ -100,6 +100,14 @@ export default function SubscriptionPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
+      if (response.status === 401) {
+        // Token invalid or expired
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        router.push('/login?redirect=/subscription&error=session_expired');
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         // Convert array to map by planId for easy lookup
@@ -181,13 +189,20 @@ export default function SubscriptionPage() {
         })
       });
 
-      const data = await response.json();
+      if (response.status === 401) {
+        toast.error('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        router.push('/login?redirect=/subscription');
+        return;
+      }
 
       if (response.ok) {
         toast.success('Subscription request submitted! Awaiting admin approval.');
         setShowPaymentModal(false);
         router.push('/?subscription=pending');
       } else {
+        const data = await response.json();
         toast.error(data.error || 'Failed to submit subscription request');
       }
     } catch (error) {
