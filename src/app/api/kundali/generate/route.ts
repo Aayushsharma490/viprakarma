@@ -31,10 +31,10 @@ export async function POST(request: NextRequest) {
       city: city || 'Unknown',
     };
 
-    const fetchWithRetry = async (url: string, options: RequestInit, retries = 2, timeout = 60000) => {
+    const fetchWithRetry = async (url: string, options: RequestInit, retries = 3, timeout = 30000) => {
       for (let i = 0; i <= retries; i++) {
         try {
-          console.log(`[API] Attempt ${i + 1} to call astro-engine...`);
+          console.log(`[API] Attempt ${i + 1} to call astro-engine (timeout: ${timeout}ms)...`);
           const controller = new AbortController();
           const id = setTimeout(() => controller.abort(), timeout);
 
@@ -47,30 +47,31 @@ export async function POST(request: NextRequest) {
           if (response.ok) return response;
 
           const errorText = await response.text();
-          console.warn(`[API] Attempt ${i + 1} failed with status ${response.status}:`, errorText.substring(0, 200));
+          console.warn(`[API] Attempt ${i + 1} failed with status ${response.status}:`, errorText.substring(0, 100));
 
-          // If it's a 502/503/504 or 408/429, we should retry.
-          // For other 4xx errors, it's likely a bad request, so don't retry.
+          // If it's a 502/503/504 or 408/429, it's likely a cold start or busy engine.
           const retryableStatuses = [408, 429, 502, 503, 504];
           if (!retryableStatuses.includes(response.status) && response.status < 500) {
             throw new Error(errorText || `Client error ${response.status} from astro-engine`);
           }
 
-          if (i === retries) throw new Error(errorText || 'Failed after retries');
+          if (i === retries) {
+            throw new Error('Engine is taking too long to start. Please try again in 10 seconds.');
+          }
         } catch (err: any) {
           if (err.name === 'AbortError') {
-            console.warn(`[API] Attempt ${i + 1} timed out after ${timeout}ms`);
+            console.warn(`[API] Attempt ${i + 1} timed out.`);
           } else {
             console.warn(`[API] Attempt ${i + 1} error:`, err.message);
           }
           if (i === retries) throw err;
         }
-        // Exponential backoff: 2s, 4s...
-        const backoff = Math.pow(2, i + 1) * 1000;
+        // Wait before retrying: 3s, 6s, 9s
+        const backoff = (i + 1) * 3000;
         console.log(`[API] Retrying in ${backoff}ms...`);
         await new Promise(resolve => setTimeout(resolve, backoff));
       }
-      throw new Error('Unknown error in fetchWithRetry');
+      throw new Error('Unexpected error in generation flow');
     };
 
     console.log('[API] Sending request to astro-engine:', ASTRO_ENGINE_URL);

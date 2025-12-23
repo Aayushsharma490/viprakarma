@@ -212,6 +212,27 @@ export default function KundaliPage() {
     "d1" | "chandra" | "d9" | "d10" | "gochar"
   >("d1");
   const [expandedDasha, setExpandedDasha] = useState<string | null>(null);
+  const [engineStatus, setEngineStatus] = useState<'offline' | 'starting' | 'online'>('offline');
+
+  // Pre-warm the astrology engine on mount
+  useEffect(() => {
+    const warmUp = async () => {
+      try {
+        const response = await fetch('/api/kundali/health');
+        const data = await response.json();
+        if (data.status === 'ok') {
+          setEngineStatus('online');
+        } else if (data.status === 'starting') {
+          setEngineStatus('starting');
+          // Poll again in 5 seconds if starting
+          setTimeout(warmUp, 5000);
+        }
+      } catch (error) {
+        console.error("Warm-up error:", error);
+      }
+    };
+    warmUp();
+  }, []);
 
   const handleLocationChange = (cityName: string) => {
     const city = indianCities.find((entry) => entry.city === cityName);
@@ -505,6 +526,35 @@ export default function KundaliPage() {
             <p className="text-lg md:text-xl text-gray-600 mt-4 max-w-3xl mx-auto">
               {t("kundali.description")}
             </p>
+
+            {/* Engine Status Indicator */}
+            <div className="mt-6 flex justify-center">
+              <AnimatePresence>
+                {engineStatus !== 'online' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${engineStatus === 'starting' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'
+                      }`}
+                  >
+                    <div className={`w-2 h-2 rounded-full ${engineStatus === 'starting' ? 'bg-amber-500 animate-pulse' : 'bg-gray-400'}`} />
+                    {engineStatus === 'starting' ? 'Waking up cosmic engine... (Almost ready)' : 'Initiating astrology engine...'}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {engineStatus === 'online' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-200"
+                >
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  Cosmic engine ready
+                </motion.div>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
