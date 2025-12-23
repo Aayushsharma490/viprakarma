@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Loader2,
   Star,
@@ -475,7 +475,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: mainPlanet?.degreeInSign || mainPlanet?.degree || 0,
+            degree: mainPlanet?.degreeInSign || 0,
           };
         })
       )
@@ -496,7 +496,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: mainPlanet?.degreeInSign || mainPlanet?.degree || 0,
+            degree: mainPlanet?.degreeInSign || 0,
           };
         })
       )
