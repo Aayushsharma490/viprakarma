@@ -110,7 +110,7 @@ export async function PATCH(
           'Payment Approved',
           'Your payment has been verified and approved. You can now access your consultation services.',
           'success',
-          '/consultation'
+          '/talk-to-astrologer'
         );
       } else {
         await createNotification(

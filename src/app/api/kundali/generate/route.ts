@@ -31,10 +31,38 @@ export async function POST(request: NextRequest) {
       city: city || 'Unknown',
     };
 
+    const fetchWithRetry = async (url: string, options: RequestInit, retries = 2, timeout = 10000) => {
+      for (let i = 0; i <= retries; i++) {
+        try {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), timeout);
+
+          const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
+          });
+          clearTimeout(id);
+
+          if (response.ok) return response;
+
+          const errorText = await response.text();
+          console.warn(`[API] Attempt ${i + 1} failed:`, errorText);
+
+          if (i === retries) throw new Error(errorText || 'Failed after retries');
+        } catch (err: any) {
+          console.warn(`[API] Attempt ${i + 1} error:`, err.message);
+          if (i === retries) throw err;
+        }
+        // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      }
+      throw new Error('Unknown error in fetchWithRetry');
+    };
+
     console.log('[API] Sending request to astro-engine:', ASTRO_ENGINE_URL);
 
-    // Call astro-engine server
-    const response = await fetch(`${ASTRO_ENGINE_URL}/kundali`, {
+    // Call astro-engine server with retry logic
+    const response = await fetchWithRetry(`${ASTRO_ENGINE_URL}/kundali`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

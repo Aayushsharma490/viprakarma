@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -45,7 +45,7 @@ const rashiKeys = [
 ];
 
 export default function MahuratPage() {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const { t } = useLanguage();
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<MahuratResult[]>([]);
@@ -59,6 +59,10 @@ export default function MahuratPage() {
         latitude: '',
         longitude: ''
     });
+
+    useEffect(() => {
+        refreshUser();
+    }, [refreshUser]);
 
     const isSubscribed = user?.isMahuratSubscribed || false;
     const subscriptionExpiry = user?.mahuratSubscriptionExpiry;

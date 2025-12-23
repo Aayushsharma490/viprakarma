@@ -22,6 +22,7 @@ interface AuthContextType {
   adminLogin: (token: string, user: User) => void;
   logout: () => void;
   adminLogout: () => void;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
   isAdminLoggedIn: boolean;
 }
@@ -130,6 +131,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser);
   };
 
+  const refreshUser = async () => {
+    const currentToken = localStorage.getItem('token');
+    if (!currentToken) return;
+
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${currentToken}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      } else if (response.status === 401) {
+        logout();
+      }
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -161,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       adminLogin,
       logout,
       adminLogout,
+      refreshUser,
       isLoading,
       isAdminLoggedIn
     }}>

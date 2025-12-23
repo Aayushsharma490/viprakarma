@@ -84,6 +84,9 @@ export default function SubscriptionPage() {
   // Get translated plans
   const plans = getPlans(t);
 
+  const activeSubscription = Object.values(userSubscriptions).find(sub => sub.isActive);
+  const hasActiveSubscription = !!activeSubscription;
+
   useEffect(() => {
     fetchUserSubscriptionStatus();
   }, []);
@@ -315,21 +318,28 @@ export default function SubscriptionPage() {
                   }
 
                   return (
-                    <Button
-                      onClick={() => handleSubscribe(plan)}
-                      disabled={loading === plan.id}
-                      className={`w-full ${plan.popular ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-800'
-                        } text-white shadow-lg transition-all duration-200 hover:scale-[1.02]`}
-                    >
-                      {loading === plan.id ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('subscription.processing')}
-                        </>
-                      ) : (
-                        `${t('subscription.subscribeTo')} ${plan.name}`
+                    <div className="space-y-3">
+                      <Button
+                        onClick={() => handleSubscribe(plan)}
+                        disabled={loading === plan.id || hasActiveSubscription}
+                        className={`w-full ${plan.popular ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-900 hover:bg-gray-800'
+                          } text-white shadow-lg transition-all duration-200 hover:scale-[1.02]`}
+                      >
+                        {loading === plan.id ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t('subscription.processing')}
+                          </>
+                        ) : (
+                          `${t('subscription.subscribeTo')} ${plan.name}`
+                        )}
+                      </Button>
+                      {hasActiveSubscription && !isActive && (
+                        <p className="text-xs text-center text-gray-500 mt-2">
+                          You already have an active {activeSubscription.planName} plan.
+                        </p>
                       )}
-                    </Button>
+                    </div>
                   );
                 })()}
               </Card>
