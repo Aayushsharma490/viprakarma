@@ -73,14 +73,17 @@ export default function Home() {
             stagger: 0.3,
             ease: 'back.out(2)',
             onComplete: () => {
-              // Button pulse animation
-              gsap.to('.cta-button', {
-                scale: 1.02,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: 'sine.inOut'
-              });
+              // Button pulse animation - only if target exists
+              const targets = document.querySelectorAll('.cta-button');
+              if (targets.length > 0) {
+                gsap.to(targets, {
+                  scale: 1.02,
+                  duration: 2,
+                  repeat: -1,
+                  yoyo: true,
+                  ease: 'sine.inOut'
+                });
+              }
             }
           },
           '-=0.5'
