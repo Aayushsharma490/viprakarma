@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -28,23 +29,24 @@ export default function Home() {
 
       // Animated zodiac signs
       gsap.fromTo('.zodiac-sign',
-        { scale: 0, rotation: -180, opacity: 0 },
+        { scale: 0, rotation: -360, opacity: 0, filter: 'blur(10px)' },
         {
           scale: 1,
           rotation: 0,
           opacity: 1,
-          duration: 1.5,
+          filter: 'blur(0px)',
+          duration: 2,
           stagger: 0.1,
-          ease: 'elastic.out(1, 0.8)',
+          ease: 'elastic.out(1, 0.5)',
           delay: 0.5
         }
       );
 
-      // Floating planets
+      // Floating planets with glow
       gsap.to('.floating-planet', {
-        y: 20,
+        y: 30,
         rotation: 360,
-        duration: 8,
+        duration: 10,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
@@ -53,31 +55,31 @@ export default function Home() {
 
       tl.fromTo(
         heroRef.current.querySelector('.hero-title'),
-        { opacity: 0, y: 80, scale: 0.8 },
-        { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: 'power4.out' }
+        { opacity: 0, y: 100, scale: 0.7, filter: 'blur(20px)' },
+        { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.8, ease: 'expo.out' }
       )
         .fromTo(
           heroRef.current.querySelector('.hero-subtitle'),
-          { opacity: 0, y: 50 },
-          { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' },
-          '-=0.8'
+          { opacity: 0, x: -50 },
+          { opacity: 1, x: 0, duration: 1.5, ease: 'power4.out' },
+          '-=1'
         )
         .fromTo(
           heroRef.current.querySelectorAll('.hero-button'),
-          { opacity: 0, y: 30, scale: 0.9 },
+          { opacity: 0, y: 40, scale: 0.8 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 1,
-            stagger: 0.3,
-            ease: 'back.out(2)',
+            duration: 1.2,
+            stagger: 0.4,
+            ease: 'back.out(1.7)',
             onComplete: () => {
               // Button pulse animation - only if target exists
               const targets = document.querySelectorAll('.cta-button');
               if (targets.length > 0) {
                 gsap.to(targets, {
-                  scale: 1.02,
+                  boxShadow: '0 0 30px rgba(212, 175, 55, 0.4)',
                   duration: 2,
                   repeat: -1,
                   yoyo: true,
@@ -86,20 +88,20 @@ export default function Home() {
               }
             }
           },
-          '-=0.5'
+          '-=0.8'
         )
         .fromTo(
           heroRef.current.querySelectorAll('.hero-stats'),
-          { opacity: 0, scale: 0.8, y: 20 },
+          { opacity: 0, scale: 0.5, rotationX: 90 },
           {
             opacity: 1,
             scale: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: 'elastic.out(1, 0.5)'
+            rotationX: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'expo.out'
           },
-          '-=0.3'
+          '-=0.5'
         );
     }
 
@@ -325,54 +327,53 @@ export default function Home() {
       <div className="relative w-full h-96 md:h-[500px] lg:h-[600px]">
         {/* Central Sun */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-32 h-32 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-2xl shadow-amber-400/50 floating-planet">
-            <div className="absolute inset-4 bg-gradient-to-r from-amber-300 to-amber-200 rounded-full animate-pulse"></div>
+          <div className="w-32 h-32 bg-gradient-to-r from-[#FFD700] to-orange-400 rounded-full shadow-[0_0_60px_rgba(255,215,0,0.3)] floating-planet relative group">
+            <div className="absolute inset-2 bg-gradient-to-r from-white to-amber-200 rounded-full animate-pulse group-hover:scale-110 transition-transform duration-700"></div>
+            <div className="absolute inset-0 bg-[#FFD700]/20 rounded-full blur-2xl animate-pulse"></div>
           </div>
         </div>
 
         {/* Zodiac Signs in Circular Pattern */}
         {[
-          { icon: '♈', name: 'Aries', color: 'text-red-500', angle: 0 },
-          { icon: '♉', name: 'Taurus', color: 'text-green-500', angle: 30 },
-          { icon: '♊', name: 'Gemini', color: 'text-yellow-500', angle: 60 },
-          { icon: '♋', name: 'Cancer', color: 'text-blue-500', angle: 90 },
-          { icon: '♌', name: 'Leo', color: 'text-orange-500', angle: 120 },
-          { icon: '♍', name: 'Virgo', color: 'text-purple-500', angle: 150 },
-          { icon: '♎', name: 'Libra', color: 'text-pink-500', angle: 180 },
-          { icon: '♏', name: 'Scorpio', color: 'text-red-600', angle: 210 },
-          { icon: '♐', name: 'Sagittarius', color: 'text-indigo-500', angle: 240 },
-          { icon: '♑', name: 'Capricorn', color: 'text-gray-600', angle: 270 },
-          { icon: '♒', name: 'Aquarius', color: 'text-cyan-500', angle: 300 },
-          { icon: '♓', name: 'Pisces', color: 'text-teal-500', angle: 330 },
+          { icon: '♈', name: 'Aries', angle: 0 },
+          { icon: '♉', name: 'Taurus', angle: 30 },
+          { icon: '♊', name: 'Gemini', angle: 60 },
+          { icon: '♋', name: 'Cancer', angle: 90 },
+          { icon: '♌', name: 'Leo', angle: 120 },
+          { icon: '♍', name: 'Virgo', angle: 150 },
+          { icon: '♎', name: 'Libra', angle: 180 },
+          { icon: '♏', name: 'Scorpio', angle: 210 },
+          { icon: '♐', name: 'Sagittarius', angle: 240 },
+          { icon: '♑', name: 'Capricorn', angle: 270 },
+          { icon: '♒', name: 'Aquarius', angle: 300 },
+          { icon: '♓', name: 'Pisces', angle: 330 },
         ].map((sign, index) => (
           <div
             key={sign.name}
-            className={`zodiac-sign absolute transform -translate-x-1/2 -translate-y-1/2 ${sign.color} font-bold text-2xl md:text-3xl bg-white/90 backdrop-blur-sm rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center shadow-lg border-2 border-current floating-element`}
+            className={`zodiac-sign absolute transform -translate-x-1/2 -translate-y-1/2 text-foreground font-black text-2xl md:text-3xl bg-card/60 backdrop-blur-xl rounded-full w-14 h-14 md:w-20 md:h-20 flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.2)] border border-border hover:border-primary hover:text-primary hover:shadow-[0_0_40px_rgba(255,215,0,0.3)] transition-all duration-500 cursor-pointer floating-element font-sans`}
             style={{
               left: `50%`,
               top: `50%`,
-              transform: `rotate(${sign.angle}deg) translate(180px) rotate(-${sign.angle}deg)`,
+              transform: `rotate(${sign.angle}deg) translate(${typeof window !== 'undefined' && window.innerWidth < 768 ? '140px' : '220px'}) rotate(-${sign.angle}deg)`,
             }}
           >
             {sign.icon}
-          </div>
+          </div >
         ))}
 
         {/* Orbiting Planets */}
-        <div className="floating-planet absolute w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full shadow-lg"
+        <div className="floating-planet absolute w-8 h-8 bg-gradient-to-r from-purple-400 to-indigo-600 rounded-full shadow-lg border border-white/20"
           style={{ top: '20%', left: '30%' }}></div>
-        <div className="floating-planet absolute w-6 h-6 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full shadow-lg"
+        <div className="floating-planet absolute w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full shadow-lg border border-white/20"
           style={{ top: '70%', left: '20%' }}></div>
-        <div className="floating-planet absolute w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-full shadow-lg"
+        <div className="floating-planet absolute w-10 h-10 bg-gradient-to-r from-emerald-400 to-teal-600 rounded-full shadow-lg border border-white/20"
           style={{ top: '30%', left: '70%' }}></div>
-        <div className="floating-planet absolute w-7 h-7 bg-gradient-to-r from-red-400 to-red-600 rounded-full shadow-lg"
-          style={{ top: '80%', left: '80%' }}></div>
 
         {/* Animated Stars - Only render after client-side hydration */}
         {stars.map((star: { left: string; top: string; delay: string; duration: string }, i: number) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-yellow-300 rounded-full animate-pulse"
+            className="absolute w-1.5 h-1.5 bg-white rounded-full animate-pulse opacity-40"
             style={{
               left: star.left,
               top: star.top,
@@ -398,33 +399,22 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 overflow-hidden">
+    <div className="min-h-screen bg-transparent overflow-hidden">
       <Navbar />
       <ChatBot />
-
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-amber-300 rounded-full opacity-20 floating-element"></div>
-        <div className="absolute top-1/3 right-1/4 w-6 h-6 bg-orange-200 rounded-full opacity-15 floating-element"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-amber-200 rounded-full opacity-20 floating-element"></div>
-      </div>
 
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent"
       >
-        {/* Animated Cosmic Background */}
+        {/* Animated Cosmic Background Overlay */}
         <div className="absolute inset-0 z-0">
-          {/* Gradient Orbs */}
-          <div className="absolute top-1/4 -left-10 w-72 h-72 bg-gradient-to-r from-amber-200 to-orange-200 rounded-full blur-3xl opacity-20 floating-element"></div>
-          <div className="absolute bottom-1/4 -right-10 w-96 h-96 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full blur-3xl opacity-15 floating-element"></div>
-
           {/* Subtle Grid Pattern */}
-          <div className="absolute inset-0 opacity-[0.02]" style={{
+          <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: `
-              linear-gradient(to right, #d97706 1px, transparent 1px),
-              linear-gradient(to bottom, #d97706 1px, transparent 1px)
+              linear-gradient(to right, #FFD700 1px, transparent 1px),
+              linear-gradient(to bottom, #FFD700 1px, transparent 1px)
             `,
             backgroundSize: '50px 50px'
           }}></div>
@@ -433,51 +423,51 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             {/* Left Content */}
-            <div className="text-left">
+            <div className="text-left py-12 lg:py-24">
               <div className="mb-8">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-amber-100 rounded-full border border-amber-200 mb-6">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span className="text-sm font-semibold text-amber-700">Trusted by 10,000+ Seekers</span>
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-accent/10 rounded-full border border-border mb-8 backdrop-blur-md animate-pulse">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.2em]">Trusted by 10,000+ Seekers</span>
                 </div>
 
-                <h1 className="hero-title text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-slate-900 font-serif leading-tight">
-                  <span className="block bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 bg-clip-text text-transparent">
+                <h1 className="hero-title text-6xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground font-sans leading-[0.9] tracking-tighter">
+                  <span className="block drop-shadow-[0_0_30px_rgba(255,215,0,0.2)]">
                     {t('hero.title1')}
                   </span>
-                  <span className="block bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 bg-clip-text text-transparent">
+                  <span className="block golden-text">
                     {t('hero.title2')}
                   </span>
                 </h1>
 
-                <p className="hero-subtitle text-xl md:text-2xl text-slate-700 mb-8 font-light leading-relaxed max-w-2xl font-serif">
+                <p className="hero-subtitle text-lg md:text-xl text-muted-foreground mb-10 font-bold leading-relaxed max-w-xl font-sans uppercase tracking-[0.05em]">
                   {t('hero.subtitle')}
                 </p>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <div className="flex flex-col sm:flex-row gap-6 mb-16">
                 <Link href="/kundali">
                   <Button
                     size="lg"
-                    className="cta-button hero-button bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-lg px-8 py-7 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-amber-400/50 font-bold relative overflow-hidden group"
+                    className="cta-button hero-button bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-10 py-8 rounded-2xl shadow-[0_0_40px_rgba(255,215,0,0.2)] hover:shadow-[0_0_60px_rgba(255,215,0,0.4)] transition-all duration-500 font-black relative overflow-hidden group uppercase tracking-widest"
                     onMouseEnter={handleButtonHover}
                     onMouseLeave={handleButtonLeave}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <Sparkles className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <Sparkles className="w-6 h-6 mr-3" />
                     {t('hero.cta1')}
-                    <Zap className="w-5 h-5 ml-2 group-hover:scale-110 transition-transform duration-300" />
+                    <Zap className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link href="/subscription">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="cta-button hero-button text-lg px-8 py-7 rounded-2xl border-3 border-amber-500/80 text-amber-700 bg-white/80 backdrop-blur-sm hover:bg-amber-50 hover:border-amber-600 hover:text-amber-800 transition-all duration-300 shadow-xl hover:shadow-2xl font-semibold group"
+                    className="cta-button hero-button text-lg px-10 py-8 rounded-2xl border-2 border-border text-foreground bg-background/50 backdrop-blur-sm hover:bg-accent/10 hover:border-primary/50 transition-all duration-500 shadow-xl font-bold group uppercase tracking-widest"
                     onMouseEnter={handleButtonHover}
                     onMouseLeave={handleButtonLeave}
                   >
-                    <Star className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     {t('hero.cta2')}
                     <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
@@ -485,17 +475,19 @@ export default function Home() {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl">
                 {[
-                  { icon: Sparkles, label: 'Happy Users', value: '10K+', color: 'text-amber-600' },
-                  { icon: Star, label: 'Expert Astrologers', value: '50+', color: 'text-orange-600' },
-                  { icon: Award, label: 'Years Experience', value: '15+', color: 'text-amber-700' },
-                  { icon: TrendingUp, label: 'Accuracy', value: '98%', color: 'text-green-600' },
+                  { icon: Sparkles, label: 'Happy Users', value: '10K+', color: 'text-[#FFD700]' },
+                  { icon: Star, label: 'Expert Astrologers', value: '50+', color: 'text-[#00F2FF]' },
+                  { icon: Award, label: 'Years Experience', value: '15+', color: 'text-amber-500' },
+                  { icon: TrendingUp, label: 'Accuracy', value: '98%', color: 'text-green-500' },
                 ].map((stat, index) => (
-                  <div key={stat.label} className="hero-stats text-center bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-amber-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <stat.icon className={`w-6 h-6 mx-auto mb-2 ${stat.color}`} />
-                    <div className="text-lg font-bold text-slate-800 mb-1">{stat.value}</div>
-                    <div className="text-xs text-slate-600 font-medium">{stat.label}</div>
+                  <div key={stat.label} className="hero-stats text-left group cursor-pointer">
+                    <div className="flex items-center gap-3 mb-2">
+                      <stat.icon className={`w-5 h-5 ${stat.color} group-hover:scale-110 transition-transform`} />
+                      <div className="text-xl font-black text-foreground font-sans">{stat.value}</div>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -526,132 +518,168 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section ref={featuresRef} className="relative py-24 bg-gradient-to-b from-white to-amber-50/30">
+      <section ref={featuresRef} className="relative py-24 bg-transparent">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-4 mb-6">
-              <div className="w-20 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 font-serif">
-                {t('features.title')}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="text-center mb-20"
+          >
+            <div className="inline-flex items-center gap-6 mb-8">
+              <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary"></div>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground uppercase tracking-tighter font-sans">
+                Explore <span className="golden-text">Cosmic</span> Services
               </h2>
-              <div className="w-20 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
+              <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary"></div>
             </div>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-serif">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
               {t('features.subtitle')}
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
             {features.map((feature, index) => (
-              <Link key={feature.title} href={feature.href}>
-                <Card className={`feature-card group relative overflow-hidden ${feature.bgColor} rounded-3xl cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-amber-200/50`}>
-                  {/* Badges */}
-                  {feature.popular && (
-                    <div className="absolute top-4 left-4 z-20">
-                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                        Most Popular
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                whileHover={{ y: -10 }}
+              >
+                <Link href={feature.href}>
+                  <Card className="celestial-card group relative overflow-hidden bg-card/40 border-border rounded-[2rem] p-4 cursor-pointer">
+                    {/* Badge */}
+                    {(feature.popular || feature.new) && (
+                      <div className="absolute top-8 left-8 z-30">
+                        <span className="bg-primary text-primary-foreground text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
+                          {feature.popular ? 'Most Popular' : 'New Feature'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Image Container */}
+                    <div className="relative h-56 rounded-[1.5rem] overflow-hidden mb-6">
+                      <img
+                        src={feature.image}
+                        alt={feature.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-40 group-hover:opacity-60"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+
+                      {/* Icon overlay */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                        <div className={`w-20 h-20 rounded-full bg-background/40 backdrop-blur-xl border border-border flex items-center justify-center transition-all duration-500 group-hover:border-primary/30 group-hover:bg-primary/10`}>
+                          <feature.icon className={`w-8 h-8 ${feature.popular ? 'text-primary' : 'text-foreground'} group-hover:scale-110 transition-transform`} />
+                        </div>
                       </div>
                     </div>
-                  )}
-                  {feature.new && (
-                    <div className="absolute top-4 left-4 z-20">
-                      <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                        New Feature
+
+                    <div className="px-4 pb-4">
+                      <h3 className="text-2xl font-black text-foreground mb-3 group-hover:text-primary transition-colors duration-300 font-sans tracking-tight">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-bold line-clamp-2">
+                        {feature.description}
+                      </p>
+
+                      <div className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-primary group-hover:gap-5 transition-all">
+                        Explore Now
+                        <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
-                  )}
-
-                  {/* Background Image with Overlay */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={feature.image}
-                      alt={feature.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    <div className={`absolute top-4 right-4 w-14 h-14 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300`}>
-                      <feature.icon className="w-7 h-7 text-white" />
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-amber-700 transition-colors duration-300 font-serif">
-                      {feature.title}
-                    </h3>
-                    <p className="text-slate-600 leading-relaxed mb-4 text-sm">
-                      {feature.description}
-                    </p>
-
-                    {/* Arrow */}
-                    <div className="flex items-center text-amber-600 group-hover:text-amber-700 transition-colors duration-300 font-semibold">
-                      <span className="text-sm">Explore Service</span>
-                      <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
-                    </div>
-                  </div>
-
-                  {/* Hover Border Effect */}
-                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-amber-300/50 rounded-3xl transition-all duration-500" />
-                </Card>
-              </Link>
+                  </Card>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section ref={statsRef} className="relative py-24 bg-gradient-to-br from-amber-50 to-orange-50">
+      <section ref={statsRef} className="relative py-24 bg-transparent">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 font-serif">
-              Trusted by Thousands
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-6 uppercase tracking-tighter font-sans">
+              Trusted by <span className="golden-text">Thousands</span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Join our growing community of believers who have found guidance, clarity, and transformation
+            <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
+              Join our growing community of enlightened souls finding guidance and transformation
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24 px-4">
             {[
-              { icon: Users, label: 'Satisfied Clients', value: '10000', color: 'from-amber-500 to-orange-500' },
-              { icon: Award, label: 'Expert Astrologers', value: '50', color: 'from-purple-500 to-indigo-500' },
-              { icon: Star, label: 'Accurate Predictions', value: '95%', color: 'from-blue-500 to-cyan-500' },
-              { icon: TrendingUp, label: 'Success Rate', value: '98%', color: 'from-green-500 to-emerald-500' },
-            ].map((stat) => (
-              <div key={stat.label} className="stat-item text-center group">
-                <div className={`w-24 h-24 rounded-3xl bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:scale-110 transition-transform duration-500`}>
-                  <stat.icon className="w-12 h-12 text-white" />
+              { icon: Users, label: 'Satisfied Clients', value: '10000', color: 'text-primary' },
+              { icon: Award, label: 'Expert Astrologers', value: '50', color: 'text-secondary' },
+              { icon: Star, label: 'Accurate Predictions', value: '95%', color: 'text-amber-500' },
+              { icon: TrendingUp, label: 'Success Rate', value: '98%', color: 'text-emerald-500' },
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                className="stat-item text-center group"
+              >
+                <div className={`w-20 h-20 rounded-[2rem] bg-card/40 border border-border flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:border-primary/30 transition-all duration-500`}>
+                  <stat.icon className={`w-10 h-10 ${stat.color} group-hover:scale-110 transition-transform`} />
                 </div>
                 <h3
-                  className="text-4xl font-bold text-slate-900 mb-3 group-hover:text-amber-700 transition-colors duration-300 count-up"
+                  className="text-5xl font-black text-foreground mb-3 group-hover:text-primary transition-colors duration-300 count-up font-sans tracking-tighter"
                   data-value={stat.value}
                 >
-                  0{stat.value.includes('%') ? '%' : '+'}
+                  {stat.value}{stat.value.includes('%') ? '' : '+'}
                 </h3>
-                <p className="text-slate-600 font-semibold text-lg">{stat.label}</p>
-              </div>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">{stat.label}</p>
+              </motion.div>
             ))}
           </div>
 
           {/* Testimonials */}
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-3xl font-bold text-center text-slate-900 mb-12 font-serif">What Our Clients Say</h3>
+          <div className="max-w-6xl mx-auto px-4">
+            <h3 className="text-3xl font-black text-center text-white mb-16 uppercase tracking-widest font-sans">
+              Voice of the <span className="golden-text">Universe</span>
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <Card key={index} className="p-6 bg-white/80 backdrop-blur-sm border border-amber-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-slate-900">{testimonial.name}</h4>
-                      <p className="text-sm text-slate-600">{testimonial.role}</p>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                >
+                  <Card className="celestial-card p-8 border-border h-full group bg-card/40 rounded-[2.5rem] relative overflow-hidden transition-all duration-500 hover:bg-card/60">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="relative">
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-14 h-14 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 border border-border"
+                        />
+                        <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1 shadow-lg">
+                          <Sparkles className="w-3 h-3 text-primary-foreground" />
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-black text-foreground text-sm uppercase tracking-widest font-sans">{testimonial.name}</h4>
+                        <p className="text-[10px] text-primary font-black uppercase tracking-widest">{testimonial.role}</p>
+                      </div>
                     </div>
-                  </div>
-                  <StarRating rating={testimonial.rating} />
-                  <p className="text-slate-700 mt-4 text-sm leading-relaxed">"{testimonial.content}"</p>
-                </Card>
+                    <StarRating rating={testimonial.rating} />
+                    <p className="text-muted-foreground mt-6 text-sm leading-relaxed font-bold italic group-hover:text-foreground transition-colors">"{testimonial.content}"</p>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -659,41 +687,41 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="relative py-24 bg-gradient-to-br from-white to-amber-50">
-        <div className="container mx-auto px-4">
+      <section ref={ctaRef} className="relative py-32 bg-transparent overflow-hidden px-4">
+        <div className="container mx-auto">
           <div className="max-w-5xl mx-auto text-center">
             {/* Main CTA Card */}
-            <div className="cta-card bg-gradient-to-br from-amber-500 to-orange-600 rounded-4xl p-12 shadow-2xl border border-amber-400/30 relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                }}></div>
-              </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="cta-card bg-card/60 backdrop-blur-xl rounded-[3rem] p-12 lg:p-20 shadow-[0_0_80px_rgba(255,215,0,0.05)] border border-border relative overflow-hidden"
+            >
+              {/* Background Glows */}
+              <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+              <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-secondary/5 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '3s' }}></div>
 
               <div className="relative z-10">
-                <div className="w-24 h-1 bg-white/60 mx-auto mb-6 rounded-full"></div>
+                <div className="w-20 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-12 rounded-full opacity-50"></div>
 
-                <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 font-serif leading-tight">
-                  Begin Your Cosmic<br />Journey Today
+                <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 uppercase tracking-tighter leading-[0.9] font-sans">
+                  Begin Your <span className="golden-text">Cosmic</span><br />Path Today
                 </h2>
 
-                <p className="text-xl text-amber-100 mb-12 leading-relaxed max-w-2xl mx-auto font-serif">
-                  Join thousands of enlightened souls who have discovered their true path through our divine guidance and celestial insights
+                <p className="text-lg md:text-xl text-muted-foreground mb-16 leading-relaxed max-w-2xl mx-auto font-bold uppercase tracking-widest">
+                  Join thousands of souls who have discovered their true path through celestial insights and divine guidance.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
                   <Link href="/signup">
                     <Button
                       size="lg"
-                      className="bg-white text-amber-700 hover:bg-amber-50 text-lg px-12 py-7 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-white font-bold relative overflow-hidden group"
-                      onMouseEnter={handleButtonHover}
-                      onMouseLeave={handleButtonLeave}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground text-xl px-14 py-10 rounded-2xl shadow-[0_0_50px_rgba(255,215,0,0.2)] hover:shadow-[0_0_70px_rgba(255,215,0,0.3)] transition-all duration-500 font-black relative overflow-hidden group uppercase tracking-[0.2em]"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Sparkles className="w-6 h-6 mr-3 text-amber-600" />
-                      Start Free Trial
-                      <Zap className="w-5 h-5 ml-2 text-amber-600" />
+                      <Sparkles className="w-6 h-6 mr-3" />
+                      Start Journey
+                      <Zap className="w-5 h-5 ml-2" />
                     </Button>
                   </Link>
 
@@ -701,42 +729,38 @@ export default function Home() {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="text-lg px-12 py-7 rounded-2xl border-3 border-white/80 text-white bg-transparent hover:bg-white/10 hover:border-white backdrop-blur-sm transition-all duration-300 shadow-xl hover:shadow-2xl font-semibold group"
-                      onMouseEnter={handleButtonHover}
-                      onMouseLeave={handleButtonLeave}
+                      className="text-xl px-14 py-10 rounded-2xl border-2 border-border text-foreground bg-background/40 hover:bg-accent/10 hover:border-primary/50 backdrop-blur-md transition-all duration-500 shadow-2xl font-black group uppercase tracking-[0.2em]"
                     >
-                      <MessageCircle className="w-6 h-6 mr-3" />
-                      Consult Expert
-                      <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                      Consult Now
+                      <ChevronRight className="w-6 h-6 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
                     </Button>
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Trust Badges */}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-700">
-              <div className="flex items-center justify-center gap-4 bg-white rounded-2xl p-6 shadow-lg border border-amber-100 hover:shadow-xl transition-all duration-300">
-                <Shield className="w-8 h-8 text-amber-600" />
-                <div className="text-left">
-                  <div className="font-bold text-lg">100% Secure</div>
-                  <div className="text-sm text-slate-600">& Confidential</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-4 bg-white rounded-2xl p-6 shadow-lg border border-amber-100 hover:shadow-xl transition-all duration-300">
-                <Clock className="w-8 h-8 text-amber-600" />
-                <div className="text-left">
-                  <div className="font-bold text-lg">24/7 Available</div>
-                  <div className="text-sm text-slate-600">Services</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-4 bg-white rounded-2xl p-6 shadow-lg border border-amber-100 hover:shadow-xl transition-all duration-300">
-                <Heart className="w-8 h-8 text-amber-600" />
-                <div className="text-left">
-                  <div className="font-bold text-lg">Trusted Since</div>
-                  <div className="text-sm text-slate-600">2008</div>
-                </div>
-              </div>
+            <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { icon: Shield, title: '100% Secure', desc: '& Confidential' },
+                { icon: Clock, title: '24/7 Available', desc: 'Divine Services' },
+                { icon: Heart, title: 'Top Rated', desc: 'Trusted Service' }
+              ].map((badge, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.2 }}
+                  className="flex items-center justify-center gap-6 celestial-card p-8 border-border hover:border-primary/10 transition-all duration-500 rounded-[2rem] bg-card/60 backdrop-blur-sm"
+                >
+                  <badge.icon className="w-10 h-10 text-primary" />
+                  <div className="text-left">
+                    <div className="font-black text-foreground uppercase tracking-[0.1em] text-sm font-sans">{badge.title}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{badge.desc}</div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>

@@ -255,12 +255,7 @@ export default function AdminSubscriptionsContent() {
     }
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6 space-y-6"
-        >
+        <div className="container mx-auto px-4 py-24 space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">{t('admin.subscriptions.title')}</h1>
             </div>
@@ -535,6 +530,6 @@ export default function AdminSubscriptionsContent() {
                     )}
                 </DialogContent>
             </Dialog>
-        </motion.div>
+        </div>
     );
 }

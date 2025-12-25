@@ -4,6 +4,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
+import CosmicBackground from "@/components/CosmicBackground";
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Viprakarma - Complete Astrology & Spiritual Services",
@@ -20,17 +22,21 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script src="https://checkout.razorpay.com/v1/checkout.js" async />
-        {/* Dummy favicon to prevent Next.js error */}
         <link
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22/>"
         />
       </head>
-      <body className="antialiased" suppressHydrationWarning>
+      <body className="antialiased font-serif bg-[#050510] text-[#f0f0f5]" suppressHydrationWarning>
         <ThemeProvider>
           <LanguageProvider>
             <AuthProvider>
-              {children}
+              <CosmicBackground />
+              <div className="relative z-10">
+                <ClientLayoutWrapper>
+                  {children}
+                </ClientLayoutWrapper>
+              </div>
               <Toaster richColors position="top-center" />
             </AuthProvider>
           </LanguageProvider>

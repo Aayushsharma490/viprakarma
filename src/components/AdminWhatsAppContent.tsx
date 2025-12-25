@@ -222,12 +222,7 @@ export default function AdminWhatsAppContent() {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6 space-y-6"
-        >
+        <div className="container mx-auto px-4 py-24 space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                     <MessageSquare className="w-8 h-8 text-green-600" />
@@ -448,6 +443,6 @@ export default function AdminWhatsAppContent() {
                     <li>QR scan needed only once - stays connected</li>
                 </ul>
             </Card>
-        </motion.div>
+        </div>
     );
 }

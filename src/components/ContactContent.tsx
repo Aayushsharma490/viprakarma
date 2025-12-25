@@ -73,24 +73,31 @@ export default function ContactContent() {
     ];
 
     return (
-        <div className="min-h-screen cosmic-gradient">
+        <div className="min-h-screen bg-transparent">
             <Navbar />
             <ChatBot />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-20 relative overflow-hidden">
-                <div className="fixed inset-0 stars-bg opacity-30 pointer-events-none" />
-
+            <section className="pt-40 pb-20 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1, ease: "easeOut" }}
                         className="text-center max-w-4xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-cosmic">
-                            {t("contact.subtitle")}
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-primary/20 rounded-full mb-6"
+                        >
+                            <Send className="w-4 h-4 text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Get in Touch</span>
+                        </motion.div>
+                        <h1 className="text-6xl md:text-8xl font-black text-foreground mb-8 tracking-tighter uppercase font-sans leading-none">
+                            Contact <span className="golden-text">Us</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-muted-foreground">
+                        <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
                             {t("contact.description")}
                         </p>
                     </motion.div>
@@ -100,7 +107,7 @@ export default function ContactContent() {
             {/* Contact Info Cards */}
             <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {contactInfo.map((info, index) => (
                             <motion.div
                                 key={info.title}
@@ -109,23 +116,18 @@ export default function ContactContent() {
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
                             >
-                                <Card className="glass-effect p-6 text-center h-full hover:glow-purple transition-all duration-300">
-                                    <div
-                                        className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4"
-                                        style={{
-                                            background: 'linear-gradient(135deg, #6d28d9, #a855f7)',
-                                        }}
-                                    >
-                                        <info.icon className="w-6 h-6 text-white" />
+                                <Card className="celestial-card p-8 text-center h-full bg-card/40 border-border rounded-[2rem] hover:border-primary/30 transition-all duration-500 group">
+                                    <div className="w-16 h-16 rounded-2xl bg-accent/20 border border-border flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform">
+                                        <info.icon className="w-8 h-8 text-primary" />
                                     </div>
-                                    <h3 className="text-lg font-semibold mb-2 text-foreground">
+                                    <h3 className="text-lg font-black mb-3 text-foreground uppercase tracking-tighter font-sans">
                                         {info.title === 'Email Us' ? t('contact.info.email.title') :
                                             info.title === 'Call Us' ? t('contact.info.phone.title') :
                                                 info.title === 'Visit Us' ? t('contact.info.visit.title') :
                                                     t('contact.info.hours.title')}
                                     </h3>
-                                    <p className="text-primary font-medium mb-1">{info.content}</p>
-                                    <p className="text-sm text-muted-foreground">{info.subContent}</p>
+                                    <p className="text-primary font-black uppercase tracking-tight mb-2 text-sm">{info.content}</p>
+                                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{info.subContent}</p>
                                 </Card>
                             </motion.div>
                         ))}
@@ -134,29 +136,35 @@ export default function ContactContent() {
             </section>
 
             {/* Contact Form */}
-            <section className="py-20">
+            <section className="py-24">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto">
+                    <div className="max-w-4xl mx-auto">
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <Card className="glass-effect p-8">
-                                <h2 className="text-3xl font-bold text-center mb-6 text-cosmic">
+                            <Card className="celestial-card border-border bg-card/60 backdrop-blur-3xl p-10 md:p-16 rounded-[3rem] relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 -ml-32 -mt-32 rounded-full blur-[80px]"></div>
+                                <h2 className="text-4xl font-black text-center mb-10 text-foreground uppercase tracking-tighter font-sans relative z-10">
                                     {t("contact.form.title")}
                                 </h2>
 
                                 {submitted && (
-                                    <div className="bg-green-500/10 border border-green-500/50 text-green-500 px-4 py-3 rounded-lg mb-6 text-center">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-4 rounded-2xl mb-10 text-center font-black uppercase tracking-tight text-sm flex items-center justify-center gap-3 relative z-10"
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                                         {t("contact.form.success")}
-                                    </div>
+                                    </motion.div>
                                 )}
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <Label htmlFor="name">{t("contact.form.name")} *</Label>
+                                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">{t("contact.form.name")} *</Label>
                                             <Input
                                                 id="name"
                                                 type="text"
@@ -164,11 +172,11 @@ export default function ContactContent() {
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                                 required
-                                                className="mt-1"
+                                                className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm hover:border-primary/50 transition-colors"
                                             />
                                         </div>
-                                        <div>
-                                            <Label htmlFor="email">{t("contact.form.email")} *</Label>
+                                        <div className="space-y-3">
+                                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">{t("contact.form.email")} *</Label>
                                             <Input
                                                 id="email"
                                                 type="email"
@@ -176,25 +184,25 @@ export default function ContactContent() {
                                                 value={formData.email}
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                                 required
-                                                className="mt-1"
+                                                className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm hover:border-primary/50 transition-colors"
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <Label htmlFor="phone">{t("contact.form.phone")}</Label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">{t("contact.form.phone")}</Label>
                                             <Input
                                                 id="phone"
                                                 type="tel"
                                                 placeholder="+91 98765 43210"
                                                 value={formData.phone}
                                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                className="mt-1"
+                                                className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm hover:border-primary/50 transition-colors"
                                             />
                                         </div>
-                                        <div>
-                                            <Label htmlFor="subject">{t("contact.form.subject")} *</Label>
+                                        <div className="space-y-3">
+                                            <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">{t("contact.form.subject")} *</Label>
                                             <Input
                                                 id="subject"
                                                 type="text"
@@ -202,38 +210,38 @@ export default function ContactContent() {
                                                 value={formData.subject}
                                                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                                 required
-                                                className="mt-1"
+                                                className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm hover:border-primary/50 transition-colors"
                                             />
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <Label htmlFor="message">{t("contact.form.message")} *</Label>
+                                    <div className="space-y-3">
+                                        <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">{t("contact.form.message")} *</Label>
                                         <Textarea
                                             id="message"
                                             placeholder="Tell us more about your inquiry..."
                                             value={formData.message}
                                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                             required
-                                            className="mt-1 min-h-[150px]"
+                                            className="min-h-[180px] bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm hover:border-primary/50 transition-colors py-4 px-5"
                                         />
                                     </div>
 
                                     <Button
                                         type="submit"
-                                        className="w-full bg-primary hover:bg-primary/90 glow-purple"
+                                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black h-16 rounded-[1.25rem] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-[0.2em] text-sm"
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? (
-                                            <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            <div className="flex items-center gap-3">
+                                                <Loader2 className="w-5 h-5 animate-spin" />
                                                 {t("contact.form.sending")}
-                                            </>
+                                            </div>
                                         ) : (
-                                            <>
-                                                <Send className="mr-2 h-4 w-4" />
+                                            <div className="flex items-center gap-3">
+                                                <Send className="w-5 h-5" />
                                                 {t("contact.form.send")}
-                                            </>
+                                            </div>
                                         )}
                                     </Button>
                                 </form>
@@ -244,19 +252,19 @@ export default function ContactContent() {
             </section>
 
             {/* FAQ Section */}
-            <section className="py-20">
+            <section className="py-24 pb-48">
                 <div className="container mx-auto px-4">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="max-w-4xl mx-auto"
                     >
-                        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-cosmic">
-                            Frequently Asked Questions
+                        <h2 className="text-4xl font-black text-center mb-16 text-foreground uppercase tracking-tighter font-sans">
+                            Frequently Asked <span className="golden-text">Questions</span>
                         </h2>
 
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 gap-6">
                             {[
                                 {
                                     q: 'How accurate are the kundali predictions?',
@@ -275,11 +283,11 @@ export default function ContactContent() {
                                     a: 'We accept all major credit/debit cards, UPI, net banking, and mobile wallets through our secure Razorpay integration.',
                                 },
                             ].map((faq, index) => (
-                                <Card key={index} className="glass-effect p-6">
-                                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                                <Card key={index} className="celestial-card border-border bg-card/40 backdrop-blur-xl rounded-3xl p-8 hover:border-primary/20 transition-all duration-300">
+                                    <h3 className="text-xl font-black text-foreground mb-4 uppercase tracking-tight font-sans">
                                         {faq.q}
                                     </h3>
-                                    <p className="text-muted-foreground">{faq.a}</p>
+                                    <p className="text-muted-foreground font-medium leading-relaxed">{faq.a}</p>
                                 </Card>
                             ))}
                         </div>

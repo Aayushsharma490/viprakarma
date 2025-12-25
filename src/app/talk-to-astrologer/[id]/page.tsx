@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Navbar from '@/components/Navbar';
 import PaymentModal from '@/components/PaymentModal';
-import { Send, Loader2, Phone, Video, MessageCircle, Lock, Calendar, MapPin, User } from 'lucide-react';
+import NorthIndianKundali from '@/components/NorthIndianKundali';
+import { Send, Loader2, Phone, Video, MessageCircle, Lock, Calendar, MapPin, User, ChevronRight, ChevronLeft, X, Star } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -41,6 +42,9 @@ function AstrologerChatContent() {
     question: ''
   });
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [kundaliData, setKundaliData] = useState<any>(null);
+  const [showKundali, setShowKundali] = useState(false);
+  const [isGeneratingKundali, setIsGeneratingKundali] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -161,6 +165,50 @@ function AstrologerChatContent() {
     };
 
     setMessages([welcomeMessage]);
+
+    // Generate Kundali
+    generateKundali();
+  };
+
+  const generateKundali = async () => {
+    if (!consultationData.dob || !consultationData.place) return;
+
+    setIsGeneratingKundali(true);
+    try {
+      const [year, month, day] = consultationData.dob.split('-').map(Number);
+      const [hour, minute] = (consultationData.time || '12:00').split(':').map(Number);
+
+      const payload = {
+        name: consultationData.name,
+        gender: 'male', // Default or add to form
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second: 0,
+        latitude: 26.9124, // Fallback or geocode place
+        longitude: 75.7873, // Fallback or geocode place
+        timezone: '+05:30',
+        city: consultationData.place,
+      };
+
+      const response = await fetch('/api/kundali/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setKundaliData(data);
+        setShowKundali(true);
+      }
+    } catch (error) {
+      console.error('Failed to generate kundali:', error);
+    } finally {
+      setIsGeneratingKundali(false);
+    }
   };
 
   if (showConsultationForm) {
@@ -298,105 +346,167 @@ function AstrologerChatContent() {
   }
 
   return (
-    <div className="min-h-screen cosmic-gradient flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col pt-16">
       <Navbar />
 
       <div className="fixed inset-0 stars-bg opacity-30 pointer-events-none" />
 
-      <div className="relative z-10 flex-grow container mx-auto px-4 py-8 flex flex-col max-w-4xl">
+      <div className="relative z-10 flex-grow container mx-auto px-4 py-8 flex flex-col overflow-hidden max-w-7xl">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          className="mb-4"
         >
-          <Card className="glass-effect p-4 mb-4">
+          <Card className="celestial-card p-4 bg-card/40 border-border">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-xl font-bold text-white">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-xl font-black text-primary-foreground shadow-lg">
                   {astrologer?.name?.charAt(0) || 'A'}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">{astrologer?.name || 'Astrologer'}</h2>
-                  <p className="text-sm text-muted-foreground">{astrologer?.specialization || 'Vedic Astrology'}</p>
+                  <h2 className="text-xl font-black uppercase tracking-tighter text-foreground leading-tight">
+                    {astrologer?.name || 'Astrologer'}
+                  </h2>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    {astrologer?.specialization || 'Vedic Astrology Expert'}
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {getIcon()}
-                <span className="text-sm capitalize">{chatType}</span>
+              <div className="flex items-center gap-4">
+                <div className="hidden md:flex flex-col items-end">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-primary">₹{astrologer?.pricePerMinute || 0}/min</span>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Live Consultation</span>
+                </div>
+                <Button
+                  onClick={() => setShowKundali(!showKundali)}
+                  variant="outline"
+                  size="sm"
+                  className="border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 text-[10px] font-black uppercase tracking-widest h-10 px-4 rounded-xl"
+                >
+                  {showKundali ? 'Hide Kundali' : 'Show Kundali'}
+                </Button>
               </div>
             </div>
           </Card>
         </motion.div>
 
-        <Card className="glass-effect flex-grow flex flex-col overflow-hidden">
-          <div className="flex-grow overflow-y-auto p-6 space-y-4">
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`flex ${message.senderId === userId ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.senderId === userId
-                    ? 'bg-primary text-white'
-                    : 'bg-muted/50 text-foreground'
-                    }`}
-                >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                  <p className="text-xs opacity-70 mt-1">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+        {/* Main Content Area */}
+        <div className="flex-grow flex gap-4 overflow-hidden relative">
+          {/* Chat Column */}
+          <div className={`flex-grow flex flex-col transition-all duration-500 ${showKundali ? 'lg:w-1/2' : 'w-full'}`}>
+            <Card className="celestial-card flex-grow flex flex-col overflow-hidden bg-card/40 border-border rounded-[2rem]">
+              <div className="flex-grow overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-primary/20">
+                <AnimatePresence>
+                  {messages.map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, x: message.senderId === userId ? 20 : -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className={`flex ${message.senderId === userId ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-[1.5rem] px-5 py-3 shadow-xl ${message.senderId === userId
+                          ? 'bg-primary text-primary-foreground rounded-tr-none'
+                          : 'bg-card/80 text-foreground border border-border rounded-tl-none'
+                          }`}
+                      >
+                        <p className="text-sm font-medium leading-relaxed">{message.content}</p>
+                        <p className="text-[10px] font-bold opacity-60 mt-2 uppercase tracking-widest">
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
 
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-start"
-              >
-                <div className="bg-muted/50 rounded-2xl px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                {isLoading && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                    <div className="bg-card/80 border border-border rounded-2xl rounded-tl-none px-5 py-3 shadow-xl">
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    </div>
+                  </motion.div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="p-4 bg-background/20 backdrop-blur-md border-t border-border">
+                <div className="flex gap-2">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your message..."
+                    className="flex-grow bg-background/50 border-border focus:ring-primary h-14 rounded-2xl placeholder:text-muted-foreground/50"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    onClick={handleSend}
+                    disabled={!input.trim() || isLoading}
+                    className="bg-primary hover:bg-primary/90 w-14 h-14 rounded-2xl shadow-xl shadow-primary/20"
+                  >
+                    <Send className="w-5 h-5" />
+                  </Button>
                 </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Kundali Column (Desktop Only or via Toggle) */}
+          <AnimatePresence>
+            {showKundali && (
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 100 }}
+                className={`fixed inset-0 lg:relative lg:inset-auto z-50 lg:z-0 lg:w-1/2 bg-background lg:bg-transparent p-4 lg:p-0 transition-all duration-500`}
+              >
+                <Card className="celestial-card h-full flex flex-col overflow-hidden bg-card/60 backdrop-blur-3xl border-border rounded-[2.5rem] p-6 lg:p-8 relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowKundali(false)}
+                    className="lg:hidden absolute top-6 right-6 h-10 w-10 rounded-full hover:bg-accent/10"
+                  >
+                    <X className="w-6 h-6" />
+                  </Button>
+
+                  <div className="mb-6">
+                    <h3 className="text-xl font-black uppercase tracking-tighter golden-text">Birth Chart</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Visualization for {consultationData.name}</p>
+                  </div>
+
+                  <div className="flex-grow flex items-center justify-center overflow-auto min-h-0 bg-white/5 rounded-3xl p-4 border border-border/50 shadow-inner">
+                    {isGeneratingKundali ? (
+                      <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground animate-pulse">Calculating Alignment...</p>
+                      </div>
+                    ) : kundaliData ? (
+                      <div className="transform scale-[0.7] sm:scale-75 md:scale-90 lg:scale-100 origin-center text-black">
+                        <NorthIndianKundali
+                          planets={Object.values(kundaliData.charts?.d1 || {}).flatMap((h: any) => h.planets.map((p: any) => ({ ...p, house: h.house })))}
+                          houses={Object.values(kundaliData.charts?.d1 || {}).map((h: any) => ({ rashi: h.sign }))}
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center p-8">
+                        <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground/30" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">No Chart Data Available</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
               </motion.div>
             )}
+          </AnimatePresence>
+        </div>
 
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className="border-t border-border p-4">
-            <div className="flex gap-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={`Type your question...`}
-                className="flex-grow"
-                disabled={isLoading}
-              />
-
-              <Button
-                onClick={handleSend}
-                disabled={!input.trim() || isLoading}
-                className="bg-primary hover:bg-primary/90 flex-shrink-0"
-              >
-                <Send className="w-5 h-5" />
-              </Button>
-            </div>
-
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Consultation in progress • ₹{astrologer?.pricePerMinute || 0}/minute
-            </p>
-          </div>
-        </Card>
-
-        <div className="mt-4 text-center">
+        <div className="mt-6 flex justify-center">
           <Button
             onClick={() => router.push('/talk-to-astrologer')}
-            variant="outline"
+            variant="ghost"
+            className="text-red-500/60 hover:text-red-500 hover:bg-red-500/10 text-[10px] font-black uppercase tracking-widest h-10 px-8 rounded-xl transition-all"
           >
             End Consultation
           </Button>

@@ -14,6 +14,7 @@ import {
     Loader2,
     LogOut
 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -137,39 +138,41 @@ export default function AdminDashboardContent() {
     };
 
     const statCards = [
-        { title: t('admin.dashboard.totalUsers'), value: stats.totalUsers, icon: Users, color: 'from-amber-500 to-amber-600' },
-        { title: t('admin.dashboard.astrologers'), value: stats.totalAstrologers, icon: UserCheck, color: 'from-amber-600 to-amber-700' },
-        { title: t('admin.dashboard.bookings'), value: stats.totalBookings, icon: Calendar, color: 'from-amber-700 to-amber-800' },
-        { title: t('admin.dashboard.payments'), value: stats.totalPayments, icon: DollarSign, color: 'from-green-500 to-green-600' },
-        { title: t('admin.dashboard.revenue'), value: `₹${stats.totalRevenue}`, icon: TrendingUp, color: 'from-green-600 to-green-700' },
+        { title: t('admin.dashboard.totalUsers'), value: stats.totalUsers, icon: Users, color: 'text-[#FFD700]' },
+        { title: t('admin.dashboard.astrologers'), value: stats.totalAstrologers, icon: UserCheck, color: 'text-[#00F2FF]' },
+        { title: t('admin.dashboard.bookings'), value: stats.totalBookings, icon: Calendar, color: 'text-amber-500' },
+        { title: t('admin.dashboard.payments'), value: stats.totalPayments, icon: DollarSign, color: 'text-green-500' },
+        { title: t('admin.dashboard.revenue'), value: `₹${stats.totalRevenue}`, icon: TrendingUp, color: 'text-emerald-500' },
     ];
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center">
-                <Loader2 className="w-16 h-16 text-amber-600 animate-spin" />
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <Loader2 className="w-16 h-16 text-primary animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100">
-            <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
+        <div className="min-h-screen bg-transparent pt-24">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold golden-text">{t('admin.dashboard.title')}</h1>
-                            <p className="text-gray-600 mt-2 text-sm md:text-base">{t('admin.managePlatform')}</p>
+                            <h1 className="text-4xl md:text-5xl font-black text-foreground uppercase tracking-tighter font-sans leading-none mb-4">
+                                Admin <span className="golden-text">Control</span>
+                            </h1>
+                            <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">{t('admin.managePlatform')}</p>
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                            <Button onClick={() => router.push('/')} variant="outline" className="border-amber-600 text-amber-900 text-sm md:text-base">
+                        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                            <Button onClick={() => router.push('/')} variant="outline" className="border-border text-foreground hover:bg-accent/10 text-xs font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-2xl backdrop-blur-md transition-colors">
                                 {t('admin.home')}
                             </Button>
-                            <Button onClick={handleLogout} variant="destructive" className="text-sm md:text-base">
+                            <Button onClick={handleLogout} variant="destructive" className="bg-red-500 text-white hover:bg-red-600 dark:bg-red-950/40 dark:hover:bg-red-900/60 dark:text-red-400 border border-red-500/20 dark:border-red-900/40 text-xs font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-2xl backdrop-blur-md">
                                 <LogOut className="w-4 h-4 mr-2" />
                                 {t('admin.logout')}
                             </Button>
@@ -177,7 +180,7 @@ export default function AdminDashboardContent() {
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
                         {statCards.map((stat, index) => {
                             const Icon = stat.icon;
                             return (
@@ -187,12 +190,13 @@ export default function AdminDashboardContent() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.6, delay: index * 0.1 }}
                                 >
-                                    <Card className="classical-card p-4 md:p-6 hover:shadow-xl transition-shadow">
-                                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3`}>
-                                            <Icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                                    <Card className="celestial-card p-8 group hover:border-primary/30 transition-all duration-500 bg-card/40 border-border rounded-3xl relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full blur-2xl"></div>
+                                        <div className={`w-12 h-12 rounded-2xl bg-accent/20 border border-border flex items-center justify-center mb-6 shadow-xl`}>
+                                            <Icon className={`w-6 h-6 ${stat.color} group-hover:scale-110 transition-transform`} />
                                         </div>
-                                        <p className="text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
-                                        <p className="text-xs md:text-sm text-muted-foreground">{stat.title}</p>
+                                        <p className="text-3xl font-black text-foreground font-sans tracking-tighter mb-2">{stat.value}</p>
+                                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">{stat.title}</p>
                                     </Card>
                                 </motion.div>
                             );
@@ -200,133 +204,126 @@ export default function AdminDashboardContent() {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-                        <Button
-                            onClick={() => setActiveTab('overview')}
-                            variant={activeTab === 'overview' ? 'default' : 'outline'}
-                            className={`${activeTab === 'overview' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-600 text-amber-900'} text-sm md:text-base`}
-                        >
-                            {t('admin.dashboard.overview')}
-                        </Button>
-                        <Button
-                            onClick={() => setActiveTab('bookings')}
-                            variant={activeTab === 'bookings' ? 'default' : 'outline'}
-                            className={`${activeTab === 'bookings' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-600 text-amber-900'} text-sm md:text-base`}
-                        >
-                            {t('admin.dashboard.recentBookings')}
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/admin/payments')}
-                            variant="outline"
-                            className="border-amber-600 text-amber-900 hover:bg-amber-50 text-sm md:text-base"
-                        >
-                            {t('admin.dashboard.paymentVerifications')}
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/admin/users')}
-                            variant="outline"
-                            className="border-amber-600 text-amber-900 hover:bg-amber-50 text-sm md:text-base"
-                        >
-                            {t('admin.dashboard.userManagement')}
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/admin/pandits')}
-                            variant="outline"
-                            className="border-amber-600 text-amber-900 hover:bg-amber-50 text-sm md:text-base"
-                        >
-                            {t('admin.dashboard.managePandits')}
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/admin/subscriptions')}
-                            variant="outline"
-                            className="border-amber-600 text-amber-900 hover:bg-amber-50 text-sm md:text-base"
-                        >
-                            {t('admin.dashboard.subscriptions')}
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/admin/whatsapp')}
-                            variant="outline"
-                            className="border-green-600 text-green-900 hover:bg-green-50 text-sm md:text-base"
-                        >
-                            {t('admin.dashboard.whatsappMessaging')}
-                        </Button>
+                    <div className="flex flex-wrap gap-4 mb-10 pb-6 border-b border-white/5">
+                        {[
+                            { id: 'overview', label: t('admin.dashboard.overview') },
+                            { id: 'bookings', label: t('admin.dashboard.recentBookings') }
+                        ].map((tab) => (
+                            <Button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as any)}
+                                variant="ghost"
+                                className={`text-xs font-black uppercase tracking-widest h-12 px-8 rounded-xl transition-all duration-500 ${activeTab === tab.id ? 'bg-primary text-primary-foreground shadow-[0_0_30px_rgba(255,215,0,0.2)]' : 'text-muted-foreground hover:text-foreground hover:bg-accent/10'}`}
+                            >
+                                {tab.label}
+                            </Button>
+                        ))}
+                        <div className="flex-1" />
+                        <div className="flex flex-wrap gap-2">
+                            {[
+                                { path: '/admin/payments', label: t('admin.dashboard.paymentVerifications') },
+                                { path: '/admin/users', label: t('admin.dashboard.userManagement') },
+                                { path: '/admin/pandits', label: t('admin.dashboard.managePandits') },
+                                { path: '/admin/subscriptions', label: t('admin.dashboard.subscriptions') }
+                            ].map((nav) => (
+                                <Button
+                                    key={nav.path}
+                                    onClick={() => router.push(nav.path)}
+                                    variant="outline"
+                                    className="border-border bg-card/60 text-muted-foreground hover:text-foreground hover:border-primary/50 text-[10px] font-black uppercase tracking-widest h-10 px-6 rounded-lg backdrop-blur-sm transition-all"
+                                >
+                                    {nav.label}
+                                </Button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Content */}
-                    {activeTab === 'overview' && (
-                        <Card className="classical-card p-4 md:p-6">
-                            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 golden-text">{t('admin.dashboard.platformOverview')}</h2>
-                            <div className="space-y-3 md:space-y-4">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 p-3 md:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                    <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-green-600 flex-shrink-0" />
-                                    <div>
-                                        <p className="font-semibold text-foreground text-sm md:text-base">{t('admin.dashboard.platformGrowth')}</p>
-                                        <p className="text-xs md:text-sm text-muted-foreground">
-                                            {stats.totalUsers} {t('admin.dashboard.registeredUsers')}
-                                        </p>
+                    <AnimatePresence mode="wait">
+                        {activeTab === 'overview' ? (
+                            <motion.div
+                                key="overview"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <Card className="celestial-card p-8 border-border bg-card/60 backdrop-blur-xl rounded-[2.5rem]">
+                                    <h2 className="text-2xl font-black text-foreground mb-10 uppercase tracking-tighter font-sans">{t('admin.dashboard.platformOverview')}</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {[
+                                            { icon: TrendingUp, label: t('admin.dashboard.platformGrowth'), desc: `${stats.totalUsers} ${t('admin.dashboard.registeredUsers')}`, color: 'text-green-400' },
+                                            { icon: UserCheck, label: t('admin.dashboard.expertAstrologers'), desc: `${stats.totalAstrologers} ${t('admin.dashboard.verifiedAstrologers')}`, color: 'text-[#FFD700]' },
+                                            { icon: DollarSign, label: t('admin.dashboard.totalRevenue'), desc: `₹${stats.totalRevenue} from ${stats.totalPayments} payments`, color: 'text-emerald-400' },
+                                            { icon: Calendar, label: t('admin.dashboard.totalBookings'), desc: `${stats.totalBookings} ${t('admin.dashboard.consultationsBooked')}`, color: 'text-[#00F2FF]' }
+                                        ].map((item, idx) => (
+                                            <motion.div
+                                                key={idx}
+                                                whileHover={{ x: 10 }}
+                                                className="flex items-center gap-6 p-6 bg-accent/5 rounded-3xl border border-border transition-all duration-500 hover:border-primary/20"
+                                            >
+                                                <div className="w-14 h-14 rounded-2xl bg-accent/20 border border-border flex items-center justify-center shadow-xl">
+                                                    <item.icon className={`w-8 h-8 ${item.color}`} />
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-foreground text-sm uppercase tracking-widest mb-1">{item.label}</p>
+                                                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{item.desc}</p>
+                                                </div>
+                                            </motion.div>
+                                        ))}
                                     </div>
-                                </div>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 p-3 md:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                    <UserCheck className="w-6 h-6 md:w-8 md:h-8 text-amber-600 flex-shrink-0" />
-                                    <div>
-                                        <p className="font-semibold text-foreground text-sm md:text-base">{t('admin.dashboard.expertAstrologers')}</p>
-                                        <p className="text-xs md:text-sm text-muted-foreground">
-                                            {stats.totalAstrologers} {t('admin.dashboard.verifiedAstrologers')}
-                                        </p>
+                                </Card>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="bookings"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <Card className="celestial-card p-8 border-border bg-card/60 backdrop-blur-xl rounded-[2.5rem]">
+                                    <h2 className="text-2xl font-black text-foreground mb-10 uppercase tracking-tighter font-sans">{t('admin.dashboard.recentBookings')}</h2>
+                                    <div className="space-y-4">
+                                        {recentBookings.length === 0 ? (
+                                            <p className="text-center text-gray-500 py-20 font-bold uppercase tracking-widest text-xs">{t('admin.dashboard.noBookings')}</p>
+                                        ) : (
+                                            recentBookings.map((booking, idx) => (
+                                                <motion.div
+                                                    key={booking.id}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: idx * 0.05 }}
+                                                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 bg-accent/5 rounded-3xl border border-border transition-all duration-500 hover:bg-accent/10 group"
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-black text-foreground text-sm uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">{booking.userName}</p>
+                                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-2">
+                                                            {booking.serviceType} {booking.astrologerName ? `with ${booking.astrologerName}` : ''}
+                                                        </p>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-[10px] text-primary font-black uppercase tracking-widest px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                                                                ₹{booking.amount}
+                                                            </span>
+                                                            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                                                                {new Date(booking.scheduledDate).toLocaleDateString()}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl backdrop-blur-md ${booking.status === 'confirmed' ? 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/30' :
+                                                        booking.status === 'cancelled' ? 'bg-red-950/30 text-red-400 border border-red-500/30' :
+                                                            'bg-primary/10 text-primary border border-primary/20'
+                                                        }`}>
+                                                        {booking.status.toUpperCase()}
+                                                    </span>
+                                                </motion.div>
+                                            ))
+                                        )}
                                     </div>
-                                </div>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 p-3 md:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                    <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-green-600 flex-shrink-0" />
-                                    <div>
-                                        <p className="font-semibold text-foreground text-sm md:text-base">{t('admin.dashboard.totalRevenue')}</p>
-                                        <p className="text-xs md:text-sm text-muted-foreground">
-                                            ₹{stats.totalRevenue} {t('admin.dashboard.generatedFrom')} {stats.totalPayments} {t('admin.dashboard.paymentsText')}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 p-3 md:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                    <Calendar className="w-6 h-6 md:w-8 md:h-8 text-amber-600 flex-shrink-0" />
-                                    <div>
-                                        <p className="font-semibold text-foreground text-sm md:text-base">{t('admin.dashboard.totalBookings')}</p>
-                                        <p className="text-xs md:text-sm text-muted-foreground">
-                                            {stats.totalBookings} {t('admin.dashboard.consultationsBooked')}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    )}
-
-                    {activeTab === 'bookings' && (
-                        <Card className="classical-card p-4 md:p-6">
-                            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 golden-text">{t('admin.dashboard.recentBookings')}</h2>
-                            <div className="space-y-3 md:space-y-4">
-                                {recentBookings.length === 0 ? (
-                                    <p className="text-center text-muted-foreground py-6 md:py-8 text-sm md:text-base">{t('admin.dashboard.noBookings')}</p>
-                                ) : (
-                                    recentBookings.map(booking => (
-                                        <div key={booking.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4 p-3 md:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-semibold text-foreground text-sm md:text-base truncate">{booking.userName}</p>
-                                                <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                                                    {booking.serviceType} {booking.astrologerName ? `with ${booking.astrologerName}` : ''}
-                                                </p>
-                                                <p className="text-xs md:text-sm text-amber-700 dark:text-amber-500">
-                                                    {new Date(booking.scheduledDate).toLocaleDateString()} • ₹{booking.amount}
-                                                </p>
-                                            </div>
-                                            <span className={`px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-medium whitespace-nowrap ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                                booking.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
-                                                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                                }`}>
-                                                {booking.status}
-                                            </span>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </Card>
-                    )}
+                                </Card>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </motion.div>
             </div>
         </div>
