@@ -1,8 +1,5 @@
 'use client'; // Error components must be Client Components
 
-export const dynamic = 'force-dynamic';
-
-
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCcw, Home } from 'lucide-react';
