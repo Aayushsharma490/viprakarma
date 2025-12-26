@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const ENGINE_URL =
-  process.env.ASTRO_ENGINE_URL || "https://astro-engine-c5xk.onrender.com/kundali";
+  process.env.ASTRO_ENGINE_URL || "https://astro-engine-production.up.railway.app/kundali";
 
 // Force dynamic rendering - no caching
 export const dynamic = "force-dynamic";

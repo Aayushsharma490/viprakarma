@@ -25,9 +25,9 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_5y5g4gY3g3g3g3
 
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 
-NEXT_PUBLIC_ASTRO_ENGINE_URL=https://astro-engine-c5xk.onrender.com
+NEXT_PUBLIC_ASTRO_ENGINE_URL=https://astro-engine-production.up.railway.app
 
-ASTRO_ENGINE_URL=https://astro-engine-c5xk.onrender.com
+ASTRO_ENGINE_URL=https://astro-engine-production.up.railway.app
 
 NODE_ENV=production
 ```
