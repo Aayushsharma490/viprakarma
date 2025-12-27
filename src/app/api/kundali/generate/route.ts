@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const ASTRO_ENGINE_URL = process.env.ASTRO_ENGINE_URL || 'http://localhost:5005';
+const ASTRO_ENGINE_URL = process.env.ASTRO_ENGINE_URL || 'https://astro-engine-production.up.railway.app';
 
 export async function POST(request: NextRequest) {
   try {

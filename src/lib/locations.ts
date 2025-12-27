@@ -95,6 +95,27 @@ const baseCities: IndianCity[] = [
   { city: 'Sri Ganganagar', state: 'Rajasthan', latitude: 29.9038, longitude: 73.8772 },
   { city: 'Tonk', state: 'Rajasthan', latitude: 26.1667, longitude: 75.7833 },
   { city: 'Beawar', state: 'Rajasthan', latitude: 26.1012, longitude: 74.3203 },
+  { city: 'Bijanagar', state: 'Rajasthan', latitude: 25.9167, longitude: 74.6333 },
+  { city: 'Udaipur Dabok', state: 'Rajasthan', latitude: 24.6167, longitude: 73.8833 },
+  { city: 'Kishangarh', state: 'Rajasthan', latitude: 26.5833, longitude: 74.8667 },
+  { city: 'Makrana', state: 'Rajasthan', latitude: 27.0417, longitude: 74.7167 },
+  { city: 'Pushkar', state: 'Rajasthan', latitude: 26.4897, longitude: 74.5511 },
+
+  // More Rajasthan towns
+  { city: 'Gangapur', state: 'Rajasthan', latitude: 26.4667, longitude: 76.7167 },
+  { city: 'Bhilwara', state: 'Rajasthan', latitude: 25.3463, longitude: 74.6364 },
+  { city: 'Mandal', state: 'Rajasthan', latitude: 25.3833, longitude: 74.5667 },
+  { city: 'Shahpura', state: 'Rajasthan', latitude: 25.6167, longitude: 74.9167 },
+  { city: 'Asind', state: 'Rajasthan', latitude: 25.7333, longitude: 74.3333 },
+  { city: 'Mandalgarh', state: 'Rajasthan', latitude: 25.1833, longitude: 75.1000 },
+  { city: 'Hurda', state: 'Rajasthan', latitude: 25.7500, longitude: 75.5500 },
+  { city: 'Gulabpura', state: 'Rajasthan', latitude: 25.8833, longitude: 74.6500 },
+  { city: 'Raipur', state: 'Rajasthan', latitude: 25.6167, longitude: 74.0333 },
+  { city: 'Banera', state: 'Rajasthan', latitude: 25.4833, longitude: 74.7000 },
+  { city: 'Jahazpur', state: 'Rajasthan', latitude: 25.6167, longitude: 75.2667 },
+  { city: 'Kotri', state: 'Rajasthan', latitude: 25.8167, longitude: 75.3667 },
+  { city: 'Hamirgarh', state: 'Rajasthan', latitude: 25.7333, longitude: 74.5167 },
+  { city: 'Suwana', state: 'Rajasthan', latitude: 25.5500, longitude: 74.4333 },
 ];
 
 // Stable, locale-aware sorting without in-place mutation. Then deep-freeze for safety.
@@ -129,12 +150,30 @@ export function getCitiesByState(state: string): ReadonlyArray<IndianCity> {
   return indianCities.filter((c) => c.state.toLowerCase() === target);
 }
 
-export function searchCities(query: string): ReadonlyArray<IndianCity> {
+export function searchCities(query: string): Array<{
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  name: string;
+  displayName: string;
+  country: string;
+}> {
   const q = query.trim().toLowerCase();
-  if (!q) return indianCities;
-  return indianCities.filter(
-    (c) => c.city.toLowerCase().includes(q) || c.state.toLowerCase().includes(q),
-  );
+
+  const filtered = q
+    ? indianCities.filter((c) => c.city.toLowerCase().includes(q) || c.state.toLowerCase().includes(q))
+    : indianCities.slice(0, 15);
+
+  return filtered.map(c => ({
+    city: c.city,
+    state: c.state,
+    latitude: c.latitude,
+    longitude: c.longitude,
+    name: c.city,
+    displayName: `${c.city}, ${c.state}`,
+    country: 'India'
+  }));
 }
 
 export function findCity(

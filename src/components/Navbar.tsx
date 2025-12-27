@@ -42,6 +42,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/kundali", label: t("nav.kundali") },
+    { href: "/kundali-matching", label: t("nav.kundaliMatching") || (language === "en" ? "Kundali Matching" : "कुंडली मिलान") },
     { href: "/numerology", label: t("nav.numerology") },
     { href: "/palmistry", label: t("nav.palmistry") },
     { href: "/mahurat", label: t("nav.mahurat") },

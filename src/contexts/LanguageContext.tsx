@@ -21,6 +21,7 @@ const translations = {
   en: {
     // Navigation
     "nav.kundali": "Kundali",
+    "nav.kundaliMatching": "Kundali Matching",
     "nav.numerology": "Numerology",
     "nav.palmistry": "Palmistry",
     "nav.mahurat": "Mahurat",
@@ -967,6 +968,7 @@ const translations = {
     "nav.palmistry": "हस्तरेखा शास्त्र",
     "nav.mahurat": "मुहूर्त",
     "nav.consultation": "परामर्श",
+    "nav.kundaliMatching": "कुंडली मिलान",
     "nav.talkToAstrologer": "ज्योतिषी से बात करें",
     "nav.about": "हमारे बारे में",
     "nav.contact": "संपर्क",

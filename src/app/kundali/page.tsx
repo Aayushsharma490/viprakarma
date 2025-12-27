@@ -30,6 +30,7 @@ import {
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { indianCities } from "@/lib/locations";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 import NorthIndianKundali from "@/components/NorthIndianKundali";
 import ChandraKundaliChart from "@/components/ChandraKundaliChart";
 import NavmaanshKundaliChart from "@/components/NavmaanshKundaliChart";
@@ -675,25 +676,19 @@ export default function KundaliPage() {
                 </div>
 
                 <div className="space-y-2 notranslate" translate="no">
-                  <Label className="font-semibold text-gray-900">
-                    {t("kundali.placeOfBirth")}
-                  </Label>
-                  <Select
-                    onValueChange={handleLocationChange}
+                  <LocationAutocomplete
                     value={formData.place}
-                    disabled={isManualLocation}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("kundali.selectCity")} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {indianCities.map((city) => (
-                        <SelectItem key={city.city} value={city.city}>
-                          {city.city}, {city.state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(location) => {
+                      setFormData({
+                        ...formData,
+                        place: location.city,
+                        latitude: location.latitude.toString(),
+                        longitude: location.longitude.toString(),
+                      });
+                    }}
+                    label={t("kundali.placeOfBirth")}
+                    placeholder={t("kundali.selectCity")}
+                  />
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <input
                       id="manual-location-toggle"

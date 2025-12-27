@@ -8,7 +8,19 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, astrologerId, type, formData } = await request.json();
+    // Parse request body with error handling
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('Consultation - JSON parse error:', parseError);
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid request format'
+      }, { status: 400 });
+    }
+
+    const { userId, astrologerId, type, formData } = body;
 
     if (!userId || !type || !formData) {
       return NextResponse.json({

@@ -1,0 +1,19 @@
+{
+    "name": "astro-engine",
+    "version": "1.0.0",
+    "description": "Astrology calculation engine using Swiss Ephemeris",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "build": "if [ ! -d 'swisseph-master' ]; then git clone https://github.com/aloistr/swisseph.git swisseph-master; fi"
+    },
+    "dependencies": {
+        "sweph": "latest",
+        "@whiskeysockets/baileys": "latest",
+        "pino": "latest"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}
+

@@ -29,6 +29,23 @@ export function formatPhoneNumber(phone: string): string {
 }
 
 /**
+ * Format date to dd/mm/yyyy
+ */
+function formatDateToDDMMYYYY(dateStr: string): string {
+    if (!dateStr) return '';
+
+    try {
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    } catch (error) {
+        return dateStr; // Return original if parsing fails
+    }
+}
+
+/**
  * Get WhatsApp connection status and QR code
  */
 export async function getWhatsAppStatus(): Promise<WhatsAppStatus | null> {
@@ -152,7 +169,10 @@ export function formatMahuratMessage(mahurats: any[], purpose: string, rashi: st
         const auspiciousnessHindi = m.auspiciousness === 'highly_auspicious' ? 'अत्यंत शुभ' :
             m.auspiciousness === 'auspicious' ? 'शुभ' : 'सामान्य';
 
-        return `${index + 1}. 📅 तिथि: ${m.date || 'N/A'}
+        // Format date to dd/mm/yyyy
+        const formattedDate = formatDateToDDMMYYYY(m.date);
+
+        return `${index + 1}. 📅 तिथि: ${formattedDate || 'N/A'}
    ⏰ समय: ${m.time || 'N/A'}
    ✨ शुभता: ${auspiciousnessHindi}
    📝 सिफारिश: ${m.recommendation || 'कोई विशेष सिफारिश नहीं'}`;
@@ -176,7 +196,10 @@ ${hindiMahurats}
         const auspiciousnessEng = m.auspiciousness === 'highly_auspicious' ? 'Highly Auspicious' :
             m.auspiciousness === 'auspicious' ? 'Auspicious' : 'Moderate';
 
-        return `${index + 1}. 📅 Date: ${m.date || 'N/A'}
+        // Format date to dd/mm/yyyy
+        const formattedDate = formatDateToDDMMYYYY(m.date);
+
+        return `${index + 1}. 📅 Date: ${formattedDate || 'N/A'}
    ⏰ Time: ${m.time || 'N/A'}
    ✨ Auspiciousness: ${auspiciousnessEng}
    📝 Recommendation: ${m.recommendation || 'No specific recommendation'}`;

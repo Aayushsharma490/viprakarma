@@ -7,7 +7,19 @@ import { generateToken } from '@/lib/jwt';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    // Parse request body with error handling
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('Login - JSON parse error:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request format. Please check your input.' },
+        { status: 400 }
+      );
+    }
+
+    const { email, password } = body;
 
     if (!email || !password) {
       return NextResponse.json(

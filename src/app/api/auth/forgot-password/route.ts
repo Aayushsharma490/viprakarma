@@ -8,7 +8,19 @@ import { sendPasswordResetEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
     try {
-        const { email } = await request.json();
+        // Parse request body with error handling
+        let body;
+        try {
+            body = await request.json();
+        } catch (parseError) {
+            console.error('[Forgot Password] JSON parse error:', parseError);
+            return NextResponse.json(
+                { error: 'Invalid request format. Please check your input.' },
+                { status: 400 }
+            );
+        }
+
+        const { email } = body;
 
         if (!email) {
             return NextResponse.json(
@@ -17,10 +29,20 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { error: 'Please enter a valid email address' },
+                { status: 400 }
+            );
+        }
+
         // Check if database is available
         if (!db) {
+            console.error('[Forgot Password] Database not available');
             return NextResponse.json(
-                { error: 'Service temporarily unavailable' },
+                { error: 'Service temporarily unavailable. Please try again later.' },
                 { status: 503 }
             );
         }
