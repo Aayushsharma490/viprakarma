@@ -9,8 +9,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Send, Upload, Mic, MicOff, User, Star } from 'lucide-react';
+import { Loader2, Send, Upload, Mic, MicOff, User, Star, Calendar, Clock, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
+import ChatUserAstroSidebar from '@/components/ChatUserAstroSidebar';
+import LocationAutocomplete from '@/components/LocationAutocomplete';
 
 interface Astrologer {
   id: number;
@@ -63,6 +65,22 @@ export default function ChatWithAstrologerPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sessionEndedRef = useRef(false);
+
+  // Birth details and astro data state
+  const [showBirthDetailsForm, setShowBirthDetailsForm] = useState(false);
+  const [birthDetails, setBirthDetails] = useState({
+    birthDate: '',
+    birthTime: '',
+    birthPlace: '',
+    latitude: '',
+    longitude: '',
+  });
+  const [astroData, setAstroData] = useState<{
+    kundaliData: any;
+    numerologyData: any;
+    birthDetails: any;
+  } | null>(null);
+  const [isLoadingAstroData, setIsLoadingAstroData] = useState(false);
 
   const getAuthHeaders = (): Record<string, string> => {
     if (!token) return {};
@@ -243,8 +261,8 @@ export default function ChatWithAstrologerPage() {
         const data = await response.json();
         setMessages(prev => {
           // Only update if messages have changed to prevent unnecessary scrolling
-          if (prev.length === data.messages.length && 
-              prev[prev.length - 1]?.id === data.messages[data.messages.length - 1]?.id) {
+          if (prev.length === data.messages.length &&
+            prev[prev.length - 1]?.id === data.messages[data.messages.length - 1]?.id) {
             return prev;
           }
           return data.messages;
@@ -323,6 +341,80 @@ export default function ChatWithAstrologerPage() {
     } catch (error) {
       console.error('Error uploading file:', error);
       toast.error('Failed to upload file');
+    }
+  };
+
+  const loadAstroData = async (sessionId: number) => {
+    try {
+      const headers = getAuthHeaders();
+      const response = await fetch(`/api/chat/astrologer/user-details?sessionId=${sessionId}`, {
+        headers,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.hasBirthDetails) {
+          setAstroData({
+            kundaliData: data.kundaliData,
+            numerologyData: data.numerologyData,
+            birthDetails: data.birthDetails,
+          });
+          setShowBirthDetailsForm(false);
+        } else {
+          setShowBirthDetailsForm(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading astro data:', error);
+    }
+  };
+
+  const saveBirthDetails = async () => {
+    if (!chatSession || !birthDetails.birthDate || !birthDetails.birthTime || !birthDetails.birthPlace) {
+      toast.error('Please fill all birth details');
+      return;
+    }
+
+    setIsLoadingAstroData(true);
+    try {
+      const headers = getAuthHeaders();
+      const response = await fetch('/api/chat/astrologer/save-birth-details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+        },
+        body: JSON.stringify({
+          sessionId: chatSession.id,
+          birthDate: birthDetails.birthDate,
+          birthTime: birthDetails.birthTime,
+          birthPlace: birthDetails.birthPlace,
+          latitude: birthDetails.latitude,
+          longitude: birthDetails.longitude,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAstroData({
+          kundaliData: data.kundaliData,
+          numerologyData: data.numerologyData,
+          birthDetails: {
+            birthDate: birthDetails.birthDate,
+            birthTime: birthDetails.birthTime,
+            birthPlace: birthDetails.birthPlace,
+          },
+        });
+        setShowBirthDetailsForm(false);
+        toast.success('Birth details saved! Kundali generated.');
+      } else {
+        toast.error('Failed to save birth details');
+      }
+    } catch (error) {
+      console.error('Error saving birth details:', error);
+      toast.error('Failed to save birth details');
+    } finally {
+      setIsLoadingAstroData(false);
     }
   };
 
@@ -469,11 +561,10 @@ export default function ChatWithAstrologerPage() {
                         className={`flex ${message.senderType === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                            message.senderType === 'user'
-                              ? 'bg-amber-600 text-white'
-                              : 'bg-gray-200 text-gray-900'
-                          }`}
+                          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.senderType === 'user'
+                            ? 'bg-amber-600 text-white'
+                            : 'bg-gray-200 text-gray-900'
+                            }`}
                         >
                           {message.messageType === 'text' && (
                             <p className="text-sm">{message.content}</p>
