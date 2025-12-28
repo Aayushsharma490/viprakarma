@@ -1,14 +1,14 @@
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 async function main() {
     const currentDate = new Date().toISOString();
-    
+
     // Hash all passwords with bcrypt
     const adminPassword = await bcrypt.hash('Admin@123', 10);
     const testPassword = await bcrypt.hash('Test@123', 10);
-    
+
     const sampleUsers = [
         {
             email: 'admin@kundali.com',
@@ -69,7 +69,7 @@ async function main() {
     ];
 
     await db.insert(users).values(sampleUsers);
-    
+
     console.log('✅ Users seeder completed successfully');
     console.log(`📊 Seeded ${sampleUsers.length} users (1 admin, 3 regular users)`);
 }

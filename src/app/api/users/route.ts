@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq, like, or } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Helper function to exclude password from user objects
 function excludePassword(user: any) {
@@ -203,7 +203,7 @@ export async function PUT(request: NextRequest) {
     // Validate and add email if provided
     if (email !== undefined) {
       const sanitizedEmail = email.trim().toLowerCase();
-      
+
       if (!isValidEmail(sanitizedEmail)) {
         return NextResponse.json(
           { error: 'Invalid email format', code: 'INVALID_EMAIL_FORMAT' },

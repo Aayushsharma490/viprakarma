@@ -17,37 +17,8 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    // Completely disable static optimization
-    experimental: {
-        isrMemoryCacheSize: 0,
-    },
-    // Force all routes to be dynamic
-    async headers() {
-        return [
-            {
-                source: '/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'no-store, must-revalidate',
-                    },
-                ],
-            },
-        ];
-    },
-    webpack: (config, { isServer }) => {
-        // Ignore README.md and LICENSE files from @libsql packages
-        config.module.rules.push({
-            test: /\.(md|LICENSE)$/,
-            type: 'asset/source',
-        });
-
-        config.ignoreWarnings = [
-            { module: /node_modules\/@libsql/ },
-        ];
-
-        return config;
-    },
+    // Empty turbopack config to silence warning
+    turbopack: {},
 };
 
 module.exports = nextConfig;

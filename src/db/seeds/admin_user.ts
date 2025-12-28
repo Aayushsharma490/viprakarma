@@ -1,26 +1,26 @@
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 async function main() {
     const adminEmail = 'viprakarma@gmail.com';
-    
+
     // Check if admin user already exists
     const existingAdmin = await db
         .select()
         .from(users)
         .where(eq(users.email, adminEmail))
         .limit(1);
-    
+
     if (existingAdmin.length > 0) {
         console.log('ℹ️  Admin user already exists, skipping...');
         return;
     }
-    
+
     // Hash the password with 10 salt rounds
     const hashedPassword = await bcrypt.hash('viprakarma', 10);
-    
+
     // Create admin user
     const adminUser = {
         email: 'viprakarma@gmail.com',
@@ -36,9 +36,9 @@ async function main() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     };
-    
+
     await db.insert(users).values(adminUser);
-    
+
     console.log('✅ Admin user created successfully');
 }
 
