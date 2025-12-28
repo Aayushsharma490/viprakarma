@@ -1,10 +1,7 @@
-import type { NextConfig } from "next";
-import path from "node:path";
-
-const LOADER = path.resolve(__dirname, 'src/visual-edits/component-tagger-loader.js');
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
     output: 'standalone',
+    reactStrictMode: true,
     images: {
         remotePatterns: [
             {
@@ -20,8 +17,6 @@ const nextConfig: NextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    // Removed eslint config as it's deprecated in Next.js 16
-    turbopack: {},
     webpack: (config, { isServer }) => {
         // Ignore README.md and LICENSE files from @libsql packages
         config.module.rules.push({
@@ -37,4 +32,4 @@ const nextConfig: NextConfig = {
     },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
