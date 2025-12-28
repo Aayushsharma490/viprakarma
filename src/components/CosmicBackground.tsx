@@ -33,6 +33,24 @@ const CosmicBackground = () => {
             delay: Math.random() * 5,
         }));
         setStars(newStars);
+
+        // Listen for theme changes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    const root = document.documentElement;
+                    const newTheme = root.classList.contains('dark') ? 'dark' : 'light';
+                    setTheme(newTheme);
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+        return () => observer.disconnect();
     }, []);
 
     // Don't render anything until mounted to avoid SSR issues

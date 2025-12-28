@@ -32,11 +32,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.remove('light', 'dark');
       root.classList.add(theme);
       localStorage.setItem('theme', theme);
+
+      // Force repaint to ensure CSS updates immediately
+      void root.offsetHeight;
     }
   }, [theme, mounted]);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    setTheme(prevTheme => {
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+
+      // Immediately update DOM
+      const root = window.document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(newTheme);
+
+      return newTheme;
+    });
   };
 
   return (
