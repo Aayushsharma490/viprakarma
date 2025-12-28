@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { LanguageProvider } from "@/contexts/LanguageContext";
-import { Toaster } from "@/components/ui/sonner";
-import CosmicBackground from "@/components/CosmicBackground";
-import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Viprakarma - Complete Astrology & Spiritual Services",
@@ -28,19 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased font-serif bg-[#050510] text-[#f0f0f5]" suppressHydrationWarning>
-        <ThemeProvider>
-          <LanguageProvider>
-            <AuthProvider>
-              <CosmicBackground />
-              <div className="relative z-10">
-                <ClientLayoutWrapper>
-                  {children}
-                </ClientLayoutWrapper>
-              </div>
-              <Toaster richColors position="top-center" />
-            </AuthProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
