@@ -1,6 +1,5 @@
-'use client';
-
-// Minimal 404 page with zero dependencies and inline styles
+// Pure server component - NO 'use client' directive
+// NO imports, NO hooks, NO dependencies
 export default function NotFound() {
     return (
         <html lang="en">
@@ -28,23 +27,6 @@ export default function NotFound() {
                         </p>
                         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <a
-                                href="javascript:history.back()"
-                                style={{
-                                    display: 'inline-block',
-                                    padding: '12px 24px',
-                                    fontSize: '16px',
-                                    background: 'rgba(255, 255, 255, 0.2)',
-                                    color: 'white',
-                                    textDecoration: 'none',
-                                    borderRadius: '8px',
-                                    fontWeight: '600',
-                                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                ← Go Back
-                            </a>
-                            <a
                                 href="/"
                                 style={{
                                     display: 'inline-block',
@@ -54,8 +36,7 @@ export default function NotFound() {
                                     color: '#ea580c',
                                     textDecoration: 'none',
                                     borderRadius: '8px',
-                                    fontWeight: '600',
-                                    transition: 'all 0.3s ease'
+                                    fontWeight: '600'
                                 }}
                             >
                                 🏠 Go Home
