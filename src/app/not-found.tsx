@@ -1,38 +1,69 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Home, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-
+// Minimal 404 page with zero dependencies and inline styles
 export default function NotFound() {
-    const router = useRouter();
-
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 px-4">
-            <div className="text-center space-y-6 max-w-md mx-auto">
-                <h1 className="text-9xl font-bold text-amber-600">404</h1>
-                <h2 className="text-3xl font-semibold text-gray-800">Page Not Found</h2>
-                <p className="text-gray-600">
-                    The page you are looking for doesn't exist or has been moved.
-                </p>
-                <div className="flex gap-4 justify-center pt-4">
-                    <Button
-                        onClick={() => router.back()}
-                        variant="outline"
-                        className="border-amber-200 text-amber-800 hover:bg-amber-50 flex items-center gap-2"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Go Back
-                    </Button>
-                    <Button
-                        onClick={() => router.push('/')}
-                        className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-2"
-                    >
-                        <Home className="w-4 h-4" />
-                        Go Home
-                    </Button>
+        <html lang="en">
+            <body style={{ margin: 0, padding: 0, fontFamily: 'system-ui, sans-serif' }}>
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
+                    color: 'white'
+                }}>
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '40px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '20px',
+                        backdropFilter: 'blur(10px)',
+                        maxWidth: '500px'
+                    }}>
+                        <h1 style={{ fontSize: '96px', marginBottom: '20px', fontWeight: 'bold', margin: '0 0 20px 0' }}>404</h1>
+                        <h2 style={{ fontSize: '28px', marginBottom: '15px', fontWeight: '600', margin: '0 0 15px 0' }}>Page Not Found</h2>
+                        <p style={{ marginBottom: '30px', opacity: 0.95, fontSize: '16px', lineHeight: '1.6' }}>
+                            The page you're looking for doesn't exist or has been moved.
+                        </p>
+                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <a
+                                href="javascript:history.back()"
+                                style={{
+                                    display: 'inline-block',
+                                    padding: '12px 24px',
+                                    fontSize: '16px',
+                                    background: 'rgba(255, 255, 255, 0.2)',
+                                    color: 'white',
+                                    textDecoration: 'none',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                ← Go Back
+                            </a>
+                            <a
+                                href="/"
+                                style={{
+                                    display: 'inline-block',
+                                    padding: '12px 24px',
+                                    fontSize: '16px',
+                                    background: 'white',
+                                    color: '#ea580c',
+                                    textDecoration: 'none',
+                                    borderRadius: '8px',
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s ease'
+                                }}
+                            >
+                                🏠 Go Home
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </body>
+        </html>
     );
 }
