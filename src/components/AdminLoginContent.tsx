@@ -31,11 +31,21 @@ export default function AdminLoginContent() {
                 body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
-
+            // ✅ Check response.ok BEFORE calling .json()
             if (!response.ok) {
-                throw new Error(data.error || 'Admin login failed');
+                // Try to get error message from response
+                let errorMessage = 'Admin login failed';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                } catch {
+                    // If JSON parsing fails, use status text
+                    errorMessage = response.statusText || errorMessage;
+                }
+                throw new Error(errorMessage);
             }
+
+            const data = await response.json();
 
             // Aggressively find a valid string token from the API response.
             let foundToken = null;
