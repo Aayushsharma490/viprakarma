@@ -22,7 +22,7 @@ export default function RootLayout({
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22/>"
         />
       </head>
-      <body className="antialiased font-serif bg-[#050510] text-[#f0f0f5]" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
