@@ -2,6 +2,10 @@
 const nextConfig = {
     output: 'standalone',
     reactStrictMode: true,
+    // Disable ALL static optimization for Render compatibility
+    experimental: {
+        optimizePackageImports: ['@radix-ui/react-icons'],
+    },
     images: {
         remotePatterns: [
             {
@@ -17,14 +21,12 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    // Disable static optimization to prevent Render prerendering errors
-    experimental: {
-        optimizePackageImports: ['@radix-ui/react-icons'],
-    },
-    // Skip static page generation for error pages
+    // Force all pages to be dynamic
     generateBuildId: async () => {
         return 'build-' + Date.now();
     },
+    // Skip static page generation
+    skipTrailingSlashRedirect: true,
     // Empty turbopack config to silence warning
     turbopack: {},
 };
