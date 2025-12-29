@@ -5,6 +5,9 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET_KEY || 'viprakarma_jwt_secret_2024_production');
 
 export async function POST(request: NextRequest) {

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // Varna mapping

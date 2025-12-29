@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { users, paymentVerifications } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

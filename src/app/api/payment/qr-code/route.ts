@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import QRCode from 'qrcode';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
   try {
     const { amount } = await req.json();

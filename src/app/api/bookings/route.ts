@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { bookings, users, astrologers } from '@/db/schema';
 import { eq, and, gte, lte, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 // GET method - List bookings with filters and pagination, or single booking by ID
 export async function GET(request: NextRequest) {
   try {

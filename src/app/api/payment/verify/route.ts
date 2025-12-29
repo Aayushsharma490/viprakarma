@@ -3,6 +3,9 @@ import crypto from 'crypto';
 import { db } from '@/db';
 import { paymentVerifications, payments } from '@/db/schema';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 import { eq } from 'drizzle-orm';
 
 export async function POST(req: NextRequest) {

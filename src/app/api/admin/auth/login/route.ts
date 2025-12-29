@@ -5,6 +5,9 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/jwt';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

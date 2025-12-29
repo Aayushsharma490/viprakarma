@@ -4,6 +4,9 @@ import { users, notifications } from '@/db/schema';
 import { eq, and, lt } from 'drizzle-orm';
 import { verifyToken } from '@/lib/jwt';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // POST - Send expiry reminder to specific user (Manual)

@@ -4,6 +4,9 @@ import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { verifyToken } from '@/lib/jwt';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {

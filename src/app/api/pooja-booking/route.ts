@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { poojaBookings } from '@/db/schema';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();

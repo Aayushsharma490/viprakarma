@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { payments } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 const VALID_STATUSES = ['pending', 'completed', 'failed', 'refunded'];
 
 export async function GET(request: NextRequest) {

@@ -5,6 +5,9 @@ import { eq, isNotNull } from 'drizzle-orm';
 import { verifyToken } from '@/lib/jwt';
 import { sendBulkWhatsApp } from '@/lib/wahaService';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {

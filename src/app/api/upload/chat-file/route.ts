@@ -3,6 +3,9 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { verifyToken } from '@/lib/jwt';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {

@@ -4,6 +4,9 @@ import { paymentVerifications, users, consultations, astrologers } from '@/db/sc
 import { eq, or, like, and } from 'drizzle-orm';
 import { createClient } from '@libsql/client';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 async function ensurePaymentVerificationsTable() {
   try {
     const client = createClient({

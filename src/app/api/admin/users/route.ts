@@ -3,6 +3,9 @@ import { db, client } from '@/db';
 import { users, paymentVerifications } from '@/db/schema';
 import { eq, like, or, and, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET(request: NextRequest) {
   try {
     // Simplified - no auth required

@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq, and, gt } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
     try {
         const { email, code } = await request.json();

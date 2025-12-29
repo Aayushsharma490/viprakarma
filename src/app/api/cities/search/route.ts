@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { searchCities } from '@/lib/locations';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');

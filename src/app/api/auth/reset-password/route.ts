@@ -4,6 +4,9 @@ import { users } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
     try {
         const { email, code, newPassword } = await request.json();

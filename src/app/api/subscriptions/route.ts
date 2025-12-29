@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { subscriptions, users } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 // Helper function to validate date format (ISO 8601)
 function isValidISODate(dateString: string): boolean {
   const date = new Date(dateString);

@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { poojaBookings, users } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET() {
     try {
         const bookings = await db

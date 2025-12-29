@@ -4,6 +4,9 @@ import { astrologers } from '@/db/schema';
 import { eq, like, and, or, desc } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 const SALT_ROUNDS = 10;
 
 // Helper function to validate email format

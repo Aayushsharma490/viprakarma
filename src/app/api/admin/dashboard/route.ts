@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { users, astrologers, bookings, payments, paymentVerifications } from '@/db/schema';
 import { count, sum, desc, eq } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET(request: NextRequest) {
   try {
     // Get stats from database

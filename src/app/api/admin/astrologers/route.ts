@@ -4,6 +4,9 @@ import { astrologers } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET() {
   try {
     const allAstrologers = await db

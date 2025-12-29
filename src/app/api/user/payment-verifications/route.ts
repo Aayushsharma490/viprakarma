@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { paymentVerifications } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   try {
     // Get user ID from query params or auth context

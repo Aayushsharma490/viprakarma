@@ -3,6 +3,9 @@ import { db } from '@/db';
 import { chatSessions, users, astrologers } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 // Helper function to validate message structure
 function validateMessages(messages: any): boolean {
   if (!Array.isArray(messages)) return false;

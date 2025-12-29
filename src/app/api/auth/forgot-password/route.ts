@@ -6,6 +6,9 @@ import crypto from 'crypto';
 import { sendPasswordResetEmail } from '@/lib/email';
 
 
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     try {
         // Parse request body with error handling

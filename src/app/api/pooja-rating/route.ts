@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(request: Request) {
     try {
         const body = await request.json();

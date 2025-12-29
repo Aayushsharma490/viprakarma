@@ -6,6 +6,9 @@ import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/jwt';
 import { sendWelcomeEmail } from '@/lib/email';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   try {
     const { name, email, phone, password } = await request.json();

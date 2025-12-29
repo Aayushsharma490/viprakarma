@@ -3,6 +3,9 @@ import { verifyToken } from '@/lib/jwt';
 import { db } from '@/db';
 import { chatSessions } from '@/db/schema';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // OpenAI is disabled for now

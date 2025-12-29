@@ -4,6 +4,9 @@ import { users } from '@/db/schema';
 import { eq, like, or } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 // Helper function to exclude password from user objects
 function excludePassword(user: any) {
   const { password, ...userWithoutPassword } = user;

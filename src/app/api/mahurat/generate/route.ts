@@ -6,6 +6,9 @@ import { eq } from 'drizzle-orm';
 import { calculateMahurat } from '@/lib/mahuratUtils';
 import { sendWhatsAppMessage, formatMahuratMessage } from '@/lib/wahaService';
 
+
+// Force Node.js runtime for Vercel compatibility
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
