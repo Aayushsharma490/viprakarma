@@ -1,28 +1,39 @@
 /**
  * API Base URL Helper for Vercel Deployment
- * Always use absolute URLs for fetch calls
+ * 
+ * CRITICAL RULES:
+ * - Client-side (browser): Use relative URLs (/api/...)
+ * - Server-side (SSR/API): Use absolute URLs (https://...)
  */
 
 export const BASE_URL =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+    typeof window === "undefined"
+        ? process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        : "";
 
 /**
- * Safe API fetch with absolute URL
- * Use this instead of relative URLs
+ * Get API URL - Use ONLY for server-side fetching
+ * For client-side, just use: fetch('/api/...')
  */
 export function getApiUrl(path: string): string {
     // Ensure path starts with /
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+    // On client (browser), return relative URL
+    if (typeof window !== "undefined") {
+        return normalizedPath;
+    }
+
+    // On server, return absolute URL
     return `${BASE_URL}${normalizedPath}`;
 }
 
 /**
  * Example usage:
  * 
- * // ❌ DON'T DO THIS (breaks on Vercel)
- * fetch('/api/pandit')
+ * // ✅ CLIENT-SIDE (in components)
+ * fetch('/api/astrologers')
  * 
- * // ✅ DO THIS (works everywhere)
- * fetch(getApiUrl('/api/pandit'))
+ * // ✅ SERVER-SIDE (in server components/API routes)
+ * fetch(getApiUrl('/api/astrologers'))
  */
