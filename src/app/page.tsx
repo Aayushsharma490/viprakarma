@@ -107,25 +107,28 @@ export default function Home() {
 
     // Features animations
     if (featuresRef.current) {
-      gsap.fromTo(
-        featuresRef.current.querySelectorAll('.feature-card'),
-        { opacity: 0, y: 60, scale: 0.9, rotationY: 10 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotationY: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: featuresRef.current,
-            start: 'top 75%',
-            end: 'bottom 25%',
-            toggleActions: 'play none none reverse',
+      const featureCards = featuresRef.current.querySelectorAll('.feature-card');
+      if (featureCards.length > 0) {
+        gsap.fromTo(
+          featureCards,
+          { opacity: 0, y: 60, scale: 0.9, rotationY: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            rotationY: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: featuresRef.current,
+              start: 'top 75%',
+              end: 'bottom 25%',
+              toggleActions: 'play none none reverse',
+            }
           }
-        }
-      );
+        );
+      }
     }
 
     // Stats animations

@@ -9,10 +9,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Send, Upload, Mic, MicOff, User, Star, Calendar, Clock, MapPin } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Loader2, Send, Upload, Mic, MicOff, User, Star, Calendar, Clock, MapPin, Target } from 'lucide-react';
 import { toast } from 'sonner';
 import ChatUserAstroSidebar from '@/components/ChatUserAstroSidebar';
 import LocationAutocomplete from '@/components/LocationAutocomplete';
+import NorthIndianKundali from '@/components/NorthIndianKundali';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Astrologer {
   id: number;
@@ -51,6 +54,7 @@ export default function ChatWithAstrologerPage() {
   const { user, token } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { language } = useLanguage();
   const [astrologers, setAstrologers] = useState<Astrologer[]>([]);
   const [selectedAstrologer, setSelectedAstrologer] = useState<Astrologer | null>(null);
   const [chatSession, setChatSession] = useState<ChatSession | null>(null);
@@ -639,34 +643,213 @@ export default function ChatWithAstrologerPage() {
                 </Card>
               </div>
 
-              {/* Astrologer Info */}
+              {/* Birth Details Form / Kundali Display */}
               <div className="lg:col-span-1">
-                <Card className="p-6">
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <User className="w-10 h-10 text-amber-600" />
+                {!astroData ? (
+                  <Card className="p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">{language === 'en' ? 'Your Birth Details' : 'आपकी जन्म विवरण'}</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {language === 'en' ? 'Submit your birth details to generate your Kundali, Mahadasha, and Numerology for this consultation.' : 'इस परामर्श के लिए अपनी कुंडली, महादशा और अंकज्योतिष उत्पन्न करने के लिए अपनी जन्म विवरण जमा करें।'}
+                    </p>
+
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-sm font-medium">{language === 'en' ? 'Birth Date' : 'जन्म तिथि'}</Label>
+                        <Input
+                          type="date"
+                          value={birthDetails.birthDate}
+                          onChange={(e) => setBirthDetails({ ...birthDetails, birthDate: e.target.value })}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">{language === 'en' ? 'Birth Time' : 'जन्म समय'}</Label>
+                        <Input
+                          type="time"
+                          step="1"
+                          value={birthDetails.birthTime}
+                          onChange={(e) => setBirthDetails({ ...birthDetails, birthTime: e.target.value })}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <LocationAutocomplete
+                          value={birthDetails.birthPlace}
+                          onChange={(location) => setBirthDetails({
+                            ...birthDetails,
+                            birthPlace: location.city,
+                            latitude: location.latitude.toString(),
+                            longitude: location.longitude.toString()
+                          })}
+                          label={language === 'en' ? 'Birth Place' : 'जन्म स्थान'}
+                          placeholder={language === 'en' ? 'Type city name...' : 'शहर का नाम टाइप करें...'}
+                        />
+                      </div>
+
+                      <Button
+                        onClick={saveBirthDetails}
+                        disabled={isLoadingAstroData || !birthDetails.birthDate || !birthDetails.birthTime || !birthDetails.birthPlace}
+                        className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        {isLoadingAstroData ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            {language === 'en' ? 'Generating...' : 'उत्पन्न हो रहा है...'}
+                          </>
+                        ) : (
+                          <>
+                            <Star className="w-4 h-4 mr-2" />
+                            {language === 'en' ? 'Generate Kundali' : 'कुंडली उत्पन्न करें'}
+                          </>
+                        )}
+                      </Button>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{selectedAstrologer?.name}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{selectedAstrologer?.bio}</p>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Experience:</span>
-                        <span className="font-medium">{selectedAstrologer?.experience} years</span>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Regenerate Button */}
+                    <Button
+                      onClick={saveBirthDetails}
+                      disabled={isLoadingAstroData}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                      size="sm"
+                    >
+                      {isLoadingAstroData ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {language === 'en' ? 'Regenerating...' : 'पुनः उत्पन्न हो रहा है...'}
+                        </>
+                      ) : (
+                        <>
+                          <Star className="w-4 h-4 mr-2" />
+                          {language === 'en' ? 'Regenerate Kundali' : 'कुंडली पुनः उत्पन्न करें'}
+                        </>
+                      )}
+                    </Button>
+
+                    {/* Birth Details Summary */}
+                    <Card className="p-4 bg-amber-50">
+                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        {language === 'en' ? 'Birth Details' : 'जन्म विवरण'}
+                      </h4>
+                      <div className="text-xs space-y-1 text-gray-700">
+                        <p><strong>{language === 'en' ? 'Date:' : 'तिथि:'}</strong> {astroData.birthDetails.birthDate}</p>
+                        <p><strong>{language === 'en' ? 'Time:' : 'समय:'}</strong> {astroData.birthDetails.birthTime}</p>
+                        <p><strong>{language === 'en' ? 'Place:' : 'स्थान:'}</strong> {astroData.birthDetails.birthPlace}</p>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Rating:</span>
-                        <span className="font-medium flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-current text-yellow-400" />
-                          {selectedAstrologer?.rating}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Rate:</span>
-                        <span className="font-medium">₹{selectedAstrologer?.hourlyRate}/hr</span>
-                      </div>
-                    </div>
+                    </Card>
+
+                    {/* Kundali Chart */}
+                    {astroData.kundaliData && (
+                      <Card className="p-2">
+                        <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm px-2">
+                          <Star className="w-4 h-4 text-amber-600" />
+                          {language === 'en' ? 'Kundali Chart' : 'कुंडली चार्ट'}
+                        </h4>
+
+                        {/* Chart Visualization - Full Width */}
+                        <div className="w-full">
+                          <NorthIndianKundali
+                            planets={astroData.kundaliData.planets?.map((p: any) => ({
+                              name: p.name,
+                              house: p.house,
+                              sign: p.sign,
+                              degree: p.degreeInSign,
+                              isRetrograde: p.isRetrograde
+                            })) || []}
+                            houses={astroData.kundaliData.houses?.map((h: any) => ({
+                              sign: h.sign
+                            })) || []}
+                          />
+                        </div>
+
+                        {/* Basic Signs Info */}
+                        <div className="text-xs space-y-2 px-2 mt-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-amber-50 p-2 rounded">
+                              <p className="font-medium text-xs">{language === 'en' ? 'Sun Sign' : 'सूर्य राशि'}</p>
+                              <p className="text-amber-700">{astroData.kundaliData.sunSign}</p>
+                            </div>
+                            <div className="bg-blue-50 p-2 rounded">
+                              <p className="font-medium text-xs">{language === 'en' ? 'Moon Sign' : 'चंद्र राशि'}</p>
+                              <p className="text-blue-700">{astroData.kundaliData.moonSign}</p>
+                            </div>
+                            <div className="bg-purple-50 p-2 rounded col-span-2">
+                              <p className="font-medium text-xs">{language === 'en' ? 'Ascendant' : 'लग्न'}</p>
+                              <p className="text-purple-700">{astroData.kundaliData.ascendant?.sign}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+
+                    {/* Mahadasha */}
+                    {astroData.kundaliData?.dashas && (
+                      <Card className="p-4">
+                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm">
+                          <Clock className="w-4 h-4 text-purple-600" />
+                          {language === 'en' ? 'Current Mahadasha' : 'वर्तमान महादशा'}
+                        </h4>
+                        <div className="bg-purple-50 p-3 rounded text-xs">
+                          <p className="font-bold text-purple-900 mb-1">
+                            {astroData.kundaliData.dashas.current.planet}
+                          </p>
+                          <p className="text-purple-700 text-xs">
+                            {astroData.kundaliData.dashas.current.startDate} to {astroData.kundaliData.dashas.current.endDate}
+                          </p>
+                          <p className="text-purple-600 text-xs mt-1">
+                            {astroData.kundaliData.dashas.current.years.toFixed(1)} years
+                          </p>
+                        </div>
+
+                        {astroData.kundaliData.dashas.mahadashas && astroData.kundaliData.dashas.mahadashas.length > 0 && (
+                          <div className="mt-3 space-y-1">
+                            <p className="text-xs font-medium text-gray-700">{language === 'en' ? 'Upcoming Periods:' : 'आगामी अवधि:'}</p>
+                            {astroData.kundaliData.dashas.mahadashas.slice(0, 3).map((dasha: any, idx: number) => (
+                              <div key={idx} className="bg-gray-50 p-2 rounded text-xs">
+                                <p className="font-medium text-gray-900">{dasha.planet}</p>
+                                <p className="text-gray-600 text-xs">{dasha.startDate} - {dasha.endDate}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </Card>
+                    )}
+
+                    {/* Numerology */}
+                    {astroData.numerologyData && (
+                      <Card className="p-4">
+                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm">
+                          <Target className="w-4 h-4 text-green-600" />
+                          {language === 'en' ? 'Numerology' : 'अंकज्योतिष'}
+                        </h4>
+                        <div className="space-y-2 text-xs">
+                          {astroData.numerologyData.lifePathNumber && (
+                            <div className="bg-green-50 p-2 rounded">
+                              <p className="font-medium">{language === 'en' ? 'Life Path Number' : 'जीवन पथ संख्या'}</p>
+                              <p className="text-green-700 font-bold text-lg">{astroData.numerologyData.lifePathNumber}</p>
+                            </div>
+                          )}
+                          {astroData.numerologyData.destinyNumber && (
+                            <div className="bg-blue-50 p-2 rounded">
+                              <p className="font-medium">{language === 'en' ? 'Destiny Number' : 'भाग्य संख्या'}</p>
+                              <p className="text-blue-700 font-bold text-lg">{astroData.numerologyData.destinyNumber}</p>
+                            </div>
+                          )}
+                          {astroData.numerologyData.soulUrgeNumber && (
+                            <div className="bg-purple-50 p-2 rounded">
+                              <p className="font-medium">{language === 'en' ? 'Soul Urge Number' : 'आत्मा इच्छा संख्या'}</p>
+                              <p className="text-purple-700 font-bold text-lg">{astroData.numerologyData.soulUrgeNumber}</p>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    )}
                   </div>
-                </Card>
+                )}
               </div>
             </div>
           )}

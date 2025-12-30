@@ -67,6 +67,7 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-border">
+                                <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'No.' : 'क्र.'}</th>
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Name' : 'नाम'}</th>
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Date / Time' : 'तिथि / समय'}</th>
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Place' : 'स्थान'}</th>
@@ -77,6 +78,9 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                         </thead>
                         <tbody>
                             <tr className="border-b border-border/50">
+                                <td className="p-3">
+                                    <span className="font-bold text-primary">1</span>
+                                </td>
                                 <td className="p-3">
                                     <span className="font-bold text-primary">{language === 'en' ? 'Boy' : 'लड़का'}</span>
                                     <br />
@@ -91,6 +95,9 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                                 <td className="p-3 text-muted-foreground">5.5</td>
                             </tr>
                             <tr>
+                                <td className="p-3">
+                                    <span className="font-bold text-primary">2</span>
+                                </td>
                                 <td className="p-3">
                                     <span className="font-bold text-primary">{language === 'en' ? 'Girl' : 'लड़की'}</span>
                                     <br />
@@ -118,6 +125,7 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-border">
+                                <th className="text-left p-3 font-black">{language === 'en' ? 'No.' : 'क्र.'}</th>
                                 <th className="text-left p-3 font-black">{language === 'en' ? 'Guna' : 'गुण'}</th>
                                 <th className="text-left p-3 font-black">{language === 'en' ? 'Boy' : 'लड़का'}</th>
                                 <th className="text-left p-3 font-black">{language === 'en' ? 'Girl' : 'लड़की'}</th>
@@ -129,6 +137,7 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                         <tbody>
                             {matchResult.details && matchResult.details.map((detail: any, index: number) => (
                                 <tr key={index} className="border-b border-border/50">
+                                    <td className="p-3 font-bold text-primary">{index + 1}</td>
                                     <td className="p-3 font-bold text-foreground">{detail.name.split('(')[0].trim()}</td>
                                     <td className="p-3 text-muted-foreground">{detail.boyValue || '-'}</td>
                                     <td className="p-3 text-muted-foreground">{detail.girlValue || '-'}</td>

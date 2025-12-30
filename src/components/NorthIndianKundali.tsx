@@ -265,9 +265,9 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
           {title}
         </h3>
       )}
-      <div className="rounded-xl w-full max-w-[700px] bg-[#ffffff] border-2 border-[#ddd] p-4">
-        <div className="w-full h-[500px] relative">
-          <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" height="100%">
+      <div className="rounded-xl w-full bg-[#ffffff] border-2 border-[#ddd] p-2">
+        <div className="w-full aspect-square relative">
+          <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="#fef6e4" />
             {drawChartGrid()}
             {renderHouseContent()}
