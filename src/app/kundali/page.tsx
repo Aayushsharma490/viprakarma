@@ -521,7 +521,7 @@ export default function KundaliPage() {
 
         <Navbar />
         <ChatBot />
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-16 relative z-10">
           <div className="text-center mb-12 relative">
             <div className="absolute top-0 right-0">
               <Button
