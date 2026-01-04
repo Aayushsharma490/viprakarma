@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 /**
  * Astro Engine (FIX MODE)
@@ -171,7 +171,7 @@ function formatDMS(degree) {
   const minutesFloat = (norm - deg) * 60;
   const minutes = Math.floor(minutesFloat);
   const seconds = Math.round((minutesFloat - minutes) * 60);
-  return `${deg}°${minutes}'${seconds}"`;
+  return `${deg}Â°${minutes}'${seconds}"`;
 }
 
 function parseTimezoneOffset(value) {
@@ -253,11 +253,11 @@ function toUtcDate({ year, month, day, hour, minute, second }, timezone) {
 
 function calculateNakshatra(degree) {
   const normalized = normalizeDegree(degree);
-  // 27 nakshatras → 13°20' each = 13.333333... degrees
+  // 27 nakshatras â†’ 13Â°20' each = 13.333333... degrees
   const span = 360 / 27; // 13.333333...
   const index = Math.floor(normalized / span);
   const withinNak = normalized % span;
-  // 4 padas per nakshatra → 3°20' each = 3.333333... degrees
+  // 4 padas per nakshatra â†’ 3Â°20' each = 3.333333... degrees
   const pada = Math.floor(withinNak / (span / 4)) + 1;
   return {
     name: NAKSHATRAS[index],
@@ -283,7 +283,7 @@ function getDashamsaSignIndex(longitude) {
   const norm = normalizeDegree(longitude);
   const signIndex = Math.floor(norm / 30); // 0..11
   const degInSign = norm % 30;
-  const d10Index = Math.floor(degInSign / 3); // 0..9  (10 parts of 3°)
+  const d10Index = Math.floor(degInSign / 3); // 0..9  (10 parts of 3Â°)
 
   // Movable: start from same sign
   // Fixed: start from 9th sign from it
@@ -632,7 +632,7 @@ function computeKundali(payload) {
 
     planets.push(planetData);
     console.log(
-      `[astro-engine] ${config.name}: ${siderealLongitude.toFixed(6)}° ${planetData.sign} (${nakshatra.name} p${nakshatra.pada})`
+      `[astro-engine] ${config.name}: ${siderealLongitude.toFixed(6)}Â° ${planetData.sign} (${nakshatra.name} p${nakshatra.pada})`
     );
   });
 
@@ -655,7 +655,7 @@ function computeKundali(payload) {
       dashamsaSignIndex: getDashamsaSignIndex(ketuLongitude),
     });
     console.log(
-      `[astro-engine] Ketu: ${ketuLongitude.toFixed(6)}° ${RASHIS[ketuSignIndex]} (${ketuNakshatra.name} p${ketuNakshatra.pada})`
+      `[astro-engine] Ketu: ${ketuLongitude.toFixed(6)}Â° ${RASHIS[ketuSignIndex]} (${ketuNakshatra.name} p${ketuNakshatra.pada})`
     );
   }
 
@@ -690,10 +690,10 @@ function computeKundali(payload) {
   const ascNakshatra = calculateNakshatra(ascDegree);
 
   console.log(
-    `[astro-engine] ASCENDANT: ${ascDegree.toFixed(6)}° = ${RASHIS[ascSignIndex]} (sign index ${ascSignIndex}) [tropical: ${ascTropical.toFixed(2)}° - ayanamsa: ${ayanamsa.toFixed(2)}°]`
+    `[astro-engine] ASCENDANT: ${ascDegree.toFixed(6)}Â° = ${RASHIS[ascSignIndex]} (sign index ${ascSignIndex}) [tropical: ${ascTropical.toFixed(2)}Â° - ayanamsa: ${ayanamsa.toFixed(2)}Â°]`
   );
 
-  // Whole sign houses: each house is exactly 30° starting from ascendant sign
+  // Whole sign houses: each house is exactly 30Â° starting from ascendant sign
   const houses = Array.from({ length: 12 }, (_, index) => ({
     house: index + 1,
     cusp: normalizeDegree(ascDegree + index * 30),
@@ -1038,14 +1038,14 @@ const server = http.createServer(async (req, res) => {
         percentage: Math.round((totalScore / 36) * 100),
         compatibility: totalScore >= 28 ? "Excellent" : totalScore >= 24 ? "Very Good" : totalScore >= 18 ? "Good" : "Average",
         details: [
-          { name: "Varna (वर्ण)", boyValue: varna1, girlValue: varna2, score: varnaScore, maxScore: 1, areaOfLife: "Work", description: "Spiritual compatibility and ego levels" },
-          { name: "Vashya (वश्य)", boyValue: vashya1, girlValue: vashya2, score: vashyaScore, maxScore: 2, areaOfLife: "Dominance", description: "Mutual attraction and control" },
-          { name: "Tara (तारा)", boyValue: tara1, girlValue: tara2, score: taraScore, maxScore: 3, areaOfLife: "Destiny", description: "Birth star compatibility and health" },
-          { name: "Yoni (योनि)", boyValue: yoni1, girlValue: yoni2, score: yoniScore, maxScore: 4, areaOfLife: "Mentality", description: "Sexual compatibility and intimacy" },
-          { name: "Graha Maitri (ग्रह मैत्री)", boyValue: lord1, girlValue: lord2, score: grahaMaitriScore, maxScore: 5, areaOfLife: "Compatibility", description: "Mental compatibility and friendship" },
-          { name: "Gana (गण)", boyValue: gana1, girlValue: gana2, score: ganaScore, maxScore: 6, areaOfLife: "Guna Level", description: "Temperament and behavior compatibility" },
-          { name: "Bhakoot (भकूट)", boyValue: moon1.sign, girlValue: moon2.sign, score: bhakootScore, maxScore: 7, areaOfLife: "Love", description: "Love and prosperity" },
-          { name: "Nadi (नाडी)", boyValue: nadi1, girlValue: nadi2, score: nadiScore, maxScore: 8, areaOfLife: "Health", description: "Health and progeny" }
+          { name: "Varna (à¤µà¤°à¥à¤£)", boyValue: varna1, girlValue: varna2, score: varnaScore, maxScore: 1, areaOfLife: "Work", description: "Spiritual compatibility and ego levels" },
+          { name: "Vashya (à¤µà¤¶à¥à¤¯)", boyValue: vashya1, girlValue: vashya2, score: vashyaScore, maxScore: 2, areaOfLife: "Dominance", description: "Mutual attraction and control" },
+          { name: "Tara (à¤¤à¤¾à¤°à¤¾)", boyValue: tara1, girlValue: tara2, score: taraScore, maxScore: 3, areaOfLife: "Destiny", description: "Birth star compatibility and health" },
+          { name: "Yoni (à¤¯à¥‹à¤¨à¤¿)", boyValue: yoni1, girlValue: yoni2, score: yoniScore, maxScore: 4, areaOfLife: "Mentality", description: "Sexual compatibility and intimacy" },
+          { name: "Graha Maitri (à¤—à¥à¤°à¤¹ à¤®à¥ˆà¤¤à¥à¤°à¥€)", boyValue: lord1, girlValue: lord2, score: grahaMaitriScore, maxScore: 5, areaOfLife: "Compatibility", description: "Mental compatibility and friendship" },
+          { name: "Gana (à¤—à¤£)", boyValue: gana1, girlValue: gana2, score: ganaScore, maxScore: 6, areaOfLife: "Guna Level", description: "Temperament and behavior compatibility" },
+          { name: "Bhakoot (à¤­à¤•à¥‚à¤Ÿ)", boyValue: moon1.sign, girlValue: moon2.sign, score: bhakootScore, maxScore: 7, areaOfLife: "Love", description: "Love and prosperity" },
+          { name: "Nadi (à¤¨à¤¾à¤¡à¥€)", boyValue: nadi1, girlValue: nadi2, score: nadiScore, maxScore: 8, areaOfLife: "Health", description: "Health and progeny" }
         ],
         mangalDosha: {
           boy: mangalDosha1,
@@ -1090,6 +1090,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   // WhatsApp Status Endpoint
+  if (req.method === "GET" && req.url === "/whatsapp/status") {
+    respondJson(res, 200, {
+      status: connectionStatus,
+      qr: currentQR,
+      connected: connectionStatus === "CONNECTED",
+    });
+    return;
+  }
 
   // WhatsApp Send Message Endpoint
   if (req.method === "POST" && req.url === "/whatsapp/send") {
@@ -1244,7 +1252,7 @@ async function startWhatsAppConnection() {
           currentQR = null;
         }
       } else if (connection === "open") {
-        console.log("[WhatsApp] ✅ Connected successfully!");
+        console.log("[WhatsApp] âœ… Connected successfully!");
         connectionStatus = "CONNECTED";
         currentQR = null;
       } else if (connection === "connecting") {
