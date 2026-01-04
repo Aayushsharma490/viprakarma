@@ -14,40 +14,28 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
     try {
         const authHeader = request.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        let userId = null;
+
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring(7);
+            try {
+                const decoded = await verifyToken(token);
+                userId = decoded.userId || decoded.id;
+            } catch (e) {
+                console.warn('[Mahurat API] Invalid token provided, proceeding as guest');
+            }
         }
 
-        const token = authHeader.substring(7);
-        let decoded;
-        try {
-            decoded = await verifyToken(token);
-        } catch (e) {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-        }
+        if (userId) {
+            // Log user info if available, but don't block
+            const user = await db.select()
+                .from(users)
+                .where(eq(users.id, userId))
+                .limit(1);
 
-        const userId = decoded.userId || decoded.id;
-
-        // Check subscription status
-        const user = await db.select()
-            .from(users)
-            .where(eq(users.id, userId))
-            .limit(1);
-
-        if (!user || user.length === 0) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
-
-        const userData = user[0];
-        const isSubscribed = userData.isMahuratSubscribed;
-        const subscriptionExpiry = userData.mahuratSubscriptionExpiry;
-        const isExpired = subscriptionExpiry ? new Date(subscriptionExpiry) < new Date() : true;
-
-        if (!isSubscribed || isExpired) {
-            return NextResponse.json({
-                error: 'Mahurat subscription required or expired',
-                code: 'SUBSCRIPTION_REQUIRED'
-            }, { status: 403 });
+            if (user && user.length > 0) {
+                console.log('[Mahurat API] Request from authenticated user:', user[0].email);
+            }
         }
 
         const { purpose, rashi, phoneNumber, startDate, endDate, location } = await request.json();

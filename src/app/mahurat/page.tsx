@@ -65,16 +65,9 @@ export default function MahuratPage() {
         refreshUser();
     }, [refreshUser]);
 
-    const isSubscribed = user?.isMahuratSubscribed || false;
-    const subscriptionExpiry = user?.mahuratSubscriptionExpiry;
-    const isExpired = subscriptionExpiry ? new Date(subscriptionExpiry) < new Date() : true;
-    const hasAccess = isSubscribed && !isExpired;
+    const hasAccess = true; // Made public by client request
 
     const handleGenerate = async () => {
-        if (!hasAccess) {
-            toast.error(t('mahurat.error.subscriptionRequired'));
-            return;
-        }
 
         if (!formData.purpose || !formData.startDate || !formData.endDate) {
             toast.error(t('mahurat.error.fillAllFields'));
@@ -104,7 +97,7 @@ export default function MahuratPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : ''
                 },
                 body: JSON.stringify({
                     purpose: formData.purpose,
@@ -146,6 +139,20 @@ export default function MahuratPage() {
             toast.error(t('mahurat.error.failed'));
         } finally {
             setLoading(false);
+        }
+    };
+
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        } catch (error) {
+            return dateStr;
         }
     };
 
@@ -195,27 +202,8 @@ export default function MahuratPage() {
                         </p>
                     </div>
 
-                    {!hasAccess && (
-                        <Card className="p-12 celestial-card border-border bg-card/60 backdrop-blur-3xl rounded-[2.5rem] mb-12 relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                            <div className="text-center relative z-10">
-                                <div className="w-20 h-20 rounded-3xl bg-accent/20 border border-border flex items-center justify-center mx-auto mb-8 shadow-2xl">
-                                    <Lock className="w-10 h-10 text-primary" />
-                                </div>
-                                <h2 className="text-3xl font-black text-foreground mb-4 uppercase tracking-tighter font-sans">{t('mahurat.subscriptionRequired')}</h2>
-                                <p className="text-muted-foreground mb-10 text-lg font-medium leading-relaxed max-w-lg mx-auto">
-                                    {t('mahurat.subscriptionMessage')}
-                                </p>
-                                <Link href="/subscription">
-                                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-black px-12 h-14 rounded-2xl shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 uppercase tracking-widest text-sm">
-                                        {t('mahurat.subscribeButton')}
-                                    </Button>
-                                </Link>
-                            </div>
-                        </Card>
-                    )}
 
-                    <Card className={`p-10 celestial-card border-border bg-card/40 backdrop-blur-2xl rounded-[2.5rem] relative overflow-hidden ${!hasAccess ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
+                    <Card className="p-10 celestial-card border-border bg-card/40 backdrop-blur-2xl rounded-[2.5rem] relative overflow-hidden">
                         <div className="space-y-8 relative z-10">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
@@ -305,7 +293,7 @@ export default function MahuratPage() {
                             <div className="pt-4">
                                 <Button
                                     onClick={handleGenerate}
-                                    disabled={loading || !hasAccess}
+                                    disabled={loading}
                                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black h-16 rounded-[1.25rem] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-[0.2em] text-sm"
                                 >
                                     {loading ? (
@@ -341,7 +329,7 @@ export default function MahuratPage() {
                                                         <Calendar className="w-5 h-5 text-primary" />
                                                     </div>
                                                     <div>
-                                                        <p className="text-foreground font-black uppercase tracking-widest text-sm leading-none mb-1">{result.date}</p>
+                                                        <p className="text-foreground font-black uppercase tracking-widest text-sm leading-none mb-1">{formatDate(result.date)}</p>
                                                         <p className="text-primary font-black uppercase tracking-widest text-[10px]">{result.time}</p>
                                                     </div>
                                                     <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl backdrop-blur-md transition-colors ${result.auspiciousness === 'Highly Auspicious' ? 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/30' :
