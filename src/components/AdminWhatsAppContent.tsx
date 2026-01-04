@@ -31,7 +31,7 @@ export default function AdminWhatsAppContent() {
     // Poll WhatsApp status every 3 seconds
     useEffect(() => {
         fetchWhatsAppStatus();
-        const interval = setInterval(fetchWhatsAppStatus, 3000);
+        const interval = setInterval(fetchWhatsAppStatus, 1500); // Poll faster (1.5s)
         return () => clearInterval(interval);
     }, []);
 
@@ -47,7 +47,7 @@ export default function AdminWhatsAppContent() {
                 return data;
             }
         } catch (error) {
-            console.error('Failed to fetch WhatsApp status:', error);
+            // Silenced to avoid console noise during transient 503s
         }
         return null;
     };
@@ -236,7 +236,7 @@ export default function AdminWhatsAppContent() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-24 space-y-6">
+        <div className="container mx-auto px-4 py-24 space-y-6" suppressHydrationWarning>
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                     <MessageSquare className="w-8 h-8 text-green-600" />

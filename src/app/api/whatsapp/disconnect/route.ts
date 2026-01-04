@@ -8,8 +8,30 @@ const ASTRO_ENGINE_URL = process.env.ASTRO_ENGINE_URL || process.env.NEXT_PUBLIC
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
+    const fetchWithRetry = async (url: string, options: RequestInit, retries = 2, timeout = 10000) => {
+        for (let i = 0; i <= retries; i++) {
+            try {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(id);
+
+                if (response.ok) return response;
+                if (i === retries) return response;
+            } catch (err: any) {
+                if (i === retries) throw err;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        throw new Error('All fetch attempts failed');
+    };
+
     try {
-        const response = await fetch(`${ASTRO_ENGINE_URL}/whatsapp/disconnect`, {
+        const response = await fetchWithRetry(`${ASTRO_ENGINE_URL}/whatsapp/disconnect`, {
             method: 'POST'
         });
         const data = await response.json();
@@ -18,7 +40,7 @@ export async function POST() {
         console.error('WhatsApp disconnect error:', error);
         return NextResponse.json({
             success: false,
-            error: 'Failed to disconnect'
-        }, { status: 500 });
+            error: 'Failed to disconnect from WhatsApp service'
+        }, { status: 503 });
     }
 }
