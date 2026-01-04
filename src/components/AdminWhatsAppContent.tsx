@@ -26,6 +26,7 @@ export default function AdminWhatsAppContent() {
         recipients: 'all' as 'all' | 'users' | 'astrologers'
     });
     const [stats, setStats] = useState<{ success: number; failed: number } | null>(null);
+    const [isWaitingForQR, setIsWaitingForQR] = useState(false);
 
     // Poll WhatsApp status every 3 seconds
     useEffect(() => {
@@ -40,10 +41,15 @@ export default function AdminWhatsAppContent() {
             if (response.ok) {
                 const data = await response.json();
                 setWhatsappStatus(data);
+                if (data.status === 'SCAN_QR' || data.status === 'CONNECTED') {
+                    setIsWaitingForQR(false);
+                }
+                return data;
             }
         } catch (error) {
             console.error('Failed to fetch WhatsApp status:', error);
         }
+        return null;
     };
 
     const handleAutoTranslate = async () => {
@@ -74,10 +80,18 @@ export default function AdminWhatsAppContent() {
             if (response.ok) {
                 console.log('[Admin WhatsApp] ✓ Reconnect initiated');
                 toast.success('Reconnecting WhatsApp... QR code will appear shortly.');
-                setTimeout(() => {
-                    console.log('[Admin WhatsApp] 🔍 Fetching status to display QR...');
-                    fetchWhatsAppStatus();
-                }, 2000);
+                setIsWaitingForQR(true);
+
+                // Rapid polling every 1s for 15 seconds or until QR appears
+                let attempts = 0;
+                const pollInterval = setInterval(async () => {
+                    const status = await fetchWhatsAppStatus();
+                    attempts++;
+                    if (status?.status === 'SCAN_QR' || status?.status === 'CONNECTED' || attempts >= 15) {
+                        clearInterval(pollInterval);
+                        setIsWaitingForQR(false);
+                    }
+                }, 1000);
             } else {
                 console.error('[Admin WhatsApp] ❌ Reconnect failed');
                 toast.error('Failed to reconnect');
