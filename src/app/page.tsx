@@ -533,7 +533,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-6 mb-8">
               <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary"></div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground uppercase tracking-tighter font-sans">
-                Explore <span className="golden-text">Cosmic</span> Services
+                {t('features.title').split(' ').slice(0, -2).join(' ')} <span className="golden-text">{t('features.title').split(' ').slice(-2, -1).join(' ')}</span> {t('features.title').split(' ').slice(-1).join(' ')}
               </h2>
               <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary"></div>
             </div>
@@ -558,7 +558,7 @@ export default function Home() {
                     {(feature.popular || feature.new) && (
                       <div className="absolute top-8 left-8 z-30">
                         <span className="bg-primary text-primary-foreground text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
-                          {feature.popular ? 'Most Popular' : 'New Feature'}
+                          {feature.popular ? t('features.mostPopular') : t('features.newFeature')}
                         </span>
                       </div>
                     )}
@@ -582,14 +582,14 @@ export default function Home() {
 
                     <div className="px-4 pb-4">
                       <h3 className="text-2xl font-black text-foreground mb-3 group-hover:text-primary transition-colors duration-300 font-sans tracking-tight">
-                        {feature.title}
+                        {t(`feature${features.indexOf(feature) + 1}.title`)}
                       </h3>
                       <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-bold line-clamp-2">
-                        {feature.description}
+                        {t(`feature${features.indexOf(feature) + 1}.desc`)}
                       </p>
 
                       <div className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-primary group-hover:gap-5 transition-all">
-                        Explore Now
+                        {t('features.exploreNow')}
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -612,22 +612,22 @@ export default function Home() {
             className="text-center mb-20"
           >
             <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-6 uppercase tracking-tighter font-sans">
-              Trusted by <span className="golden-text">Thousands</span>
+              {t('stats.title').split(' ').slice(0, -1).join(' ')} <span className="golden-text">{t('stats.title').split(' ').slice(-1).join(' ')}</span>
             </h2>
             <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
-              Join our growing community of enlightened souls finding guidance and transformation
+              {t('stats.subtitle')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24 px-4">
             {[
-              { icon: Users, label: 'Satisfied Clients', value: '10000', color: 'text-primary' },
-              { icon: Award, label: 'Expert Astrologers', value: '50', color: 'text-secondary' },
-              { icon: Star, label: 'Accurate Predictions', value: '95%', color: 'text-amber-500' },
-              { icon: TrendingUp, label: 'Success Rate', value: '98%', color: 'text-emerald-500' },
+              { icon: Users, labelKey: 'stats.users', value: '10000', color: 'text-primary' },
+              { icon: Award, labelKey: 'stats.astrologers', value: '50', color: 'text-secondary' },
+              { icon: Star, labelKey: 'stats.predictions', value: '95%', color: 'text-amber-500' },
+              { icon: TrendingUp, labelKey: 'stats.rate', value: '98%', color: 'text-emerald-500' },
             ].map((stat, index) => (
               <motion.div
-                key={stat.label}
+                key={stat.labelKey}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -643,7 +643,7 @@ export default function Home() {
                 >
                   {stat.value}{stat.value.includes('%') ? '' : '+'}
                 </h3>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">{stat.label}</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">{t(stat.labelKey)}</p>
               </motion.div>
             ))}
           </div>
@@ -651,7 +651,7 @@ export default function Home() {
           {/* Testimonials */}
           <div className="max-w-6xl mx-auto px-4">
             <h3 className="text-3xl font-black text-center text-white mb-16 uppercase tracking-widest font-sans">
-              Voice of the <span className="golden-text">Universe</span>
+              {t('stats.testimonials').split(' ').slice(0, -3).join(' ')} <span className="golden-text">{t('stats.testimonials').split(' ').slice(-3).join(' ')}</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
@@ -675,12 +675,12 @@ export default function Home() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="font-black text-foreground text-sm uppercase tracking-widest font-sans">{testimonial.name}</h4>
-                        <p className="text-[10px] text-primary font-black uppercase tracking-widest">{testimonial.role}</p>
+                        <h4 className="font-black text-foreground text-sm uppercase tracking-widest font-sans">{t(`testimonial${index + 1}.name`)}</h4>
+                        <p className="text-[10px] text-primary font-black uppercase tracking-widest">{t(`testimonial${index + 1}.role`)}</p>
                       </div>
                     </div>
                     <StarRating rating={testimonial.rating} />
-                    <p className="text-muted-foreground mt-6 text-sm leading-relaxed font-bold italic group-hover:text-foreground transition-colors">"{testimonial.content}"</p>
+                    <p className="text-muted-foreground mt-6 text-sm leading-relaxed font-bold italic group-hover:text-foreground transition-colors">"{t(`testimonial${index + 1}.content`)}"</p>
                   </Card>
                 </motion.div>
               ))}
@@ -709,11 +709,11 @@ export default function Home() {
                 <div className="w-20 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-12 rounded-full opacity-50"></div>
 
                 <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 uppercase tracking-tighter leading-[0.9] font-sans">
-                  Begin Your <span className="golden-text">Cosmic</span><br />Path Today
+                  {t('cta.title').split(' ').slice(0, -3).join(' ')} <span className="golden-text">{t('cta.title').split(' ').slice(-3, -2).join(' ')}</span><br />{t('cta.title').split(' ').slice(-2).join(' ')}
                 </h2>
 
                 <p className="text-lg md:text-xl text-muted-foreground mb-16 leading-relaxed max-w-2xl mx-auto font-bold uppercase tracking-widest">
-                  Join thousands of souls who have discovered their true path through celestial insights and divine guidance.
+                  {t('cta.subtitle')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
@@ -723,7 +723,7 @@ export default function Home() {
                       className="bg-primary hover:bg-primary/90 text-primary-foreground text-xl px-14 py-10 rounded-2xl shadow-[0_0_50px_rgba(255,215,0,0.2)] hover:shadow-[0_0_70px_rgba(255,215,0,0.3)] transition-all duration-500 font-black relative overflow-hidden group uppercase tracking-[0.2em]"
                     >
                       <Sparkles className="w-6 h-6 mr-3" />
-                      Start Journey
+                      {t('cta.startJourney')}
                       <Zap className="w-5 h-5 ml-2" />
                     </Button>
                   </Link>
@@ -734,7 +734,7 @@ export default function Home() {
                       variant="outline"
                       className="text-xl px-14 py-10 rounded-2xl border-2 border-border text-foreground bg-background/40 hover:bg-accent/10 hover:border-primary/50 backdrop-blur-md transition-all duration-500 shadow-2xl font-black group uppercase tracking-[0.2em]"
                     >
-                      Consult Now
+                      {t('cta.consultNow')}
                       <ChevronRight className="w-6 h-6 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
                     </Button>
                   </Link>
@@ -759,8 +759,8 @@ export default function Home() {
                 >
                   <badge.icon className="w-10 h-10 text-primary" />
                   <div className="text-left">
-                    <div className="font-black text-foreground uppercase tracking-[0.1em] text-sm font-sans">{badge.title}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{badge.desc}</div>
+                    <div className="font-black text-foreground uppercase tracking-[0.1em] text-sm font-sans">{t(`cta.${badge.title.toLowerCase().replace(/[^a-z]/g, '')}`)}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{t(`cta.${badge.title.toLowerCase().replace(/[^a-z]/g, '')}Desc`)}</div>
                   </div>
                 </motion.div>
               ))}

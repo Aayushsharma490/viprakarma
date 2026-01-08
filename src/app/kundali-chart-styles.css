@@ -1,0 +1,101 @@
+/* House Number Positioning - Add to your global CSS or component styles */
+
+/* Ensure house numbers stay inside chart boxes */
+.kundali-chart .house-box {
+    position: relative;
+    overflow: hidden;
+}
+
+.kundali-chart .house-number {
+    position: absolute;
+    font-weight: bold;
+    font-size: 0.75rem;
+    color: var(--primary);
+    z-index: 10;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* Specific positioning for North Indian chart houses */
+.kundali-chart .house-1 .house-number {
+    top: 15%;
+    left: 50%;
+}
+
+.kundali-chart .house-2 .house-number {
+    top: 30%;
+    right: 15%;
+}
+
+.kundali-chart .house-3 .house-number {
+    top: 50%;
+    right: 10%;
+}
+
+.kundali-chart .house-4 .house-number {
+    bottom: 30%;
+    right: 15%;
+}
+
+.kundali-chart .house-5 .house-number {
+    bottom: 15%;
+    left: 50%;
+}
+
+.kundali-chart .house-6 .house-number {
+    bottom: 30%;
+    left: 15%;
+}
+
+.kundali-chart .house-7 .house-number {
+    top: 50%;
+    left: 10%;
+}
+
+.kundali-chart .house-8 .house-number {
+    top: 30%;
+    left: 15%;
+}
+
+.kundali-chart .house-9 .house-number {
+    top: 15%;
+    left: 30%;
+}
+
+.kundali-chart .house-10 .house-number {
+    top: 15%;
+    right: 30%;
+}
+
+.kundali-chart .house-11 .house-number {
+    top: 30%;
+    right: 15%;
+}
+
+.kundali-chart .house-12 .house-number {
+    top: 50%;
+    right: 10%;
+}
+
+/* Ensure planet text doesn't overflow */
+.kundali-chart .planet-text {
+    font-size: 0.7rem;
+    line-height: 1.2;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .kundali-chart .house-number {
+        font-size: 0.65rem;
+    }
+
+    .kundali-chart .planet-text {
+        font-size: 0.6rem;
+    }
+}

@@ -62,109 +62,85 @@ export default function PalmistryContent() {
 
     const handleAnalyze = async () => {
         if (!selectedFile) return;
-
         setIsAnalyzing(true);
 
-        // Mock AI analysis with FASTER response
-        setTimeout(() => {
-            setAnalysis({
-                lifeLine: {
-                    length: t('palmistry.analysis.lifeLine.length'),
-                    depth: t('palmistry.analysis.lifeLine.depth'),
-                    clarity: t('palmistry.analysis.lifeLine.clarity'),
-                    meaning: t('palmistry.analysis.lifeLine.meaning'),
-                    predictions: [
-                        t('palmistry.analysis.lifeLine.prediction1'),
-                        t('palmistry.analysis.lifeLine.prediction2'),
-                        t('palmistry.analysis.lifeLine.prediction3'),
-                        t('palmistry.analysis.lifeLine.prediction4'),
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imageData = e.target?.result as string;
+            let hash = 0;
+            for (let i = 0; i < Math.min(imageData.length, 5000); i++) {
+                hash = ((hash << 5) - hash) + imageData.charCodeAt(i);
+                hash = hash & hash;
+            }
+            const seed = Math.abs(hash);
+
+            const life = [
+                { length: 'Long and deep', depth: 'Deep and prominent', clarity: 'Crystal clear', meaning: 'Indicates strong vitality and robust health throughout life', predictions: ['Long and healthy life ahead', 'Strong immunity system', 'Active lifestyle benefits', 'Good recovery from illnesses'] },
+                { length: 'Medium length', depth: 'Moderately deep', clarity: 'Clear', meaning: 'Shows balanced energy and steady life progression', predictions: ['Balanced health patterns', 'Moderate energy levels', 'Steady life progression', 'Consistent vitality'] },
+                { length: 'Short but clear', depth: 'Light but visible', clarity: 'Slightly broken', meaning: 'Suggests dynamic life with significant changes', predictions: ['Dynamic life changes', 'Adaptable health', 'Variable energy patterns', 'Resilient nature'] },
+                { length: 'Extended and curved', depth: 'Very deep', clarity: 'Continuous', meaning: 'Reflects resilient constitution and longevity', predictions: ['Exceptional longevity', 'Robust constitution', 'High energy reserves', 'Quick healing abilities'] }
+            ][seed % 4];
+
+            const heart = [
+                { shape: 'Curved upward', position: 'High on palm', clarity: 'Clear', meaning: 'Indicates passionate and expressive emotional nature', predictions: ['Deep romantic connections', 'Passionate relationships', 'Emotional fulfillment', 'Strong family bonds'] },
+                { shape: 'Straight across', position: 'Middle position', clarity: 'Clear', meaning: 'Shows balanced and stable relationships', predictions: ['Stable partnerships', 'Balanced emotions', 'Harmonious relationships', 'Loyal nature'] },
+                { shape: 'Gently sloping', position: 'Close to fingers', clarity: 'Clear', meaning: 'Suggests deep emotional connections', predictions: ['Intense emotional experiences', 'Meaningful connections', 'Devoted partner', 'Strong empathy'] },
+                { shape: 'Deep curve', position: 'Near head line', clarity: 'Clear', meaning: 'Reflects strong romantic tendencies', predictions: ['Multiple significant relationships', 'Emotional growth', 'Compassionate nature', 'Lasting love'] }
+            ][(seed * 2) % 4];
+
+            const head = [
+                { clarity: 'Very clear', length: 'Long and extended', curve: 'Moderate', meaning: 'Shows analytical and logical thinking abilities', predictions: ['Excellent problem-solving skills', 'Analytical career success', 'Strategic thinking', 'Logical decision-making'] },
+                { clarity: 'Slightly wavy', length: 'Medium length', curve: 'Moderate', meaning: 'Indicates creative and imaginative mind', predictions: ['Creative pursuits flourish', 'Innovative ideas', 'Artistic talents', 'Imaginative solutions'] },
+                { clarity: 'Straight and deep', length: 'Short but clear', curve: 'Moderate', meaning: 'Suggests practical and grounded approach', predictions: ['Practical achievements', 'Grounded decisions', 'Business acumen', 'Common sense prevails'] },
+                { clarity: 'Forked ending', length: 'Reaching edge', curve: 'Moderate', meaning: 'Reflects balanced intellectual capabilities', predictions: ['Balanced intellect', 'Versatile thinking', 'Adaptable mind', 'Continuous learning'] }
+            ][(seed * 3) % 4];
+
+            const fate = [
+                { presence: 'Strong and clear', clarity: 'Visible', position: 'Center of palm', meaning: 'Indicates strong career path and professional success', predictions: ['Career advancement ahead', 'Professional recognition', 'Leadership opportunities', 'Financial stability'] },
+                { presence: 'Faint but visible', clarity: 'Visible', position: 'Towards thumb', meaning: 'Shows self-made success and determination', predictions: ['Self-made success', 'Entrepreneurial ventures', 'Independent achievements', 'Personal milestones'] },
+                { presence: 'Multiple lines', clarity: 'Visible', position: 'Near life line', meaning: 'Suggests multiple career opportunities', predictions: ['Multiple income sources', 'Diverse opportunities', 'Career changes', 'Versatile skills'] },
+                { presence: 'Deep and prominent', clarity: 'Visible', position: 'Straight upward', meaning: 'Reflects steady professional growth', predictions: ['Steady career growth', 'Consistent progress', 'Long-term success', 'Professional stability'] }
+            ][(seed * 5) % 4];
+
+            setTimeout(() => {
+                setAnalysis({
+                    lifeLine: life,
+                    heartLine: heart,
+                    headLine: head,
+                    fateLine: fate,
+                    mounts: {
+                        jupiter: { prominence: seed % 2 === 0 ? 'Well developed' : 'Moderately developed', meaning: seed % 2 === 0 ? 'Leadership and ambition' : 'Balanced authority' },
+                        saturn: { prominence: (seed * 2) % 2 === 0 ? 'Prominent' : 'Average', meaning: (seed * 2) % 2 === 0 ? 'Discipline and responsibility' : 'Balanced approach' },
+                        apollo: { prominence: (seed * 3) % 2 === 0 ? 'Well formed' : 'Moderate', meaning: (seed * 3) % 2 === 0 ? 'Creativity and success' : 'Artistic inclinations' },
+                        mercury: { prominence: (seed * 5) % 2 === 0 ? 'Developed' : 'Average', meaning: (seed * 5) % 2 === 0 ? 'Communication skills' : 'Business aptitude' },
+                        venus: { prominence: (seed * 7) % 2 === 0 ? 'Full and rounded' : 'Well developed', meaning: (seed * 7) % 2 === 0 ? 'Love and passion' : 'Warmth and affection' },
+                        luna: { prominence: (seed * 11) % 2 === 0 ? 'Prominent' : 'Moderate', meaning: (seed * 11) % 2 === 0 ? 'Imagination and intuition' : 'Creative instincts' }
+                    },
+                    fingerAnalysis: {
+                        thumb: seed % 3 === 0 ? 'Strong willpower' : seed % 3 === 1 ? 'Balanced determination' : 'Flexible approach',
+                        index: seed % 3 === 0 ? 'Leadership qualities' : seed % 3 === 1 ? 'Confident nature' : 'Ambitious spirit',
+                        middle: seed % 3 === 0 ? 'Responsible and serious' : seed % 3 === 1 ? 'Balanced outlook' : 'Practical wisdom',
+                        ring: seed % 3 === 0 ? 'Creative and artistic' : seed % 3 === 1 ? 'Appreciation for beauty' : 'Expressive nature',
+                        pinky: seed % 3 === 0 ? 'Excellent communication' : seed % 3 === 1 ? 'Business minded' : 'Persuasive abilities'
+                    },
+                    specialMarks: [
+                        { type: seed % 2 === 0 ? 'Star on Jupiter mount' : 'Triangle on Apollo', meaning: seed % 2 === 0 ? 'Success and recognition' : 'Creative achievements' },
+                        { type: (seed * 2) % 2 === 0 ? 'Triangle on fate line' : 'Square on life line', meaning: (seed * 2) % 2 === 0 ? 'Career breakthrough' : 'Protection and safety' },
+                        { type: (seed * 3) % 2 === 0 ? 'Clear money line' : 'Fish symbol', meaning: (seed * 3) % 2 === 0 ? 'Financial prosperity' : 'Good fortune' }
                     ],
-                },
-                heartLine: {
-                    shape: t('palmistry.analysis.heartLine.shape'),
-                    position: t('palmistry.analysis.heartLine.position'),
-                    clarity: t('palmistry.analysis.heartLine.clarity'),
-                    meaning: t('palmistry.analysis.heartLine.meaning'),
-                    predictions: [
-                        t('palmistry.analysis.heartLine.prediction1'),
-                        t('palmistry.analysis.heartLine.prediction2'),
-                        t('palmistry.analysis.heartLine.prediction3'),
-                        t('palmistry.analysis.heartLine.prediction4'),
-                    ],
-                },
-                headLine: {
-                    clarity: t('palmistry.analysis.headLine.clarity'),
-                    length: t('palmistry.analysis.headLine.length'),
-                    curve: t('palmistry.analysis.headLine.curve'),
-                    meaning: t('palmistry.analysis.headLine.meaning'),
-                    predictions: [
-                        t('palmistry.analysis.headLine.prediction1'),
-                        t('palmistry.analysis.headLine.prediction2'),
-                        t('palmistry.analysis.headLine.prediction3'),
-                        t('palmistry.analysis.headLine.prediction4'),
-                    ],
-                },
-                fateLine: {
-                    presence: t('palmistry.analysis.fateLine.presence'),
-                    clarity: t('palmistry.analysis.fateLine.clarity'),
-                    position: t('palmistry.analysis.fateLine.position'),
-                    meaning: t('palmistry.analysis.fateLine.meaning'),
-                    predictions: [
-                        t('palmistry.analysis.fateLine.prediction1'),
-                        t('palmistry.analysis.fateLine.prediction2'),
-                        t('palmistry.analysis.fateLine.prediction3'),
-                        t('palmistry.analysis.fateLine.prediction4'),
-                    ],
-                },
-                mounts: {
-                    jupiter: {
-                        prominence: t('palmistry.analysis.mounts.jupiter.prominence'),
-                        meaning: t('palmistry.analysis.mounts.jupiter.meaning')
-                    },
-                    saturn: {
-                        prominence: t('palmistry.analysis.mounts.saturn.prominence'),
-                        meaning: t('palmistry.analysis.mounts.saturn.meaning')
-                    },
-                    apollo: {
-                        prominence: t('palmistry.analysis.mounts.apollo.prominence'),
-                        meaning: t('palmistry.analysis.mounts.apollo.meaning')
-                    },
-                    mercury: {
-                        prominence: t('palmistry.analysis.mounts.mercury.prominence'),
-                        meaning: t('palmistry.analysis.mounts.mercury.meaning')
-                    },
-                    venus: {
-                        prominence: t('palmistry.analysis.mounts.venus.prominence'),
-                        meaning: t('palmistry.analysis.mounts.venus.meaning')
-                    },
-                    luna: {
-                        prominence: t('palmistry.analysis.mounts.luna.prominence'),
-                        meaning: t('palmistry.analysis.mounts.luna.meaning')
-                    },
-                },
-                fingerAnalysis: {
-                    thumb: t('palmistry.analysis.fingerAnalysis.thumb'),
-                    index: t('palmistry.analysis.fingerAnalysis.index'),
-                    middle: t('palmistry.analysis.fingerAnalysis.middle'),
-                    ring: t('palmistry.analysis.fingerAnalysis.ring'),
-                    pinky: t('palmistry.analysis.fingerAnalysis.pinky'),
-                },
-                specialMarks: [
-                    { type: 'Star on Jupiter mount', meaning: t('palmistry.analysis.specialMarks.star') },
-                    { type: 'Triangle on fate line', meaning: t('palmistry.analysis.specialMarks.triangle') },
-                    { type: 'Clear money line', meaning: t('palmistry.analysis.specialMarks.moneyLine') },
-                ],
-                overall: t('palmistry.analysis.overall'),
-                recommendations: [
-                    t('palmistry.analysis.recommendations.1'),
-                    t('palmistry.analysis.recommendations.2'),
-                    t('palmistry.analysis.recommendations.3'),
-                    t('palmistry.analysis.recommendations.4'),
-                    t('palmistry.analysis.recommendations.5'),
-                ],
-            });
-            setIsAnalyzing(false);
-        }, 800); // Reduced from 3000ms to 800ms
+                    overall: `Your palm reveals a ${seed % 2 === 0 ? 'dynamic and ambitious' : 'balanced and harmonious'} personality with ${(seed * 2) % 2 === 0 ? 'strong leadership potential' : 'excellent creative abilities'}. The combination of your major lines suggests ${(seed * 3) % 2 === 0 ? 'significant career success' : 'fulfilling personal relationships'} and ${(seed * 5) % 2 === 0 ? 'financial stability' : 'emotional fulfillment'} in the coming years.`,
+                    recommendations: [
+                        seed % 4 === 0 ? 'Focus on career development and professional growth' : seed % 4 === 1 ? 'Nurture personal relationships and emotional bonds' : seed % 4 === 2 ? 'Pursue creative and artistic endeavors' : 'Balance work and personal life',
+                        (seed * 2) % 4 === 0 ? 'Practice meditation for mental clarity' : (seed * 2) % 4 === 1 ? 'Engage in physical activities for vitality' : (seed * 2) % 4 === 2 ? 'Develop communication skills' : 'Cultivate financial discipline',
+                        (seed * 3) % 4 === 0 ? 'Take calculated risks in business' : (seed * 3) % 4 === 1 ? 'Strengthen family connections' : (seed * 3) % 4 === 2 ? 'Explore new learning opportunities' : 'Build strong professional networks',
+                        (seed * 5) % 4 === 0 ? 'Trust your intuition in decisions' : (seed * 5) % 4 === 1 ? 'Maintain work-life balance' : (seed * 5) % 4 === 2 ? 'Invest in personal development' : 'Practice gratitude and mindfulness',
+                        (seed * 7) % 4 === 0 ? 'Embrace leadership opportunities' : (seed * 7) % 4 === 1 ? 'Foster creative expression' : (seed * 7) % 4 === 2 ? 'Build financial security' : 'Cultivate emotional intelligence'
+                    ]
+                });
+                setIsAnalyzing(false);
+            }, 800);
+        };
+        reader.readAsDataURL(selectedFile);
     };
 
     return (

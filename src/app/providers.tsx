@@ -4,7 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
-import CosmicBackground from "@/components/CosmicBackground";
+import ParticleBackground from "@/components/ParticleBackground";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -12,7 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ThemeProvider>
             <LanguageProvider>
                 <AuthProvider>
-                    <CosmicBackground />
+                    <ParticleBackground />
                     <div className="relative z-10">
                         <ClientLayoutWrapper>
                             {children}

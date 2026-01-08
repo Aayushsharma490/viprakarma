@@ -368,9 +368,12 @@ const translations = {
     "hero.scroll": "Explore More",
 
     // Features
-    "features.title": "Divine Services",
+    "features.title": "Explore Cosmic Services",
     "features.subtitle":
       "Explore our comprehensive range of astrological services crafted to guide you through life's celestial journey with precision and wisdom",
+    "features.exploreNow": "Explore Now",
+    "features.mostPopular": "Most Popular",
+    "features.newFeature": "New Feature",
     "feature1.title": "Kundali Generator",
     "feature1.desc":
       "Get your personalized birth chart with detailed planetary positions and accurate predictions based on Vedic astrology principles",
@@ -394,21 +397,38 @@ const translations = {
     // Stats
     "stats.title": "Trusted by Thousands",
     "stats.subtitle":
-      "Join our growing community of believers who have found guidance, clarity, and transformation",
-    "stats.testimonials": "What Our Clients Say",
+      "Join our growing community of enlightened souls finding guidance and transformation",
+    "stats.testimonials": "Voice of the Universe",
     "stats.users": "Satisfied Clients",
     "stats.astrologers": "Expert Astrologers",
     "stats.predictions": "Accurate Predictions",
     "stats.rate": "Success Rate",
 
-    "cta.title": "Begin Your Cosmic Journey Today",
+    // Testimonials
+    "testimonial1.name": "Priya Sharma",
+    "testimonial1.role": "Software Engineer",
+    "testimonial1.content": "The kundali analysis was incredibly accurate! It helped me understand my career path better.",
+    "testimonial2.name": "Rajesh Kumar",
+    "testimonial2.role": "Business Owner",
+    "testimonial2.content": "The numerology reading transformed my business decisions. Highly recommended!",
+    "testimonial3.name": "Anita Patel",
+    "testimonial3.role": "Teacher",
+    "testimonial3.content": "AI chat feature is amazing! Got instant answers to all my astrology questions.",
+
+    // CTA Section
+    "cta.title": "Begin Your Cosmic Path Today",
     "cta.subtitle":
-      "Join thousands of enlightened souls who have discovered their true path through our divine guidance and celestial insights",
+      "Join thousands of souls who have discovered their true path through celestial insights and divine guidance",
+    "cta.startJourney": "Start Journey",
+    "cta.consultNow": "Consult Now",
     "cta.trial": "Start Free Trial",
     "cta.consult": "Consult Expert",
     "cta.secure": "100% Secure",
+    "cta.secureDesc": "& Confidential",
     "cta.available": "24/7 Available",
-    "cta.trusted": "Trusted Since",
+    "cta.availableDesc": "Divine Services",
+    "cta.trusted": "Top Rated",
+    "cta.trustedDesc": "Trusted Service",
 
     // Mahurat Page
     "mahurat.title": "Mahurat Calculator",
@@ -441,7 +461,11 @@ const translations = {
     "mahurat.purpose.propertyPurchase": "Property Purchase",
     "mahurat.purpose.nameCeremony": "Name Ceremony",
     "mahurat.purpose.threadCeremony": "Thread Ceremony",
+    "mahurat.purpose.bhoomiPoojan": "Bhoomi Poojan",
+    "mahurat.purpose.shilanyas": "Shilanyas",
     "mahurat.purpose.other": "Other",
+    "mahurat.result.excellent": "Excellent time for business opening. All planetary positions are favorable",
+    "mahurat.result.recommendation": "Recommendation",
 
     // Rashi (Zodiac Signs)
     "mahurat.rashi.aries": "Aries (Mesh)",
@@ -997,6 +1021,82 @@ const translations = {
     "footer.copyright":
       "सर्वाधिकार सुरक्षित। आध्यात्मिक खोजकर्ताओं के लिए ✨ के साथ बनाया गया।",
 
+    // Hero Section
+    "hero.title1": "खोजें",
+    "hero.title2": "अपनी नियति",
+    "hero.subtitle":
+      "प्रसिद्ध ज्योतिषियों से व्यक्तिगत ज्योतिष, अंकशास्त्र और विशेषज्ञ मार्गदर्शन के साथ ब्रह्मांड के रहस्यों को अनलॉक करें।",
+    "hero.cta1": "मुफ्त कुंडली प्राप्त करें",
+    "hero.cta2": "प्रीमियम सुविधाएं",
+    "hero.stats1": "खुश उपयोगकर्ता",
+    "hero.stats2": "विशेषज्ञ ज्योतिषी",
+    "hero.stats3": "वर्षों का अनुभव",
+    "hero.stats4": "सटीकता",
+    "hero.scroll": "और अधिक जानें",
+
+    // Features
+    "features.title": "ब्रह्मांडीय सेवाओं का अन्वेषण करें",
+    "features.subtitle":
+      "हमारी ज्योतिषीय सेवाओं की व्यापक श्रृंखला का अन्वेषण करें जो आपको जीवन की दिव्य यात्रा में सटीकता और ज्ञान के साथ मार्गदर्शन करने के लिए तैयार की गई हैं",
+    "features.exploreNow": "अभी देखें",
+    "features.mostPopular": "सबसे लोकप्रिय",
+    "features.newFeature": "नई सुविधा",
+    "feature1.title": "कुंडली जनरेटर",
+    "feature1.desc":
+      "वैदिक ज्योतिष सिद्धांतों के आधार पर विस्तृत ग्रह स्थितियों और सटीक भविष्यवाणियों के साथ अपनी व्यक्तिगत जन्म कुंडली प्राप्त करें",
+    "feature2.title": "अंकशास्त्र",
+    "feature2.desc":
+      "अपने व्यक्तित्व और भविष्य में व्यापक अंतर्दृष्टि के साथ अपने जीवन पथ, नियति और आत्मा की इच्छा संख्याओं की खोज करें",
+    "feature3.title": "हस्तरेखा विश्लेषण",
+    "feature3.desc":
+      "विस्तृत विश्लेषण और अपनी जीवन रेखाओं और भविष्य की भविष्यवाणियों की सटीक रीडिंग के लिए अपनी हथेली की छवि अपलोड करें",
+    "feature4.title": "एआई एस्ट्रो चैट",
+    "feature4.desc":
+      "तत्काल ब्रह्मांडीय मार्गदर्शन, दैनिक राशिफल और व्यक्तिगत सलाह के लिए किसी भी समय हमारे उन्नत एआई ज्योतिषी के साथ चैट करें",
+    "feature5.title": "ज्योतिषी से बात करें",
+    "feature5.desc":
+      "कॉल, वीडियो या चैट सत्रों के माध्यम से व्यक्तिगत परामर्श के लिए प्रमाणित विशेषज्ञ ज्योतिषियों से जुड़ें",
+    "feature6.title": "पंडित बुक करें",
+    "feature6.desc":
+      "पूर्ण व्यवस्था के साथ अपने घर पर पूजा, समारोह और अनुष्ठानों के लिए अनुभवी पंडितों को बुक करें",
+    "feature.explore": "सेवा देखें",
+
+    // Stats
+    "stats.title": "हजारों द्वारा विश्वसनीय",
+    "stats.subtitle":
+      "मार्गदर्शन और परिवर्तन पाने वाली प्रबुद्ध आत्माओं के हमारे बढ़ते समुदाय में शामिल हों",
+    "stats.testimonials": "ब्रह्मांड की आवाज",
+    "stats.users": "संतुष्ट ग्राहक",
+    "stats.astrologers": "विशेषज्ञ ज्योतिषी",
+    "stats.predictions": "सटीक भविष्यवाणियां",
+    "stats.rate": "सफलता दर",
+
+    // Testimonials
+    "testimonial1.name": "प्रिया शर्मा",
+    "testimonial1.role": "सॉफ्टवेयर इंजीनियर",
+    "testimonial1.content": "कुंडली विश्लेषण अविश्वसनीय रूप से सटीक था! इसने मुझे अपने करियर पथ को बेहतर ढंग से समझने में मदद की।",
+    "testimonial2.name": "राजेश कुमार",
+    "testimonial2.role": "व्यवसाय स्वामी",
+    "testimonial2.content": "अंकशास्त्र रीडिंग ने मेरे व्यावसायिक निर्णयों को बदल दिया। अत्यधिक अनुशंसित!",
+    "testimonial3.name": "अनीता पटेल",
+    "testimonial3.role": "शिक्षिका",
+    "testimonial3.content": "एआई चैट सुविधा अद्भुत है! मेरे सभी ज्योतिष प्रश्नों के तुरंत उत्तर मिले।",
+
+    // CTA Section
+    "cta.title": "आज अपना ब्रह्मांडीय पथ शुरू करें",
+    "cta.subtitle":
+      "हजारों आत्माओं में शामिल हों जिन्होंने दिव्य अंतर्दृष्टि और दैवीय मार्गदर्शन के माध्यम से अपना सच्चा मार्ग खोजा है",
+    "cta.startJourney": "यात्रा शुरू करें",
+    "cta.consultNow": "अभी परामर्श करें",
+    "cta.trial": "मुफ्त परीक्षण शुरू करें",
+    "cta.consult": "विशेषज्ञ से परामर्श करें",
+    "cta.secure": "100% सुरक्षित",
+    "cta.secureDesc": "और गोपनीय",
+    "cta.available": "24/7 उपलब्ध",
+    "cta.availableDesc": "दिव्य सेवाएं",
+    "cta.trusted": "शीर्ष रेटेड",
+    "cta.trustedDesc": "विश्वसनीय सेवा",
+
     // Admin Panel
     "admin.title": "विप्रकर्म एडमिन",
     "admin.dashboard": "डैशबोर्ड",
@@ -1365,7 +1465,11 @@ const translations = {
     "mahurat.purpose.propertyPurchase": "संपत्ति खरीद",
     "mahurat.purpose.nameCeremony": "नामकरण",
     "mahurat.purpose.threadCeremony": "जनेऊ संस्कार",
+    "mahurat.purpose.bhoomiPojan": "भूमि पूजन",
+    "mahurat.purpose.shilanyas": "शिलान्यास",
     "mahurat.purpose.other": "अन्य",
+    "mahurat.result.excellent": "व्यापार उद्घाटन के लिए उत्कृष्ट समय। सभी ग्रह स्थितियां अनुकूल हैं",
+    "mahurat.result.recommendation": "टिप्पणी",
 
     // Rashi (Zodiac Signs)
     "mahurat.rashi.aries": "मेष",

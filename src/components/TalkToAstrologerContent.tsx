@@ -27,6 +27,7 @@ import {
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ConsultationFormModal from "@/components/ConsultationFormModal";
 
 interface Astrologer {
     id: number;
@@ -59,6 +60,8 @@ export default function TalkToAstrologerContent() {
         astrologerId: number;
         status: string;
     } | null>(null);
+    const [showConsultationForm, setShowConsultationForm] = useState(false);
+    const [selectedAstrologerData, setSelectedAstrologerData] = useState<Astrologer | null>(null);
 
     useEffect(() => {
         fetchAstrologers();
@@ -128,46 +131,46 @@ export default function TalkToAstrologerContent() {
         }
     };
 
-    const handleConnect = (panditId: number, type: "chat" | "call" | "video") => {
+    const handleConnect = (astrologer: Astrologer, type: "chat" | "call" | "video") => {
         if (!token) {
-            toast.error("Please login to connect with a pandit");
+            toast.error("Please login to connect with an astrologer");
             router.push("/login");
             return;
         }
 
         if (type === "chat" && activeSession) {
             if (
-                activeSession.astrologerId === panditId &&
+                activeSession.astrologerId === astrologer.id &&
                 activeSession.status === "active"
             ) {
-                router.push(`/chat/astrologer?astrologer=${panditId}`);
+                router.push(`/chat/astrologer?astrologer=${astrologer.id}`);
                 return;
             }
 
             if (
                 activeSession.status === "active" &&
-                activeSession.astrologerId !== panditId
+                activeSession.astrologerId !== astrologer.id
             ) {
                 toast.error(
-                    "You already have an active chat session. Please complete it before starting another."
+                    "You already have an active chat session. Please complete it first."
                 );
                 return;
             }
         }
 
         if (type === "chat" && chatStatus) {
-            router.push(`/chat/astrologer?astrologer=${panditId}`);
+            router.push(`/chat/astrologer?astrologer=${astrologer.id}`);
             return;
         }
 
-        // If chat not enabled yet, guide user into consultation payment flow
+        // If chat not enabled yet, show consultation form modal
         if (type === "chat" && !chatStatus) {
-            toast.info("Please complete consultation payment to unlock chat.");
+            setSelectedAstrologerData(astrologer);
+            setShowConsultationForm(true);
+            return;
         }
 
-        // Set selected astrologer and redirect to consultation
-        setSelectedAstrologer(panditId);
-        router.push(`/consultation?astrologer=${panditId}&type=${type}`);
+        toast.info("This feature will be available soon!");
     };
 
     if (loading || isLoading) {
@@ -309,10 +312,9 @@ export default function TalkToAstrologerContent() {
                                         <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
 
                                             <Button
-                                                onClick={() => handleConnect(astrologer.id, "chat")}
-                                                className={`w-full ${activeSession && activeSession.astrologerId === astrologer.id && activeSession.status === "active" ? "bg-green-600 hover:bg-green-700" : chatStatus ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400"} text-white`}
+                                                onClick={() => handleConnect(astrologer, "chat")}
+                                                className={`w-full ${activeSession && activeSession.astrologerId === astrologer.id && activeSession.status === "active" ? "bg-green-600 hover:bg-green-700" : chatStatus ? "bg-blue-600 hover:bg-blue-700" : "bg-amber-600 hover:bg-amber-700"} text-white`}
                                                 size="sm"
-                                                disabled={!chatStatus}
                                             >
                                                 {activeSession &&
                                                     activeSession.astrologerId === astrologer.id &&
@@ -321,7 +323,7 @@ export default function TalkToAstrologerContent() {
                                                 ) : chatStatus ? (
                                                     <MessageCircle className="w-4 h-4 mr-1" />
                                                 ) : (
-                                                    <Lock className="w-4 h-4 mr-1" />
+                                                    <MessageCircle className="w-4 h-4 mr-1" />
                                                 )}
                                                 {activeSession &&
                                                     activeSession.astrologerId === astrologer.id &&
@@ -329,7 +331,7 @@ export default function TalkToAstrologerContent() {
                                                     ? t("astrologer.continueChat")
                                                     : chatStatus
                                                         ? t("astrologer.chatNow")
-                                                        : t("astrologer.startChatLocked")}
+                                                        : t("astrologer.chatNow")}
                                             </Button>
 
                                         </div>
@@ -347,6 +349,20 @@ export default function TalkToAstrologerContent() {
                 </div>
             </div>
             <Footer />
+
+            {/* Consultation Form Modal */}
+            {showConsultationForm && selectedAstrologerData && (
+                <ConsultationFormModal
+                    isOpen={showConsultationForm}
+                    onClose={() => {
+                        setShowConsultationForm(false);
+                        setSelectedAstrologerData(null);
+                        checkChatStatus();
+                    }}
+                    astrologerId={selectedAstrologerData.id}
+                    astrologerName={selectedAstrologerData.name}
+                />
+            )}
         </>
     );
 }

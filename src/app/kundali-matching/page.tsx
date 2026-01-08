@@ -272,14 +272,14 @@ export default function KundaliMatchingPage() {
                         </h1>
                         <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
                             {language === 'en'
-                                ? 'Discover compatibility through ancient Vedic astrology with Swiss Ephemeris precision'
-                                : 'स्विस एफेमेरिस सटीकता के साथ प्राचीन वैदिक ज्योतिष के माध्यम से अनुकूलता की खोज करें'}
+                                ? 'Discover compatibility through ancient Vedic astrology'
+                                : 'प्राचीन वैदिक ज्योतिष के माध्यम से अनुकूलता की खोज करें'}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                        {renderPersonForm(boy, setBoy, language === 'en' ? 'Boy' : 'लड़का')}
-                        {renderPersonForm(girl, setGirl, language === 'en' ? 'Girl' : 'लड़की')}
+                        {renderPersonForm(boy, setBoy, language === 'en' ? 'Var (Groom)' : 'वर')}
+                        {renderPersonForm(girl, setGirl, language === 'en' ? 'Vadhu (Bride)' : 'वधू')}
                     </div>
 
                     <div className="text-center mb-16">

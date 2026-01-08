@@ -46,7 +46,6 @@ export default function Navbar() {
     { href: "/numerology", label: t("nav.numerology") },
     { href: "/palmistry", label: t("nav.palmistry") },
     { href: "/mahurat", label: t("nav.mahurat") },
-    { href: "/consultation", label: t("nav.consultation") },
     { href: "/talk-to-astrologer", label: t("nav.talkToAstrologer") },
     { href: "/about", label: t("nav.about") },
     { href: "/contact", label: t("nav.contact") },

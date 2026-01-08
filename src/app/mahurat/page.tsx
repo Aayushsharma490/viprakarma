@@ -27,6 +27,8 @@ const purposeKeys = [
     'propertyPurchase',
     'nameCeremony',
     'threadCeremony',
+    'bhoomiPoojan',
+    'shilanyas',
     'other'
 ];
 
@@ -246,7 +248,20 @@ export default function MahuratPage() {
                                     type="tel"
                                     placeholder={t('mahurat.phoneNumberPlaceholder')}
                                     value={formData.phoneNumber}
-                                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        // Auto-add +91 if user starts typing without it
+                                        if (value && !value.startsWith('+')) {
+                                            value = '+91' + value.replace(/^\+?91/, '');
+                                        }
+                                        setFormData({ ...formData, phoneNumber: value });
+                                    }}
+                                    onFocus={(e) => {
+                                        // Set +91 as default when field is focused and empty
+                                        if (!e.target.value) {
+                                            setFormData({ ...formData, phoneNumber: '+91' });
+                                        }
+                                    }}
                                     className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm"
                                 />
                                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest ml-1 opacity-70">

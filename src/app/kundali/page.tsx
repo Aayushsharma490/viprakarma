@@ -522,7 +522,7 @@ export default function KundaliPage() {
               {t("kundali.subtitle") || "Precision Vedic Astrology"}
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              {t("kundali.title") || "Swiss Ephemeris Kundali"}
+              {t("kundali.title") || "Kundali Generator"}
             </h1>
             <p className="text-lg md:text-xl text-gray-600 mt-4 max-w-3xl mx-auto">
               {t("kundali.description")}
@@ -602,33 +602,46 @@ export default function KundaliPage() {
                       placeholder={t("kundali.dayPlaceholder")}
                       type="number"
                       value={formData.day}
-                      onChange={(event) =>
-                        setFormData({ ...formData, day: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 31 && value.length <= 2)) {
+                          setFormData({ ...formData, day: value });
+                        }
+                      }}
                       min={1}
                       max={31}
+                      maxLength={2}
                       required
                     />
                     <Input
                       placeholder={t("kundali.monthPlaceholder")}
                       type="number"
                       value={formData.month}
-                      onChange={(event) =>
-                        setFormData({ ...formData, month: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12 && value.length <= 2)) {
+                          setFormData({ ...formData, month: value });
+                        }
+                      }}
                       min={1}
                       max={12}
+                      maxLength={2}
                       required
                     />
                     <Input
                       placeholder={t("kundali.yearPlaceholder")}
                       type="number"
                       value={formData.year}
-                      onChange={(event) =>
-                        setFormData({ ...formData, year: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        const currentYear = new Date().getFullYear();
+                        if (value === '' || (parseInt(value) >= 1900 && parseInt(value) <= currentYear && value.length <= 4)) {
+                          setFormData({ ...formData, year: value });
+                        }
+                      }}
                       min={1900}
                       max={new Date().getFullYear()}
+                      maxLength={4}
                       required
                     />
                   </div>
@@ -643,33 +656,45 @@ export default function KundaliPage() {
                       placeholder={t("kundali.hourPlaceholder")}
                       type="number"
                       value={formData.hour}
-                      onChange={(event) =>
-                        setFormData({ ...formData, hour: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 23 && value.length <= 2)) {
+                          setFormData({ ...formData, hour: value });
+                        }
+                      }}
                       min={0}
                       max={23}
+                      maxLength={2}
                       required
                     />
                     <Input
                       placeholder={t("kundali.minutePlaceholder")}
                       type="number"
                       value={formData.minute}
-                      onChange={(event) =>
-                        setFormData({ ...formData, minute: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
+                          setFormData({ ...formData, minute: value });
+                        }
+                      }}
                       min={0}
                       max={59}
+                      maxLength={2}
                       required
                     />
                     <Input
                       placeholder="SS"
                       type="number"
                       value={formData.second}
-                      onChange={(event) =>
-                        setFormData({ ...formData, second: event.target.value })
-                      }
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
+                          setFormData({ ...formData, second: value });
+                        }
+                      }}
                       min={0}
                       max={59}
+                      maxLength={2}
                       required
                     />
                   </div>
