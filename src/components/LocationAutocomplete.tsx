@@ -128,7 +128,7 @@ export default function LocationAutocomplete({ value, onChange, label, placehold
                 </div>
             )}
 
-            {showDropdown && options.length === 0 && !loading && searchTerm.length >= 2 && (
+            {showDropdown && options.length === 0 && !loading && searchTerm.trim().length >= 2 && value.trim().length === 0 && (
                 <div className="absolute z-50 w-full mt-2 bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-4 text-center">
                     <p className="text-sm text-muted-foreground">
                         {language === 'en' ? 'No locations found' : 'कोई स्थान नहीं मिला'}

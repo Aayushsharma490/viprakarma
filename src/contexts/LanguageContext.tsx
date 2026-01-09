@@ -711,7 +711,13 @@ const translations = {
     "palmistry.fateLine": "Fate Line",
     "palmistry.mountsAnalysis": "Mounts Analysis",
     "palmistry.recommendations": "Recommendations",
-    "palmistry.predictions": "Predictions:",
+    "palmistry.overallSummary": "Overall Summary",
+
+    // Pooja Booking Page
+    "pooja.sacredService": "Sacred Service",
+    "pooja.bookTitle1": "Book a",
+    "pooja.bookTitle2": "Pooja",
+    "pooja.description": "Experience the divine power through our sacred rituals performed by expert Ved Pathi Pandits.",
     "palmistry.length": "Length:",
     "palmistry.depth": "Depth:",
     "palmistry.clarity": "Clarity:",
@@ -1888,6 +1894,13 @@ const translations = {
     "palmistry.fateLine": "भाग्य रेखा",
     "palmistry.mountsAnalysis": "हथेली के पहाड़ियों का विश्लेषण",
     "palmistry.recommendations": "सिफारिशें",
+    "palmistry.overallSummary": "समग्र सारांश",
+
+    // Pooja Booking Page
+    "pooja.sacredService": "पवित्र सेवा",
+    "pooja.bookTitle1": "पूजा",
+    "pooja.bookTitle2": "बुक करें",
+    "pooja.description": "हमारे विशेषज्ञ वेद पाठी पंडितों द्वारा किए गए पवित्र अनुष्ठानों के माध्यम से दिव्य शक्ति का अनुभव करें।",
     "palmistry.predictions": "भविष्यवाणियाँ:",
     "palmistry.length": "लंबाई:",
     "palmistry.depth": "गहराई:",

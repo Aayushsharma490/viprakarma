@@ -105,13 +105,13 @@ export default function PoojaBookingPage() {
                             className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-primary/20 rounded-full mb-6"
                         >
                             <Sparkles className="w-4 h-4 text-primary" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Sacred Service</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t("pooja.sacredService") || "Sacred Service"}</span>
                         </motion.div>
                         <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 tracking-tighter uppercase font-sans leading-none">
-                            Book a <span className="golden-text">Pooja</span>
+                            {t("pooja.bookTitle1")} <span className="golden-text">{t("pooja.bookTitle2")}</span>
                         </h1>
                         <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
-                            Experience the divine power through our sacred rituals performed by expert Ved Pathi Pandits.
+                            {t("pooja.description") || "Experience the divine power through our sacred rituals performed by expert Ved Pathi Pandits."}
                         </p>
                     </div>
 

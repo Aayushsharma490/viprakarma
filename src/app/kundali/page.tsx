@@ -524,9 +524,6 @@ export default function KundaliPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
               {t("kundali.title") || "Kundali Generator"}
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mt-4 max-w-3xl mx-auto">
-              {t("kundali.description")}
-            </p>
 
             {/* Engine Status Indicator */}
             <div className="mt-6 flex justify-center">
@@ -629,18 +626,22 @@ export default function KundaliPage() {
                       required
                     />
                     <Input
-                      placeholder={t("kundali.yearPlaceholder")}
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.year}
                       onChange={(event) => {
-                        const value = event.target.value;
-                        const currentYear = new Date().getFullYear();
-                        if (value === '' || (parseInt(value) >= 1900 && parseInt(value) <= currentYear && value.length <= 4)) {
+                        const value = event.target.value.replace(/\D/g, '');
+                        if (value === '' || (value.length <= 4)) {
                           setFormData({ ...formData, year: value });
                         }
                       }}
-                      min={1900}
-                      max={new Date().getFullYear()}
+                      onBlur={(event) => {
+                        const value = parseInt(event.target.value);
+                        const currentYear = new Date().getFullYear();
+                        if (value && (value < 1900 || value > currentYear)) {
+                          alert(`Year must be between 1900 and ${currentYear}`);
+                        }
+                      }}
                       maxLength={4}
                       required
                     />
