@@ -144,27 +144,12 @@ export default function PalmistryContent() {
     };
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <ChatBot />
 
             {/* Hero Section */}
-            <section className="relative py-20 pt-32 bg-gradient-to-r from-purple-50 to-purple-100 overflow-hidden">
-                <motion.div
-                    className="absolute inset-0 z-0 opacity-10"
-                    animate={{
-                        backgroundPosition: ["0% 0%", "100% 100%"],
-                    }}
-                    transition={{
-                        duration: 20,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                    }}
-                    style={{
-                        backgroundImage: "url('/pattern-bg.png')",
-                        backgroundSize: "cover"
-                    }}
-                />
+            <section className="relative py-20 pt-32 overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -172,17 +157,17 @@ export default function PalmistryContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-purple-900 drop-shadow-sm">
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-sm">
                             {t('palmistry.title') || 'Palmistry Analysis'}
                         </h1>
-                        <p className="text-xl text-gray-700 font-medium">
+                        <p className="text-xl text-gray-300 font-medium">
                             {t('palmistry.subtitle') || 'Upload your palm image for comprehensive AI-powered insights and predictions'}
                         </p>
                     </motion.div>
                 </div>
             </section>
 
-            <div className="container mx-auto px-4 py-16">
+            <main className="container mx-auto px-4 py-16">
                 <div className="max-w-6xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -200,7 +185,7 @@ export default function PalmistryContent() {
                                 <div className="space-y-6">
                                     {/* Location Input */}
                                     <div className="space-y-2 relative">
-                                        <Label className="text-gray-900 flex items-center gap-2">
+                                        <Label className="text-gray-100 flex items-center gap-2">
                                             <MapPin className="w-4 h-4 text-amber-600" />
                                             {t('common.location') || "Your Location"}
                                         </Label>
@@ -223,7 +208,7 @@ export default function PalmistryContent() {
                                                             setLocation(city.city);
                                                             setShowSuggestions(false);
                                                         }}
-                                                        className="px-4 py-2 hover:bg-amber-50 cursor-pointer text-sm text-gray-700"
+                                                        className="px-4 py-2 hover:bg-amber-50 cursor-pointer text-sm text-gray-900"
                                                     >
                                                         {city.city}, {city.state}
                                                     </li>
@@ -248,7 +233,7 @@ export default function PalmistryContent() {
                                                         alt="Palm preview"
                                                         className="max-w-full h-64 object-contain mx-auto rounded-lg"
                                                     />
-                                                    <p className="text-sm text-gray-600">{t('palmistry.changeImage') || 'Click to change image'}</p>
+                                                    <p className="text-sm text-muted-foreground">{t('palmistry.changeImage') || 'Click to change image'}</p>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-4">
@@ -264,12 +249,12 @@ export default function PalmistryContent() {
                                         </label>
                                     </div>
 
-                                    <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                                        <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                    <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4 border border-border">
+                                        <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                                             <ImageIcon className="w-4 h-4 text-amber-600" />
                                             {t('palmistry.tipsTitle') || 'Tips for best results:'}
                                         </h3>
-                                        <ul className="text-sm text-gray-700 space-y-1">
+                                        <ul className="text-sm text-muted-foreground space-y-1">
                                             <li>{t('palmistry.tips1') || '• Use natural bright lighting'}</li>
                                             <li>{t('palmistry.tips2') || '• Keep palm flat and straight'}</li>
                                             <li>{t('palmistry.tips3') || '• Capture full palm clearly with fingers'}</li>
@@ -453,7 +438,7 @@ export default function PalmistryContent() {
                         </div>
                     </motion.div>
                 </div>
-            </div>
+            </main>
 
             <Footer />
         </div>

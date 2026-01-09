@@ -70,19 +70,11 @@ export default function NumerologyContent() {
     };
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-background">
             <Navbar />
             <ChatBot />
 
             {/* Hero Section */}
-            <section className="relative py-20 pt-32 bg-gradient-to-r from-amber-50 to-amber-100 overflow-hidden">
-                <motion.div
-                    className="absolute inset-0 z-0 opacity-10"
-                    animate={{
-                        backgroundPosition: ["0% 0%", "100% 100%"],
-                    }}
-                    transition={{
-                        duration: 20,
                         repeat: Infinity,
                         repeatType: "reverse",
                     }}
@@ -98,10 +90,10 @@ export default function NumerologyContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 golden-text drop-shadow-sm">
-                            {t("numerology.title") || "Numerology Calculator"}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-sm">
+                            {t("numerology.title") || "Numerology Analysis"}
                         </h1>
-                        <p className="text-xl text-gray-700 font-medium">
+                        <p className="text-xl text-gray-300 font-medium">
                             {t("numerology.subtitle") ||
                                 "Discover the hidden meanings in your name and birth date with comprehensive insights"}
                         </p>
@@ -485,6 +477,6 @@ export default function NumerologyContent() {
             </div>
 
             <Footer />
-        </div>
+        </div >
     );
 }

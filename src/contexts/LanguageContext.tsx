@@ -258,6 +258,9 @@ const translations = {
     "admin.poojaBookings.datetime": "Date & Time",
     "admin.poojaBookings.location": "Location",
     "admin.poojaBookings.completed": "Completed",
+
+    // Common
+    "common.location": "Your Location",
     "admin.poojaBookings.cancelled": "Cancelled",
 
     "admin.payments.submitted": "Submitted",
@@ -990,6 +993,10 @@ const translations = {
     "subscription.feature.remedialSolutions": "Remedial Solutions",
     "subscription.feature.familyCompatibility": "Family Compatibility",
     "subscription.feature.allPremium": "All Premium Features",
+
+    // CTA Section
+    "cta.toprated": "Top Rated",
+    "cta.topratedDesc": "Trusted by thousands of satisfied customers",
   },
   hi: {
     // Navigation
@@ -1328,6 +1335,9 @@ const translations = {
     "admin.poojaBookings.datetime": "तिथि और समय",
     "admin.poojaBookings.location": "स्थान",
     "admin.poojaBookings.completed": "पूर्ण",
+
+    // Common
+    "common.location": "आपका स्थान",
     "admin.poojaBookings.cancelled": "रद्द",
 
     "admin.payments.submitted": "जमा किया गया",
@@ -2147,9 +2157,11 @@ const translations = {
     "subscription.feature.videoConsultation3": "वीडियो परामर्श (3)",
     "subscription.feature.remedialSolutions": "उपचारात्मक समाधान",
     "subscription.feature.familyCompatibility": "पारिवारिक अनुकूलता",
-    "subscription.feature.allPremium": "सभी प्रीमियम फीचर्स",
+    "subscription.feature.allPremium": "सभी प्रीमियम सुविधाएं",
 
-    // Kundali Hindi Translations (already defined above, removed duplicates)
+    // CTA Section
+    "cta.toprated": "शीर्ष रेटेड",
+    "cta.topratedDesc": "हजारों संतुष्ट ग्राहकों द्वारा विश्वसनीय",
   },
 };
 
