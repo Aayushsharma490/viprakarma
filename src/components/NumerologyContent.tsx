@@ -75,14 +75,7 @@ export default function NumerologyContent() {
             <ChatBot />
 
             {/* Hero Section */}
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                    }}
-                    style={{
-                        backgroundImage: "url('/pattern-bg.png')", // Fallback or assume generic pattern
-                        backgroundSize: "cover"
-                    }}
-                />
+            <section className="relative py-20 pt-32 overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -90,12 +83,13 @@ export default function NumerologyContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-sm">
-                            {t("numerology.title") || "Numerology Analysis"}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm">
+                            <span className="text-white">{t("numerology.title")?.split(' ')[0] || "Numerology"}</span>{' '}
+                            <span className="golden-text">{t("numerology.title")?.split(' ').slice(1).join(' ') || "Analysis"}</span>
                         </h1>
                         <p className="text-xl text-gray-300 font-medium">
                             {t("numerology.subtitle") ||
-                                "Discover the hidden meanings in your name and birth date with comprehensive insights"}
+                                "Discover the hidden meanings in your name and birth date"}
                         </p>
                     </motion.div>
                 </div>
@@ -174,14 +168,8 @@ export default function NumerologyContent() {
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
-                            className="space-y-6"
+                            className="max-w-4xl mx-auto mt-16"
                         >
-                            {/* Core Numbers Grid - Including Driver and Conductor */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {/* Life Path */}
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center classical-shadow">
                                             <span className="text-3xl font-bold text-white">
                                                 {numerologyData.lifePath}
                                             </span>
@@ -195,121 +183,121 @@ export default function NumerologyContent() {
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {numerologyData.insights.lifePathMeaning}
-                                    </p>
-                                </Card>
+                <p className="text-gray-700 leading-relaxed text-sm">
+                    {numerologyData.insights.lifePathMeaning}
+                </p>
+            </Card>
 
-                                {/* Driver Number */}
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center classical-shadow">
-                                            <span className="text-3xl font-bold text-white">
-                                                {numerologyData.driverNumber}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-purple-900">
-                                                {t("numerology.driver.title")}
-                                            </h3>
-                                            <p className="text-sm text-gray-600">
-                                                {t("numerology.driver.subtitle")}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {t("numerology.driver.description")}
-                                    </p>
-                                </Card>
+            {/* Driver Number */}
+            <Card className="classical-card p-6 classical-hover">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center classical-shadow">
+                        <span className="text-3xl font-bold text-white">
+                            {numerologyData.driverNumber}
+                        </span>
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-semibold text-purple-900">
+                            {t("numerology.driver.title")}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                            {t("numerology.driver.subtitle")}
+                        </p>
+                    </div>
+                </div>
+                <p className="text-gray-700 leading-relaxed text-sm">
+                    {t("numerology.driver.description")}
+                </p>
+            </Card>
 
-                                {/* Conductor Number */}
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-600 to-pink-700 flex items-center justify-center classical-shadow">
-                                            <span className="text-3xl font-bold text-white">
-                                                {numerologyData.conductorNumber}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-pink-900">
-                                                {t("numerology.conductor.title")}
-                                            </h3>
-                                            <p className="text-sm text-gray-600">
-                                                {t("numerology.conductor.subtitle")}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {t("numerology.conductor.description")}
-                                    </p>
-                                </Card>
-                            </div>
+            {/* Conductor Number */}
+            <Card className="classical-card p-6 classical-hover">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-600 to-pink-700 flex items-center justify-center classical-shadow">
+                        <span className="text-3xl font-bold text-white">
+                            {numerologyData.conductorNumber}
+                        </span>
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-semibold text-pink-900">
+                            {t("numerology.conductor.title")}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                            {t("numerology.conductor.subtitle")}
+                        </p>
+                    </div>
+                </div>
+                <p className="text-gray-700 leading-relaxed text-sm">
+                    {t("numerology.conductor.description")}
+                </p>
+            </Card>
+        </div>
 
-                            {/* Secondary Numbers */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center classical-shadow">
-                                            <span className="text-3xl font-bold text-white">
-                                                {numerologyData.destiny}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-blue-900">
-                                                {t("numerology.destiny.title")}
-                                            </h3>
-                                            <p className="text-sm text-gray-600">{t("numerology.destiny.subtitle")}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {numerologyData.insights.destinyMeaning}
-                                    </p>
-                                </Card>
+                            {/* Secondary Numbers */ }
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="classical-card p-6 classical-hover">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center classical-shadow">
+                    <span className="text-3xl font-bold text-white">
+                        {numerologyData.destiny}
+                    </span>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-blue-900">
+                        {t("numerology.destiny.title")}
+                    </h3>
+                    <p className="text-sm text-gray-600">{t("numerology.destiny.subtitle")}</p>
+                </div>
+            </div>
+            <p className="text-gray-700 leading-relaxed text-sm">
+                {numerologyData.insights.destinyMeaning}
+            </p>
+        </Card>
 
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center classical-shadow">
-                                            <span className="text-3xl font-bold text-white">
-                                                {numerologyData.soulUrge}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-red-900">
-                                                {t("numerology.soulUrge.title")}
-                                            </h3>
-                                            <p className="text-sm text-gray-600">
-                                                {t("numerology.soulUrge.subtitle")}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {numerologyData.insights.soulUrgeMeaning}
-                                    </p>
-                                </Card>
+        <Card className="classical-card p-6 classical-hover">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center classical-shadow">
+                    <span className="text-3xl font-bold text-white">
+                        {numerologyData.soulUrge}
+                    </span>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-red-900">
+                        {t("numerology.soulUrge.title")}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                        {t("numerology.soulUrge.subtitle")}
+                    </p>
+                </div>
+            </div>
+            <p className="text-gray-700 leading-relaxed text-sm">
+                {numerologyData.insights.soulUrgeMeaning}
+            </p>
+        </Card>
 
-                                <Card className="classical-card p-6 classical-hover">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center classical-shadow">
-                                            <span className="text-3xl font-bold text-white">
-                                                {numerologyData.personality}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-green-900">
-                                                {t("numerology.personality.title")}
-                                            </h3>
-                                            <p className="text-sm text-gray-600">
-                                                {t("numerology.personality.subtitle")}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {numerologyData.insights.personalityMeaning}
-                                    </p>
-                                </Card>
-                            </div>
+        <Card className="classical-card p-6 classical-hover">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center classical-shadow">
+                    <span className="text-3xl font-bold text-white">
+                        {numerologyData.personality}
+                    </span>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-green-900">
+                        {t("numerology.personality.title")}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                        {t("numerology.personality.subtitle")}
+                    </p>
+                </div>
+            </div>
+            <p className="text-gray-700 leading-relaxed text-sm">
+                {numerologyData.insights.personalityMeaning}
+            </p>
+        </Card>
+    </div>
 
-                            {/* Complete Profile */}
+    {/* Complete Profile */ }
                             <Card className="classical-card p-8 bg-gradient-to-br from-amber-50 to-amber-100 classical-shadow">
                                 <div className="flex items-center gap-2 mb-6">
                                     <Sparkles className="w-7 h-7 text-amber-600" />
@@ -413,70 +401,73 @@ export default function NumerologyContent() {
                                     <p className="text-xs text-gray-600">{t("numerology.luckyColorsValue")}</p>
                                 </Card>
                             </div>
-                        </motion.div>
-                    )}
+                        </motion.div >
+                    )
+}
 
-                    {numerologyData && (
-                        <div className="mt-8">
-                            <Card className="classical-card p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                                        <Hash className="w-6 h-6 text-white" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-green-900">
-                                            {t("numerology.mobileTitle") || "Lucky Mobile Number Suggestions"}
-                                        </h3>
-                                        <p className="text-sm text-green-700">
-                                            {t("numerology.mobileSubtitle") || "Choose a number that resonates with your vibrations"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <Star className="w-4 h-4 text-amber-500" />
-                                            {t("numerology.luckyDigits") || "Your Lucky Digits"}
-                                        </h4>
-                                        <div className="flex gap-4 flex-wrap">
-                                            {numerologyData.mobileSuggestions?.lucky.map((num) => (
-                                                <div key={num} className="text-center">
-                                                    <div className="w-12 h-12 rounded-lg bg-white border border-green-200 flex items-center justify-center text-2xl font-bold text-green-700 shadow-sm mx-auto mb-2 animate-bounce-slow">
-                                                        {num}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="mt-2 text-xs text-gray-600">
-                                            {t("numerology.basedOn")} ({numerologyData.driverNumber}) & {t("numerology.conductor.title")} ({numerologyData.conductorNumber})
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <TrendingUp className="w-4 h-4 text-amber-500" />
-                                            {t("numerology.suggestion") || "Suggested Totals"}
-                                        </h4>
-                                        <p className="text-sm text-gray-700 leading-relaxed">
-                                            {numerologyData.mobileSuggestions?.description}
-                                        </p>
-
-                                        {numerologyData.mobileSuggestions?.avoid && numerologyData.mobileSuggestions.avoid.length > 0 && (
-                                            <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100 text-sm text-red-800">
-                                                <p className="font-medium mb-1">{t("numerology.avoidTotals")}</p>
-                                                <p>{numerologyData.mobileSuggestions.avoid.join(", ")}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </Card>
-                        </div>
-                    )}
+{
+    numerologyData && (
+        <div className="mt-8">
+            <Card className="classical-card p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
+                        <Hash className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-green-900">
+                            {t("numerology.mobileTitle") || "Lucky Mobile Number Suggestions"}
+                        </h3>
+                        <p className="text-sm text-green-700">
+                            {t("numerology.mobileSubtitle") || "Choose a number that resonates with your vibrations"}
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <Footer />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <Star className="w-4 h-4 text-amber-500" />
+                            {t("numerology.luckyDigits") || "Your Lucky Digits"}
+                        </h4>
+                        <div className="flex gap-4 flex-wrap">
+                            {numerologyData.mobileSuggestions?.lucky.map((num) => (
+                                <div key={num} className="text-center">
+                                    <div className="w-12 h-12 rounded-lg bg-white border border-green-200 flex items-center justify-center text-2xl font-bold text-green-700 shadow-sm mx-auto mb-2 animate-bounce-slow">
+                                        {num}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-2 text-xs text-gray-600">
+                            {t("numerology.basedOn")} ({numerologyData.driverNumber}) & {t("numerology.conductor.title")} ({numerologyData.conductorNumber})
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-amber-500" />
+                            {t("numerology.suggestion") || "Suggested Totals"}
+                        </h4>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                            {numerologyData.mobileSuggestions?.description}
+                        </p>
+
+                        {numerologyData.mobileSuggestions?.avoid && numerologyData.mobileSuggestions.avoid.length > 0 && (
+                            <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100 text-sm text-red-800">
+                                <p className="font-medium mb-1">{t("numerology.avoidTotals")}</p>
+                                <p>{numerologyData.mobileSuggestions.avoid.join(", ")}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </Card>
+        </div>
+    )
+}
+                </div >
+            </div >
+
+    <Footer />
         </div >
     );
 }

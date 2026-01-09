@@ -157,8 +157,9 @@ export default function PalmistryContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-sm">
-                            {t('palmistry.title') || 'Palmistry Analysis'}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm">
+                            <span className="text-white">{t('palmistry.title')?.split(' ')[0] || 'Palmistry'}</span>{' '}
+                            <span className="golden-text">{t('palmistry.title')?.split(' ').slice(1).join(' ') || 'Analysis'}</span>
                         </h1>
                         <p className="text-xl text-gray-300 font-medium">
                             {t('palmistry.subtitle') || 'Upload your palm image for comprehensive AI-powered insights and predictions'}

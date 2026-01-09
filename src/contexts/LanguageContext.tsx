@@ -631,10 +631,10 @@ const translations = {
     // Numerology Page
     "numerology.title": "Numerology Calculator",
     "numerology.subtitle":
-      "Discover the hidden meanings in your name and birth date with comprehensive insights",
+      "Discover the hidden meanings in your name and birth date",
     "numerology.enterDetails": "Enter Your Details",
     "numerology.fullName": "Full Name",
-    "numerology.namePlaceholder": "Aayush Sharma",
+    "numerology.namePlaceholder": "Enter your full name",
     "numerology.dateOfBirth": "Date of Birth",
     "numerology.calculateNumbers": "Calculate Numbers",
     "numerology.calculating": "Calculating...",
@@ -1791,14 +1791,18 @@ const translations = {
 
     // Numerology Page
     "numerology.title": "अंकशास्त्र कैलकुलेटर",
-    "numerology.subtitle": "अपने नाम और जन्म तिथि में छिपे अर्थों की खोज करें",
+    "numerology.subtitle":
+      "अपने नाम और जन्म तिथि में छिपे अर्थों को खोजें",
     "numerology.enterDetails": "अपनी जानकारी दर्ज करें",
+    "numerology.fullName": "पूरा नाम",
+    "numerology.namePlaceholder": "अपना पूरा नाम दर्ज करें",
+    "numerology.dateOfBirth": "जन्म तिथि",
+    "numerology.calculateNumbers": "संख्याओं की गणना करें",
 
     // Consultation Page
     "consultation.title": "विशेषज्ञ ज्योतिषियों से बात करें",
     "consultation.subtitle":
-      "चैट, कॉल या वीडियो परामर्श के माध्यम से प्रमाणित ज्योतिषियों से व्यक्तिगत मार्गदर्शन प्राप्त करें",
-    "consultation.bookNow": "अभी बुक करें",
+      "consultation.bookNow": "अभी बुक करें",
     "consultation.howItWorks.title": "यह कैसे काम करता है",
     "consultation.howItWorks.subtitle":
       "विशेषज्ञ ज्योतिषियों से जुड़ने के सरल चरण",
