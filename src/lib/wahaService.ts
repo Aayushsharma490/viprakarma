@@ -175,7 +175,7 @@ export function formatMahuratMessage(mahurats: any[], purpose: string, rashi: st
         return `${index + 1}. 📅 तिथि: ${formattedDate || 'N/A'}
    ⏰ समय: ${m.time || 'N/A'}
    ✨ शुभता: ${auspiciousnessHindi}
-   📝 सिफारिश: ${m.recommendation || 'कोई विशेष सिफारिश नहीं'}`;
+   📝 टिप्पणी: ${m.recommendation || 'कोई विशेष टिप्पणी नहीं'}`;
     }).join('\n\n');
 
     // Complete Hindi Section
@@ -202,7 +202,7 @@ ${hindiMahurats}
         return `${index + 1}. 📅 Date: ${formattedDate || 'N/A'}
    ⏰ Time: ${m.time || 'N/A'}
    ✨ Auspiciousness: ${auspiciousnessEng}
-   📝 Recommendation: ${m.recommendation || 'No specific recommendation'}`;
+   📝 Remark: ${m.recommendation || 'No specific remark'}`;
     }).join('\n\n');
 
     // Complete English Section

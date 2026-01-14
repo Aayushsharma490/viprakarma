@@ -32,20 +32,20 @@ const CENTER_X = WIDTH / 2;
 const CENTER_Y = HEIGHT / 2;
 
 // House positions for PLANET/CONTENT placement (center of the cell).
-// ADJUSTED for larger chart with more padding
+// ADJUSTED for larger chart with more padding and to keep content inside boundaries
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 180 },              // Top Diamond
-  2: { x: 220, y: 80 },                    // Top Left Triangle
-  3: { x: 80, y: 220 },                    // Left Top Triangle
+  1: { x: CENTER_X, y: 220 },              // Top Diamond - moved down
+  2: { x: 240, y: 120 },                   // Top Left Triangle - moved down/right
+  3: { x: 120, y: 240 },                   // Left Top Triangle - moved down/right
   4: { x: 180, y: CENTER_Y },              // Left Diamond
-  5: { x: 80, y: HEIGHT - 220 },           // Left Bottom Triangle
-  6: { x: 220, y: HEIGHT - 80 },           // Bottom Left Triangle
-  7: { x: CENTER_X, y: HEIGHT - 180 },     // Bottom Diamond
-  8: { x: WIDTH - 220, y: HEIGHT - 80 },   // Bottom Right Triangle
-  9: { x: WIDTH - 80, y: HEIGHT - 220 },   // Right Bottom Triangle
+  5: { x: 120, y: HEIGHT - 240 },          // Left Bottom Triangle - moved up/right
+  6: { x: 240, y: HEIGHT - 120 },          // Bottom Left Triangle - moved up/right
+  7: { x: CENTER_X, y: HEIGHT - 220 },     // Bottom Diamond - moved up
+  8: { x: WIDTH - 240, y: HEIGHT - 120 },  // Bottom Right Triangle - moved up/left
+  9: { x: WIDTH - 120, y: HEIGHT - 240 },  // Right Bottom Triangle - moved up/left
   10: { x: WIDTH - 180, y: CENTER_Y },     // Right Diamond
-  11: { x: WIDTH - 80, y: 220 },           // Right Top Triangle
-  12: { x: WIDTH - 220, y: 80 },           // Top Right Triangle
+  11: { x: WIDTH - 120, y: 240 },          // Right Top Triangle - moved down/left
+  12: { x: WIDTH - 240, y: 120 },          // Top Right Triangle - moved down/left
 };
 
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {

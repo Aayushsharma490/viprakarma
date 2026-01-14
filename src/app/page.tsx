@@ -434,7 +434,7 @@ export default function Home() {
                 </div>
 
                 <h1 className="hero-title text-6xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground font-sans leading-[0.9] tracking-tighter">
-                  <span className="block drop-shadow-[0_0_30px_rgba(255,215,0,0.2)]">
+                  <span className="block drop-shadow-[0_0_30px_rgba(255,215,0,0.2)] mb-6">
                     {t('hero.title1')}
                   </span>
                   <span className="block golden-text">
@@ -480,10 +480,10 @@ export default function Home() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl">
                 {[
-                  { icon: Sparkles, label: 'Happy Users', value: '10K+', color: 'text-[#FFD700]' },
-                  { icon: Star, label: 'Expert Astrologers', value: '50+', color: 'text-[#00F2FF]' },
+                  { icon: Sparkles, label: 'Happy Users', value: '1K+', color: 'text-[#FFD700]' },
+                  { icon: Star, label: 'Expert Astrologers', value: '5+', color: 'text-[#00F2FF]' },
                   { icon: Award, label: 'Years Experience', value: '15+', color: 'text-amber-500' },
-                  { icon: TrendingUp, label: 'Accuracy', value: '98%', color: 'text-green-500' },
+                  { icon: TrendingUp, label: 'Accuracy', value: '90%', color: 'text-green-500' },
                 ].map((stat, index) => (
                   <div key={stat.label} className="hero-stats text-left group cursor-pointer">
                     <div className="flex items-center gap-3 mb-2">
@@ -621,10 +621,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24 px-4">
             {[
-              { icon: Users, labelKey: 'stats.users', value: '10000', color: 'text-primary' },
-              { icon: Award, labelKey: 'stats.astrologers', value: '50', color: 'text-secondary' },
+              { icon: Users, labelKey: 'stats.users', value: '1000', color: 'text-primary' },
+              { icon: Award, labelKey: 'stats.astrologers', value: '5', color: 'text-secondary' },
               { icon: Star, labelKey: 'stats.predictions', value: '95%', color: 'text-amber-500' },
-              { icon: TrendingUp, labelKey: 'stats.rate', value: '98%', color: 'text-emerald-500' },
+              { icon: TrendingUp, labelKey: 'stats.rate', value: '90%', color: 'text-emerald-500' },
             ].map((stat, index) => (
               <motion.div
                 key={stat.labelKey}
@@ -646,45 +646,6 @@ export default function Home() {
                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">{t(stat.labelKey)}</p>
               </motion.div>
             ))}
-          </div>
-
-          {/* Testimonials */}
-          <div className="max-w-6xl mx-auto px-4">
-            <h3 className="text-3xl font-black text-center text-white mb-16 uppercase tracking-widest font-sans">
-              {t('stats.testimonials').split(' ').slice(0, -3).join(' ')} <span className="golden-text">{t('stats.testimonials').split(' ').slice(-3).join(' ')}</span>
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                >
-                  <Card className="celestial-card p-8 border-border h-full group bg-card/40 rounded-[2.5rem] relative overflow-hidden transition-all duration-500 hover:bg-card/60">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative">
-                        <img
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          className="w-14 h-14 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 border border-border"
-                        />
-                        <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1 shadow-lg">
-                          <Sparkles className="w-3 h-3 text-primary-foreground" />
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="font-black text-foreground text-sm uppercase tracking-widest font-sans">{t(`testimonial${index + 1}.name`)}</h4>
-                        <p className="text-[10px] text-primary font-black uppercase tracking-widest">{t(`testimonial${index + 1}.role`)}</p>
-                      </div>
-                    </div>
-                    <StarRating rating={testimonial.rating} />
-                    <p className="text-muted-foreground mt-6 text-sm leading-relaxed font-bold italic group-hover:text-foreground transition-colors">"{t(`testimonial${index + 1}.content`)}"</p>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </div>
       </section>

@@ -168,27 +168,51 @@ export default function KundaliMatchingPage() {
                             type="number"
                             placeholder={language === 'en' ? 'DD' : 'दिन'}
                             value={person.day}
-                            onChange={(e) => setPerson({ ...person, day: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 31 && value.length <= 2)) {
+                                    setPerson({ ...person, day: value });
+                                }
+                            }}
                             min="1"
                             max="31"
+                            maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
                             type="number"
                             placeholder={language === 'en' ? 'MM' : 'महीना'}
                             value={person.month}
-                            onChange={(e) => setPerson({ ...person, month: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12 && value.length <= 2)) {
+                                    setPerson({ ...person, month: value });
+                                }
+                            }}
                             min="1"
                             max="12"
+                            maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'YYYY' : 'वर्ष'}
                             value={person.year}
-                            onChange={(e) => setPerson({ ...person, year: e.target.value })}
-                            min="1900"
-                            max="2100"
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value === '' || value.length <= 4) {
+                                    setPerson({ ...person, year: value });
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const value = parseInt(e.target.value);
+                                const currentYear = new Date().getFullYear();
+                                if (value && (value < 1900 || value > currentYear)) {
+                                    alert(`Year must be between 1900 and ${currentYear}`);
+                                }
+                            }}
+                            maxLength={4}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                     </div>
@@ -203,27 +227,45 @@ export default function KundaliMatchingPage() {
                             type="number"
                             placeholder={language === 'en' ? 'HH' : 'घंटा'}
                             value={person.hour}
-                            onChange={(e) => setPerson({ ...person, hour: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 23 && value.length <= 2)) {
+                                    setPerson({ ...person, hour: value });
+                                }
+                            }}
                             min="0"
                             max="23"
+                            maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
                             type="number"
                             placeholder={language === 'en' ? 'MM' : 'मिनट'}
                             value={person.minute}
-                            onChange={(e) => setPerson({ ...person, minute: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
+                                    setPerson({ ...person, minute: value });
+                                }
+                            }}
                             min="0"
                             max="59"
+                            maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
                             type="number"
                             placeholder={language === 'en' ? 'SS' : 'सेकंड'}
                             value={person.second}
-                            onChange={(e) => setPerson({ ...person, second: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
+                                    setPerson({ ...person, second: value });
+                                }
+                            }}
                             min="0"
                             max="59"
+                            maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                     </div>
@@ -268,7 +310,8 @@ export default function KundaliMatchingPage() {
                             </span>
                         </motion.div>
                         <h1 className="text-5xl md:text-7xl font-black text-foreground mb-6 tracking-tighter uppercase leading-none">
-                            {language === 'en' ? 'Find Your' : 'अपना'} <span className="golden-text">{language === 'en' ? 'Perfect Match' : 'सही मिलान'}</span>
+                            <span className="block mb-4">{language === 'en' ? 'Find Your' : 'अपना'}</span>
+                            <span className="golden-text">{language === 'en' ? 'Perfect Match' : 'सही मिलान'}</span>
                         </h1>
                         <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
                             {language === 'en'

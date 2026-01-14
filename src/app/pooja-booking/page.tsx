@@ -108,7 +108,8 @@ export default function PoojaBookingPage() {
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t("pooja.sacredService") || "Sacred Service"}</span>
                         </motion.div>
                         <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 tracking-tighter uppercase font-sans leading-none">
-                            {t("pooja.bookTitle1")}<span className="golden-text">{t("pooja.bookTitle2")}</span>
+                            <span className="block mb-4">{t("pooja.bookTitle1")}</span>
+                            <span className="golden-text">{t("pooja.bookTitle2")}</span>
                         </h1>
                         <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">
                             {t("pooja.description") || "Experience the divine power through our sacred rituals performed by expert Ved Pathi Pandits."}

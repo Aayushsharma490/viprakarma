@@ -196,6 +196,15 @@ const formatTime = (value: string) => {
   });
 };
 
+const formatDateDDMMYYYY = (dateStr: string) => {
+  if (!dateStr || typeof dateStr !== 'string') return dateStr;
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const [year, month, day] = parts;
+    return `${day}-${month}-${year}`;
+  }
+  return dateStr;
+};
 const formatDegree = (value: number) => `${value.toFixed(2)}°`;
 
 export default function KundaliPage() {
@@ -1416,7 +1425,7 @@ export default function KundaliPage() {
                         </div>
                       </div>
                       <p className="text-sm text-emerald-800 font-medium flex items-center gap-2">
-                        📅 {kundaliData.dashas.current.startDate} {t("kundali.to")} {kundaliData.dashas.current.endDate}
+                        📅 {formatDateDDMMYYYY(kundaliData.dashas.current.startDate)} {t("kundali.to")} {formatDateDDMMYYYY(kundaliData.dashas.current.endDate)}
                         <span className="text-xs bg-emerald-200 px-2 py-1 rounded-full">
                           {kundaliData.dashas.current.years.toFixed(2)} {t("kundali.years")}
                         </span>
@@ -1478,7 +1487,7 @@ export default function KundaliPage() {
                                       {isCurrent && <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">{t("kundali.active") || "ACTIVE"}</span>}
                                     </p>
                                     <p className="text-sm text-gray-700 font-medium">
-                                      {dasha.startDate} → {dasha.endDate}
+                                      {formatDateDDMMYYYY(dasha.startDate)} → {formatDateDDMMYYYY(dasha.endDate)}
                                     </p>
                                   </div>
                                 </div>
@@ -1520,7 +1529,7 @@ export default function KundaliPage() {
                                           className="bg-white bg-opacity-70 rounded-lg px-3 py-2 text-xs border border-gray-200 hover:shadow-md transition-shadow"
                                         >
                                           <p className="font-semibold text-gray-800">{t(`planet.${antardasha.planet}`) || antardasha.planet}</p>
-                                          <p className="text-gray-600">{antardasha.startDate} → {antardasha.endDate}</p>
+                                          <p className="text-gray-600">{formatDateDDMMYYYY(antardasha.startDate)} → {formatDateDDMMYYYY(antardasha.endDate)}</p>
                                           <p className="text-gray-500">{antardasha.years.toFixed(2)} {t("kundali.yrs") || "yrs"}</p>
                                         </motion.div>
                                       ))}
