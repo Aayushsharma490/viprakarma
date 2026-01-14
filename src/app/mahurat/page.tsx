@@ -249,19 +249,36 @@ export default function MahuratPage() {
                                     placeholder={t('mahurat.phoneNumberPlaceholder')}
                                     value={formData.phoneNumber}
                                     onChange={(e) => {
-                                        let value = e.target.value;
-                                        // Auto-add +91 if user starts typing without it
-                                        if (value && !value.startsWith('+')) {
-                                            value = '+91' + value.replace(/^\+?91/, '');
+                                        let input = e.target.value;
+                                        // Remove all non-digit characters
+                                        const cleanInput = input.replace(/\D/g, '');
+
+                                        // Handle user deleting everything or partial edits
+                                        if (input === '' || input === '+') {
+                                            setFormData({ ...formData, phoneNumber: '+91' });
+                                            return;
                                         }
-                                        setFormData({ ...formData, phoneNumber: value });
+
+                                        // If input doesn't start with 91 (e.g. user deleted it), re-add it
+                                        // Or if user typed a number, ensure 91 prefix
+                                        let numberBody = cleanInput;
+                                        if (cleanInput.startsWith('91')) {
+                                            numberBody = cleanInput.substring(2);
+                                        }
+
+                                        // Limit to 10 digits
+                                        if (numberBody.length > 10) {
+                                            numberBody = numberBody.substring(0, 10);
+                                        }
+
+                                        setFormData({ ...formData, phoneNumber: '+91' + numberBody });
                                     }}
                                     onFocus={(e) => {
-                                        // Set +91 as default when field is focused and empty
-                                        if (!e.target.value) {
+                                        if (!formData.phoneNumber) {
                                             setFormData({ ...formData, phoneNumber: '+91' });
                                         }
                                     }}
+                                    maxLength={13} // +91 + 10 digits
                                     className="h-14 bg-background/50 border-border rounded-2xl focus:ring-primary shadow-sm"
                                 />
                                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest ml-1 opacity-70">
