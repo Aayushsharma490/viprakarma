@@ -107,8 +107,9 @@ export default function PoojaBookingPage() {
                             <Sparkles className="w-4 h-4 text-primary" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t("pooja.sacredService") || "Sacred Service"}</span>
                         </motion.div>
-                        <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 tracking-tighter uppercase font-sans leading-none">
-                            <span className="mr-3">{language === 'en' ? 'Book' : 'पूजा'}</span>
+                        <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 uppercase font-sans leading-none" style={{ letterSpacing: '0.1em', wordSpacing: '2rem' }}>
+                            <span>{language === 'en' ? 'Book' : 'पूजा'}</span>
+                            {' '}
                             <span className="golden-text">{language === 'en' ? 'Pooja' : 'बुक करें'}</span>
                         </h1>
                         <p className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto">

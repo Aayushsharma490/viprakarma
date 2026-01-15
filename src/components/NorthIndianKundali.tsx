@@ -34,18 +34,18 @@ const CENTER_Y = HEIGHT / 2;
 // House positions for PLANET/CONTENT placement (center of the cell).
 // ADJUSTED for larger chart with more padding and to keep content inside boundaries
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 220 },              // Top Diamond - moved down
-  2: { x: 240, y: 120 },                   // Top Left Triangle - moved down/right
-  3: { x: 120, y: 240 },                   // Left Top Triangle - moved down/right
-  4: { x: 180, y: CENTER_Y },              // Left Diamond
-  5: { x: 130, y: HEIGHT - 230 },          // Left Bottom Triangle - moved further in
-  6: { x: 230, y: HEIGHT - 130 },          // Bottom Left Triangle - moved further in
-  7: { x: CENTER_X, y: HEIGHT - 200 },     // Bottom Diamond - moved down (closer to geometric center) to avoid center overlap but allow stack space
-  8: { x: WIDTH - 230, y: HEIGHT - 130 },  // Bottom Right Triangle - moved further in
-  9: { x: WIDTH - 130, y: HEIGHT - 230 },  // Right Bottom Triangle - moved further in
-  10: { x: WIDTH - 180, y: CENTER_Y },     // Right Diamond
-  11: { x: WIDTH - 120, y: 240 },          // Right Top Triangle - moved down/left
-  12: { x: WIDTH - 240, y: 120 },          // Top Right Triangle - moved down/left
+  1: { x: CENTER_X, y: 180 },              // Top center - House 1
+  2: { x: 220, y: 100 },                   // Top left - House 2  
+  3: { x: 100, y: 220 },                   // Left top - House 3
+  4: { x: 160, y: CENTER_Y },              // Left center - House 4
+  5: { x: 100, y: 480 },                   // Left bottom - House 5
+  6: { x: 220, y: 600 },                   // Bottom left - House 6
+  7: { x: CENTER_X, y: 520 },              // Bottom center - House 7
+  8: { x: 480, y: 600 },                   // Bottom right - House 8
+  9: { x: 600, y: 480 },                   // Right bottom - House 9
+  10: { x: 540, y: CENTER_Y },             // Right center - House 10
+  11: { x: 600, y: 220 },                  // Right top - House 11
+  12: { x: 480, y: 100 },                  // Top right - House 12
 };
 
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {

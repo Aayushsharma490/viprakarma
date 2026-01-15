@@ -85,7 +85,7 @@ function calculateLifePathNumber(birthDate: string): number {
     const date = new Date(birthDate);
     let sum = date.getDate() + (date.getMonth() + 1) + date.getFullYear();
     while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
-        sum = sum.toString().split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+        sum = sum.toString().split('').reduce((a, b) => parseInt(a.toString()) + parseInt(b), 0);
     }
     return sum;
 }

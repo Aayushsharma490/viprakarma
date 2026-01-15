@@ -27,18 +27,18 @@ export default function KundaliChart({
   ascendant,
 }: KundaliChartProps) {
   const planetNames: Record<string, string> = {
-    Sun: "Surya",
-    Moon: "Chandra",
-    Mars: "Mangal",
-    Mercury: "Budh",
-    Jupiter: "Guru",
-    Venus: "Shukra",
-    Saturn: "Shani",
-    Rahu: "Rahu",
-    Ketu: "Ketu",
+    Sun: "Su",
+    Moon: "Mo",
+    Mars: "Ma",
+    Mercury: "Me",
+    Jupiter: "Ju",
+    Venus: "Ve",
+    Saturn: "Sa",
+    Rahu: "Ra",
+    Ketu: "Ke",
   };
 
-  // Group planets by house using planet.house from backend
+  // Group planets by house
   const planetsByHouse: Record<number, any[]> = {};
   for (let i = 1; i <= 12; i++) {
     planetsByHouse[i] = [];
@@ -50,75 +50,95 @@ export default function KundaliChart({
     }
   });
 
+  // PERFECT North Indian chart positions - each house centered in its triangle
+  const positions = [
+    { top: '22%', left: '50%' },    // 1 - Top center
+    { top: '22%', left: '64%' },    // 2 - Top right
+    { top: '36%', left: '78%' },    // 3 - Right top
+    { top: '50%', left: '78%' },    // 4 - Right middle
+    { top: '64%', left: '78%' },    // 5 - Right bottom
+    { top: '78%', left: '64%' },    // 6 - Bottom right
+    { top: '78%', left: '50%' },    // 7 - Bottom center
+    { top: '78%', left: '36%' },    // 8 - Bottom left
+    { top: '64%', left: '22%' },    // 9 - Left bottom
+    { top: '50%', left: '22%' },    // 10 - Left middle
+    { top: '36%', left: '22%' },    // 11 - Left top
+    { top: '22%', left: '36%' },    // 12 - Top left
+  ];
+
   return (
     <div className="flex flex-col items-center justify-center py-10 min-h-screen bg-[#3A1F00]">
       <h2 className="text-yellow-400 text-3xl font-bold mb-8 tracking-wide">
-        Kundali
+        Kundali Chart
       </h2>
-      {/* FIX MODE: pure CSS grid with stable quadrants and perfect square */}
-      <div className="w-full max-w-[520px] aspect-square mx-auto">
-        <div className="chart-grid grid grid-cols-3 grid-rows-3 w-full h-full relative border-4 border-white rounded-xl">
-          {/* 9 cells — center always stable */}
-          {[...Array(9)].map((_, idx) => (
-            <div
-              key={idx}
-              className="relative flex items-center justify-center"
-            />
-          ))}
-          {/* North-Indian style overlay kept via absolute positioned content */}
-          <div className="absolute inset-0">
+      <div className="w-full max-w-[650px] aspect-square mx-auto p-4">
+        <div className="w-full h-full relative border-4 border-orange-700 rounded-2xl bg-[#FFF8DC] shadow-2xl">
+          {/* SVG for diamond and cross lines */}
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 500 500"
+            className="absolute inset-0"
+            preserveAspectRatio="none"
+          >
             {/* Outer diamond */}
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 500 500"
-              className="absolute inset-0"
-            >
-              <polygon
-                points="250,0 500,250 250,500 0,250"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="3"
-              />
-            </svg>
-            {/* House content positioned in fixed quadrants */}
+            <polygon
+              points="250,10 490,250 250,490 10,250"
+              fill="none"
+              stroke="#D2691E"
+              strokeWidth="3"
+            />
+            {/* Vertical center line */}
+            <line x1="250" y1="10" x2="250" y2="490" stroke="#D2691E" strokeWidth="2.5" />
+            {/* Horizontal center line */}
+            <line x1="10" y1="250" x2="490" y2="250" stroke="#D2691E" strokeWidth="2.5" />
+          </svg>
+
+          {/* Houses and planets */}
+          <div className="absolute inset-0">
             {Array.from({ length: 12 }).map((_, i) => {
               const houseNumber = i + 1;
               const planetsInHouse = planetsByHouse[houseNumber] || [];
               const isAscendant = houseNumber === 1;
-              // 3x3 grid coordinates
-              const row = Math.floor((i % 12) / 4);
-              const col = (i % 4) % 3;
-              const top = `${(row + 0.5) * (100 / 3)}%`;
-              const left = `${(col + 0.5) * (100 / 3)}%`;
+              const position = positions[i];
+
               return (
                 <div
                   key={houseNumber}
-                  className="absolute text-center"
+                  className="absolute"
                   style={{
-                    top,
-                    left,
+                    top: position.top,
+                    left: position.left,
                     transform: "translate(-50%, -50%)",
-                    width: "80px",
-                    zIndex: 2,
+                    width: "110px",
+                    zIndex: 10,
                   }}
                 >
-                  <div className="text-xs font-bold mb-1 text-white">
-                    {houseNumber}{" "}
-                    {houses &&
-                      houses[houseNumber - 1] &&
-                      zodiacSigns[houses[houseNumber - 1].rashi]}
+                  {/* House number */}
+                  <div className="text-center text-base font-black mb-1 text-red-700">
+                    {houseNumber}
                   </div>
-                  <div className="flex flex-col items-center justify-center text-[#FFD600] text-sm leading-tight min-h-[70px]">
+
+                  {/* Planets with degrees */}
+                  <div className="flex flex-col items-center justify-center gap-0.5">
                     {planetsInHouse.length > 0 ? (
-                      planetsInHouse.map((planet: any) => (
-                        <div key={planet.planet} className="font-bold">
-                          {planetNames[planet.planet] || planet.planet}
-                          {planet.isRetrograde ? "*" : ""}
-                        </div>
-                      ))
+                      planetsInHouse.map((planet: any) => {
+                        const degree = planet.degreeInSign ? planet.degreeInSign.toFixed(1) : '';
+                        return (
+                          <div key={planet.planet} className="text-center">
+                            <span className="font-bold text-sm text-gray-800">
+                              {degree}°
+                            </span>
+                            <br />
+                            <span className="font-black text-base text-orange-800">
+                              {planetNames[planet.planet] || planet.planet}
+                              {planet.isRetrograde ? "*" : ""}
+                            </span>
+                          </div>
+                        );
+                      })
                     ) : isAscendant ? (
-                      <div className="font-bold">Lagna</div>
+                      <div className="font-black text-sm text-teal-700">Lagna</div>
                     ) : null}
                   </div>
                 </div>
