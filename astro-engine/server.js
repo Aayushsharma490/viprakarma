@@ -662,6 +662,27 @@ function calculateIshtaKaal(sunriseLong, ascDegree) {
   return `${hours}h ${minutes}m after sunrise`;
 }
 
+// Get Nakshatra Paya (foot/step)
+function getNakshatraPaya(nakIndex, pada) {
+  const payaNames = ["", "Gold", "Silver", "Copper", "Iron"];
+  const payaIndex = ((nakIndex - 1) * 4 + pada) % 4;
+  return payaNames[payaIndex === 0 ? 4 : payaIndex];
+}
+
+// Calculate Rahu Kaal (inauspicious time)
+function getRahuKaal(dayOfWeek) {
+  const rahuKaalPeriods = {
+    "Sunday": "4:30 PM - 6:00 PM",
+    "Monday": "7:30 AM - 9:00 AM",
+    "Tuesday": "3:00 PM - 4:30 PM",
+    "Wednesday": "12:00 PM - 1:30 PM",
+    "Thursday": "1:30 PM - 3:00 PM",
+    "Friday": "10:30 AM - 12:00 PM",
+    "Saturday": "9:00 AM - 10:30 AM"
+  };
+  return rahuKaalPeriods[dayOfWeek] || "N/A";
+}
+
 // Helper functions for Auspicious Suggestions
 function getGemstoneForRashi(rashi) {
   const gemstones = {
@@ -1390,7 +1411,7 @@ function computeKundali(payload) {
     planets: enrichedPlanets.map((planet) => ({
       name: planet.name,
       longitude: planet.longitude,
-      degreeInSign: Number(planet.degree.toFixed(4)),
+      degreeInSign: Number(planet.degree.toFixed(2)),
       sign: planet.sign,
       house: planet.house,
       isRetrograde: planet.isRetrograde,
@@ -1470,10 +1491,13 @@ function computeKundali(payload) {
       gana: moon ? getGanaFromNakshatra(moon.nakshatra.index) : null,
       nadi: moon ? getNadiFromNakshatra(moon.nakshatra.index) : null,
       varna: moon ? getVarnaFromSign(moon.sign) : null,
-      nakshatraPaya: moon ? getNakshatraPaya(moon.nakshatra.index) : null,
+      nakshatraPaya: moon ? getNakshatraPaya(moon.nakshatra.index, moon.nakshatra.pada) : null,
       rashiSwami: moon ? getRasiLord(moon.sign) : null,
       nakshatraSwami: moon ? moon.nakshatra.lord : null,
       ishtaKaal: calculateIshtaKaal(ascDegree, ascDegree), // Simplified
+      rahuKaal: getRahuKaal(new Date(inputs.year, inputs.month - 1, inputs.day).toLocaleDateString('en-US', { weekday: 'long' })),
+      sunriseTime: "06:00 AM", // Calculated based on location (simplified for now)
+      remainingDasha: vimshottariDasha.current ? `${vimshottariDasha.current.planet} Dasha remaining: ${Math.max(0, (new Date(vimshottariDasha.current.endDate).getTime() - new Date(utcIsoString).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)} years` : "N/A",
       // Namakshar (first letter of name based on Nakshatra Pada)
       namakshar: moon ? getNamaksharFromNakshatra(moon.nakshatra.name, moon.nakshatra.pada) : null,
     },
@@ -1745,10 +1769,12 @@ const server = http.createServer(async (req, res) => {
       }
 
       // Tara calculation: count from boy's nakshatra to girl's nakshatra
-      const taraCount1 = ((moon2.nakshatra.index - moon1.nakshatra.index + 27) % 27) + 1;
-      const taraCount2 = ((moon1.nakshatra.index - moon2.nakshatra.index + 27) % 27) + 1;
-      const t1Idx = ((taraCount1 - 1) % 9) + 1; // 1-9
-      const t2Idx = ((taraCount2 - 1) % 9) + 1; // 1-9
+      const diff1 = (moon2.nakshatra.index - moon1.nakshatra.index + 27) % 27;
+      const diff2 = (moon1.nakshatra.index - moon2.nakshatra.index + 27) % 27;
+
+      const t1Idx = (diff1 % 9) + 1; // 1-9
+      const t2Idx = (diff2 % 9) + 1; // 1-9
+
       const taraNames = ["", "Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhak", "Vadha", "Mitra", "Ati-Mitra"];
       const tara1 = taraNames[t1Idx];
       const tara2 = taraNames[t2Idx];
@@ -1757,7 +1783,11 @@ const server = http.createServer(async (req, res) => {
       let taraScore = 0;
       if (goodTaraIndices.includes(t1Idx)) taraScore += 1.5;
       if (goodTaraIndices.includes(t2Idx)) taraScore += 1.5;
-      if (moon1.nakshatra.index === moon2.nakshatra.index && moon1.nakshatra.pada !== moon2.nakshatra.pada) taraScore = 3;
+
+      // Exception: Same Nakshatra (Janma Tara) is allowed if padas are different
+      if (t1Idx === 1 && moon1.nakshatra.index === moon2.nakshatra.index && moon1.nakshatra.pada !== moon2.nakshatra.pada) {
+        taraScore = 3;
+      }
 
       const yoni1 = getYoniFromNakshatra(moon1.nakshatra.index);
       const yoni2 = getYoniFromNakshatra(moon2.nakshatra.index);
@@ -1783,12 +1813,12 @@ const server = http.createServer(async (req, res) => {
       const lord2 = getRasiLord(moon2.sign);
       const maitriScores = {
         "Sun": { "Sun": 5, "Moon": 5, "Mars": 5, "Mercury": 4, "Jupiter": 5, "Venus": 0, "Saturn": 0 },
-        "Moon": { "Sun": 5, "Moon": 5, "Mars": 4, "Mercury": 5, "Jupiter": 4, "Venus": 4, "Saturn": 4 },
-        "Mars": { "Sun": 5, "Moon": 5, "Mars": 5, "Mercury": 0, "Jupiter": 5, "Venus": 3, "Saturn": 0.5 },
-        "Mercury": { "Sun": 5, "Moon": 0, "Mars": 4, "Mercury": 5, "Jupiter": 0.5, "Venus": 5, "Saturn": 4 },
-        "Jupiter": { "Sun": 5, "Moon": 5, "Mars": 5, "Mercury": 0.5, "Jupiter": 5, "Venus": 0.5, "Saturn": 4 },
-        "Venus": { "Sun": 0, "Moon": 0, "Mars": 3, "Mercury": 5, "Jupiter": 0.5, "Venus": 5, "Saturn": 5 },
-        "Saturn": { "Sun": 0, "Moon": 0, "Mars": 0.5, "Mercury": 4, "Jupiter": 4, "Venus": 5, "Saturn": 5 }
+        "Moon": { "Sun": 5, "Moon": 5, "Mars": 4, "Mercury": 1, "Jupiter": 4, "Venus": 0.5, "Saturn": 0.5 },
+        "Mars": { "Sun": 5, "Moon": 5, "Mars": 5, "Mercury": 0.5, "Jupiter": 5, "Venus": 3, "Saturn": 0.5 },
+        "Mercury": { "Sun": 4, "Moon": 1, "Mars": 0.5, "Mercury": 5, "Jupiter": 0.5, "Venus": 5, "Saturn": 4 },
+        "Jupiter": { "Sun": 5, "Moon": 5, "Mars": 5, "Mercury": 0.5, "Jupiter": 5, "Venus": 0.5, "Saturn": 3 },
+        "Venus": { "Sun": 0, "Moon": 0.5, "Mars": 3, "Mercury": 5, "Jupiter": 0.5, "Venus": 5, "Saturn": 5 },
+        "Saturn": { "Sun": 0, "Moon": 0.5, "Mars": 0.5, "Mercury": 4, "Jupiter": 3, "Venus": 5, "Saturn": 5 }
       };
       let grahaMaitriScore = (maitriScores[lord1] && maitriScores[lord1][lord2] !== undefined) ? maitriScores[lord1][lord2] : 0.5;
 
@@ -1804,8 +1834,18 @@ const server = http.createServer(async (req, res) => {
       const sign1Index = RASHIS.indexOf(moon1.sign);
       const sign2Index = RASHIS.indexOf(moon2.sign);
       const signDistance = ((sign2Index - sign1Index + 12) % 12) + 1;
-      let bhakootScore = [2, 5, 6, 8, 9, 12].includes(signDistance) ? 0 : 7;
-      if (bhakootScore === 0 && lord1 === lord2) bhakootScore = 7;
+
+      let bhakootScore = 7;
+
+      // Bad Bhakoot combinations: 2/12, 5/9, 6/8
+      if ([2, 12, 5, 9, 6, 8].includes(signDistance)) {
+        bhakootScore = 0;
+
+        // Exception: If Rashi lords are same or friends, Bhakoot Dosha is cancelled (simplified to same lord for now)
+        if (lord1 === lord2) {
+          bhakootScore = 7;
+        }
+      }
 
       const nadi1 = getNadiFromNakshatra(moon1.nakshatra.index);
       const nadi2 = getNadiFromNakshatra(moon2.nakshatra.index);

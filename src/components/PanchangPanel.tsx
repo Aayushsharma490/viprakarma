@@ -148,6 +148,18 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             label: language === 'en' ? 'Ayana' : 'आयन',
             value: ayana
         },
+        {
+            label: language === 'en' ? 'Nakshatra Paya' : 'नक्षत्र पाया',
+            value: enhancedDetails.nakshatraPaya || 'N/A'
+        },
+        {
+            label: language === 'en' ? 'Rahu Kaal (Inauspicious Time)' : 'राहु काल',
+            value: enhancedDetails.rahuKaal || 'N/A'
+        },
+        {
+            label: language === 'en' ? 'Sunrise Time' : 'सूर्योदय समय',
+            value: enhancedDetails.sunriseTime || 'N/A'
+        },
     ];
 
     return (
