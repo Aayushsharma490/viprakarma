@@ -1,0 +1,261 @@
+﻿// Helper: Get planet by name
+function getPlanetByName(planets, name) {
+    if (!planets || !Array.isArray(planets)) return null;
+    return planets.find(p => p && p.name && p.name.toLowerCase() === name.toLowerCase());
+}
+
+// Helper: Get house lord
+function getHouseLord(houseNumber, ascendantSign) {
+    const ascIndex = RASHIS.indexOf(ascendantSign);
+    if (ascIndex === -1) return null;
+    const houseSignIndex = (ascIndex + houseNumber - 1) % 12;
+    const houseSign = RASHIS[houseSignIndex];
+    return RASHI_LORDS[houseSign];
+}
+
+// 3. EDUCATION
+function analyzeEducation(planets, ascSign, language) {
+    const mercury = getPlanetByName(planets, 'Mercury');
+    const jupiter = getPlanetByName(planets, 'Jupiter');
+
+    if (language === 'en') {
+        let analysis = 'Education: ';
+        if (mercury && mercury.house === 4) analysis += 'Strong analytical abilities, suitable for technical/scientific subjects. ';
+        if (jupiter && (jupiter.house === 4 || jupiter.house === 5 || jupiter.house === 9)) analysis += `Higher education indicated. ${jupiter.house === 9 ? 'Foreign education possible. ' : ''}`;
+        if (mercury && mercury.isRetrograde) analysis += 'May face delays 18-22 age. ';
+        analysis += `Best subjects: ${mercury && mercury.house <= 6 ? 'Math, Science, Tech' : 'Arts, Business'}. Peak years: 16-24.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤¶à¤¿à¤•à¥à¤·à¤¾: ';
+        if (mercury && mercury.house === 4) analysis += 'à¤®à¤œà¤¬à¥‚à¤¤ à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£à¤¾à¤¤à¥à¤®à¤• à¤•à¥à¤·à¤®à¤¤à¤¾à¤à¤‚, à¤¤à¤•à¤¨à¥€à¤•à¥€/à¤µà¥ˆà¤œà¥à¤žà¤¾à¤¨à¤¿à¤• à¤µà¤¿à¤·à¤¯ à¤‰à¤ªà¤¯à¥à¤•à¥à¤¤à¥¤ ';
+        if (jupiter && (jupiter.house === 4 || jupiter.house === 5 || jupiter.house === 9)) analysis += `à¤‰à¤šà¥à¤š à¤¶à¤¿à¤•à¥à¤·à¤¾ à¤¸à¤‚à¤•à¥‡à¤¤à¤¿à¤¤à¥¤ ${jupiter.house === 9 ? 'à¤µà¤¿à¤¦à¥‡à¤¶ à¤¶à¤¿à¤•à¥à¤·à¤¾ à¤¸à¤‚à¤­à¤µà¥¤ ' : ''}`;
+        if (mercury && mercury.isRetrograde) analysis += '18-22 à¤†à¤¯à¥ à¤®à¥‡à¤‚ à¤¦à¥‡à¤°à¥€ à¤¸à¤‚à¤­à¤µà¥¤ ';
+        analysis += `à¤¸à¤°à¥à¤µà¥‹à¤¤à¥à¤¤à¤® à¤µà¤¿à¤·à¤¯: ${mercury && mercury.house <= 6 ? 'à¤—à¤£à¤¿à¤¤, à¤µà¤¿à¤œà¥à¤žà¤¾à¤¨, à¤¤à¤•à¤¨à¥€à¤•' : 'à¤•à¤²à¤¾, à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯'}à¥¤ à¤šà¤°à¤® à¤µà¤°à¥à¤·: 16-24à¥¤`;
+        return analysis;
+    }
+}
+
+// 4. CAREER (MOST IMPORTANT)
+function analyzeCareer(planets, ascSign, language) {
+    const saturn = getPlanetByName(planets, 'Saturn');
+    const sun = getPlanetByName(planets, 'Sun');
+    const mercury = getPlanetByName(planets, 'Mercury');
+    const jupiter = getPlanetByName(planets, 'Jupiter');
+
+    let careerField = '';
+    let jobVsBusiness = '';
+    let timeline = '';
+
+    if (language === 'en') {
+        if (mercury && (mercury.house === 10 || mercury.house === 1)) careerField = 'Technology, Research, Analysis, Communication';
+        else if (jupiter && (jupiter.house === 10 || jupiter.house === 9)) careerField = 'Teaching, Consulting, Finance, Law';
+        else if (saturn && saturn.house === 10) careerField = 'Government, Administration, Engineering';
+        else if (sun && (sun.house === 10 || sun.house === 1)) careerField = 'Leadership, Management, Politics';
+        else careerField = 'Business, Creative fields';
+
+        jobVsBusiness = saturn && saturn.house === 10 ? 'Job/Service more suitable' : sun && sun.house === 10 ? 'Business/Self-employment favorable' : 'Both possible';
+
+        timeline = `18-22: Foundation, initial struggles. 23-27: ${saturn && saturn.house === 10 ? 'Slow steady growth' : 'Rapid progress possible'}. 28-32: Major decisions, ${jupiter && jupiter.house === 10 ? 'significant growth' : 'stabilization'}. 33+: ${sun && sun.house === 10 ? 'Leadership roles' : 'Established position'}.`;
+
+        return `Career: ${careerField}. ${jobVsBusiness}. Timeline: ${timeline}`;
+    } else {
+        if (mercury && (mercury.house === 10 || mercury.house === 1)) careerField = 'à¤ªà¥à¤°à¥Œà¤¦à¥à¤¯à¥‹à¤—à¤¿à¤•à¥€, à¤…à¤¨à¥à¤¸à¤‚à¤§à¤¾à¤¨, à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£, à¤¸à¤‚à¤šà¤¾à¤°';
+        else if (jupiter && (jupiter.house === 10 || jupiter.house === 9)) careerField = 'à¤¶à¤¿à¤•à¥à¤·à¤£, à¤ªà¤°à¤¾à¤®à¤°à¥à¤¶, à¤µà¤¿à¤¤à¥à¤¤, à¤•à¤¾à¤¨à¥‚à¤¨';
+        else if (saturn && saturn.house === 10) careerField = 'à¤¸à¤°à¤•à¤¾à¤°, à¤ªà¥à¤°à¤¶à¤¾à¤¸à¤¨, à¤‡à¤‚à¤œà¥€à¤¨à¤¿à¤¯à¤°à¤¿à¤‚à¤—';
+        else if (sun && (sun.house === 10 || sun.house === 1)) careerField = 'à¤¨à¥‡à¤¤à¥ƒà¤¤à¥à¤µ, à¤ªà¥à¤°à¤¬à¤‚à¤§à¤¨, à¤°à¤¾à¤œà¤¨à¥€à¤¤à¤¿';
+        else careerField = 'à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯, à¤°à¤šà¤¨à¤¾à¤¤à¥à¤®à¤• à¤•à¥à¤·à¥‡à¤¤à¥à¤°';
+
+        jobVsBusiness = saturn && saturn.house === 10 ? 'à¤¨à¥Œà¤•à¤°à¥€/à¤¸à¥‡à¤µà¤¾ à¤…à¤§à¤¿à¤• à¤‰à¤ªà¤¯à¥à¤•à¥à¤¤' : sun && sun.house === 10 ? 'à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯/à¤¸à¥à¤µ-à¤°à¥‹à¤œà¤—à¤¾à¤° à¤…à¤¨à¥à¤•à¥‚à¤²' : 'à¤¦à¥‹à¤¨à¥‹à¤‚ à¤¸à¤‚à¤­à¤µ';
+
+        timeline = `18-22: à¤¨à¥€à¤‚à¤µ, à¤ªà¥à¤°à¤¾à¤°à¤‚à¤­à¤¿à¤• à¤¸à¤‚à¤˜à¤°à¥à¤·à¥¤ 23-27: ${saturn && saturn.house === 10 ? 'à¤§à¥€à¤®à¥€ à¤¸à¥à¤¥à¤¿à¤° à¤µà¥ƒà¤¦à¥à¤§à¤¿' : 'à¤¤à¥‡à¤œà¥€ à¤¸à¥‡ à¤ªà¥à¤°à¤—à¤¤à¤¿ à¤¸à¤‚à¤­à¤µ'}à¥¤ 28-32: à¤ªà¥à¤°à¤®à¥à¤– à¤¨à¤¿à¤°à¥à¤£à¤¯, ${jupiter && jupiter.house === 10 ? 'à¤®à¤¹à¤¤à¥à¤µà¤ªà¥‚à¤°à¥à¤£ à¤µà¥ƒà¤¦à¥à¤§à¤¿' : 'à¤¸à¥à¤¥à¤¿à¤°à¥€à¤•à¤°à¤£'}à¥¤ 33+: ${sun && sun.house === 10 ? 'à¤¨à¥‡à¤¤à¥ƒà¤¤à¥à¤µ à¤­à¥‚à¤®à¤¿à¤•à¤¾à¤à¤‚' : 'à¤¸à¥à¤¥à¤¾à¤ªà¤¿à¤¤ à¤¸à¥à¤¥à¤¿à¤¤à¤¿'}à¥¤`;
+
+        return `à¤•à¤°à¤¿à¤¯à¤°: ${careerField}à¥¤ ${jobVsBusiness}à¥¤ à¤¸à¤®à¤¯à¤°à¥‡à¤–à¤¾: ${timeline}`;
+    }
+}
+
+// 5. WEALTH
+function analyzeWealth(planets, ascSign, language) {
+    const jupiter = getPlanetByName(planets, 'Jupiter');
+    const venus = getPlanetByName(planets, 'Venus');
+
+    if (language === 'en') {
+        let analysis = 'Wealth: ';
+        if (jupiter && (jupiter.house === 2 || jupiter.house === 11)) analysis += 'Good earning potential. Wealth after 30. ';
+        if (venus && venus.house === 2) analysis += 'Spending on luxury. Focus on savings. ';
+        analysis += `Money through ${jupiter && jupiter.house === 10 ? 'career' : 'multiple sources'}. Stability: ${jupiter && jupiter.house === 2 ? 'Strong after 28-30' : 'Gradual improvement'}.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤§à¤¨: ';
+        if (jupiter && (jupiter.house === 2 || jupiter.house === 11)) analysis += 'à¤…à¤šà¥à¤›à¥€ à¤•à¤®à¤¾à¤ˆ à¤•à¥à¤·à¤®à¤¤à¤¾à¥¤ 30 à¤•à¥‡ à¤¬à¤¾à¤¦ à¤§à¤¨à¥¤ ';
+        if (venus && venus.house === 2) analysis += 'à¤µà¤¿à¤²à¤¾à¤¸à¤¿à¤¤à¤¾ à¤ªà¤° à¤–à¤°à¥à¤šà¥¤ à¤¬à¤šà¤¤ à¤ªà¤° à¤§à¥à¤¯à¤¾à¤¨à¥¤ ';
+        analysis += `à¤ªà¥ˆà¤¸à¤¾ ${jupiter && jupiter.house === 10 ? 'à¤•à¤°à¤¿à¤¯à¤°' : 'à¤•à¤ˆ à¤¸à¥à¤°à¥‹à¤¤à¥‹à¤‚'} à¤¸à¥‡à¥¤ à¤¸à¥à¤¥à¤¿à¤°à¤¤à¤¾: ${jupiter && jupiter.house === 2 ? '28-30 à¤•à¥‡ à¤¬à¤¾à¤¦ à¤®à¤œà¤¬à¥‚à¤¤' : 'à¤•à¥à¤°à¤®à¤¿à¤• à¤¸à¥à¤§à¤¾à¤°'}à¥¤`;
+        return analysis;
+    }
+}
+
+// 6. RELATIONSHIPS
+function analyzeRelationships(planets, ascSign, mangalDosha, language) {
+    const saturn = getPlanetByName(planets, 'Saturn');
+    const venus = getPlanetByName(planets, 'Venus');
+    const isMangalDosha = mangalDosha === 'Yes';
+
+    if (language === 'en') {
+        let analysis = 'Marriage: ';
+        if (saturn && (saturn.house === 7 || saturn.house === 1)) analysis += 'Possible delay, likely after 28-30. ';
+        else analysis += 'Timing: 24-28 years. ';
+        if (isMangalDosha) analysis += 'Mangal Dosha present - choose partner carefully. ';
+        if (venus && venus.house === 7) analysis += 'Harmonious relationship. Loving partner. ';
+        analysis += `${saturn && saturn.house === 7 ? 'Arranged more likely' : 'Love/arranged both possible'}. Success through ${venus ? 'understanding' : 'patience'}.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤µà¤¿à¤µà¤¾à¤¹: ';
+        if (saturn && (saturn.house === 7 || saturn.house === 1)) analysis += 'à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤ à¤¦à¥‡à¤°à¥€, 28-30 à¤•à¥‡ à¤¬à¤¾à¤¦à¥¤ ';
+        else analysis += 'à¤¸à¤®à¤¯: 24-28 à¤µà¤°à¥à¤·à¥¤ ';
+        if (isMangalDosha) analysis += 'à¤®à¤‚à¤—à¤² à¤¦à¥‹à¤· à¤‰à¤ªà¤¸à¥à¤¥à¤¿à¤¤ - à¤¸à¤¾à¤¥à¥€ à¤¸à¤¾à¤µà¤§à¤¾à¤¨à¥€ à¤¸à¥‡ à¤šà¥à¤¨à¥‡à¤‚à¥¤ ';
+        if (venus && venus.house === 7) analysis += 'à¤¸à¤¾à¤®à¤‚à¤œà¤¸à¥à¤¯à¤ªà¥‚à¤°à¥à¤£ à¤¸à¤‚à¤¬à¤‚à¤§à¥¤ à¤ªà¥à¤°à¥‡à¤®à¤ªà¥‚à¤°à¥à¤£ à¤¸à¤¾à¤¥à¥€à¥¤ ';
+        analysis += `${saturn && saturn.house === 7 ? 'à¤µà¥à¤¯à¤µà¤¸à¥à¤¥à¤¿à¤¤ à¤…à¤§à¤¿à¤• à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤' : 'à¤ªà¥à¤°à¥‡à¤®/à¤µà¥à¤¯à¤µà¤¸à¥à¤¥à¤¿à¤¤ à¤¦à¥‹à¤¨à¥‹à¤‚ à¤¸à¤‚à¤­à¤µ'}à¥¤ à¤¸à¤«à¤²à¤¤à¤¾ ${venus ? 'à¤¸à¤®à¤' : 'à¤§à¥ˆà¤°à¥à¤¯'} à¤¸à¥‡à¥¤`;
+        return analysis;
+    }
+}
+
+// 7. HEALTH
+function analyzeHealth(planets, ascSign, language) {
+    const saturn = getPlanetByName(planets, 'Saturn');
+    const mars = getPlanetByName(planets, 'Mars');
+    const moon = getPlanetByName(planets, 'Moon');
+
+    if (language === 'en') {
+        let analysis = 'Health: ';
+        if (saturn && (saturn.house === 1 || saturn.house === 6)) analysis += 'Watch chronic issues, joint/bone problems. Regular exercise important. ';
+        if (mars && mars.house === 6) analysis += 'Prone to accidents/injuries. Avoid risky activities. ';
+        if (moon && moon.isRetrograde) analysis += 'Mental stress possible. Practice meditation. ';
+        analysis += `Weak areas: ${saturn ? 'Bones, joints' : 'Digestive system'}. Health improves after 35.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤¸à¥à¤µà¤¾à¤¸à¥à¤¥à¥à¤¯: ';
+        if (saturn && (saturn.house === 1 || saturn.house === 6)) analysis += 'à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤¸à¤®à¤¸à¥à¤¯à¤¾à¤“à¤‚, à¤œà¥‹à¤¡à¤¼à¥‹à¤‚/à¤¹à¤¡à¥à¤¡à¤¿à¤¯à¥‹à¤‚ à¤•à¥‡ à¤²à¤¿à¤ à¤¸à¤¾à¤µà¤§à¤¾à¤¨à¥¤ à¤¨à¤¿à¤¯à¤®à¤¿à¤¤ à¤µà¥à¤¯à¤¾à¤¯à¤¾à¤® à¤®à¤¹à¤¤à¥à¤µà¤ªà¥‚à¤°à¥à¤£à¥¤ ';
+        if (mars && mars.house === 6) analysis += 'à¤¦à¥à¤°à¥à¤˜à¤Ÿà¤¨à¤¾à¤“à¤‚/à¤šà¥‹à¤Ÿà¥‹à¤‚ à¤•à¥€ à¤¸à¤‚à¤­à¤¾à¤µà¤¨à¤¾à¥¤ à¤œà¥‹à¤–à¤¿à¤® à¤¸à¥‡ à¤¬à¤šà¥‡à¤‚à¥¤ ';
+        if (moon && moon.isRetrograde) analysis += 'à¤®à¤¾à¤¨à¤¸à¤¿à¤• à¤¤à¤¨à¤¾à¤µ à¤¸à¤‚à¤­à¤µà¥¤ à¤§à¥à¤¯à¤¾à¤¨ à¤•à¤¾ à¤…à¤­à¥à¤¯à¤¾à¤¸ à¤•à¤°à¥‡à¤‚à¥¤ ';
+        analysis += `à¤•à¤®à¤œà¥‹à¤° à¤•à¥à¤·à¥‡à¤¤à¥à¤°: ${saturn ? 'à¤¹à¤¡à¥à¤¡à¤¿à¤¯à¤¾à¤‚, à¤œà¥‹à¤¡à¤¼' : 'à¤ªà¤¾à¤šà¤¨ à¤¤à¤‚à¤¤à¥à¤°'}à¥¤ 35 à¤•à¥‡ à¤¬à¤¾à¤¦ à¤¸à¥à¤µà¤¾à¤¸à¥à¤¥à¥à¤¯ à¤®à¥‡à¤‚ à¤¸à¥à¤§à¤¾à¤°à¥¤`;
+        return analysis;
+    }
+}
+
+// 8. DOSHAS & YOGAS
+function analyzeDoshasYogas(planets, mangalDosha, language) {
+    const isMangalDosha = mangalDosha === 'Yes';
+    const jupiter = getPlanetByName(planets, 'Jupiter');
+    const venus = getPlanetByName(planets, 'Venus');
+    const mars = getPlanetByName(planets, 'Mars');
+
+    if (language === 'en') {
+        let analysis = 'Doshas & Yogas: ';
+        if (isMangalDosha) analysis += `Mangal Dosha present. ${mars && mars.house === 7 ? 'Strong dosha' : 'Mild dosha'}. Remedies: Marry after 28 or find partner with same dosha. `;
+        else analysis += 'No Mangal Dosha. ';
+        if (jupiter && jupiter.house === 10) analysis += 'Raj Yoga - Success in career. ';
+        if (venus && jupiter && Math.abs(venus.house - jupiter.house) <= 1) analysis += 'Dhan Yoga - Wealth accumulation. ';
+        analysis += `Overall: ${isMangalDosha ? 'Remedies recommended' : 'Favorable combinations'}.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤¦à¥‹à¤· à¤”à¤° à¤¯à¥‹à¤—: ';
+        if (isMangalDosha) analysis += `à¤®à¤‚à¤—à¤² à¤¦à¥‹à¤· à¤‰à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¥¤ ${mars && mars.house === 7 ? 'à¤®à¤œà¤¬à¥‚à¤¤ à¤¦à¥‹à¤·' : 'à¤¹à¤²à¥à¤•à¤¾ à¤¦à¥‹à¤·'}à¥¤ à¤‰à¤ªà¤¾à¤¯: 28 à¤•à¥‡ à¤¬à¤¾à¤¦ à¤¶à¤¾à¤¦à¥€ à¤¯à¤¾ à¤¸à¤®à¤¾à¤¨ à¤¦à¥‹à¤· à¤µà¤¾à¤²à¥‡ à¤¸à¤¾à¤¥à¥€à¥¤ `;
+        else analysis += 'à¤•à¥‹à¤ˆ à¤®à¤‚à¤—à¤² à¤¦à¥‹à¤· à¤¨à¤¹à¥€à¤‚à¥¤ ';
+        if (jupiter && jupiter.house === 10) analysis += 'à¤°à¤¾à¤œà¤¯à¥‹à¤— - à¤•à¤°à¤¿à¤¯à¤° à¤®à¥‡à¤‚ à¤¸à¤«à¤²à¤¤à¤¾à¥¤ ';
+        if (venus && jupiter && Math.abs(venus.house - jupiter.house) <= 1) analysis += 'à¤§à¤¨ à¤¯à¥‹à¤— - à¤§à¤¨ à¤¸à¤‚à¤šà¤¯à¥¤ ';
+        analysis += `à¤•à¥à¤² à¤®à¤¿à¤²à¤¾à¤•à¤°: ${isMangalDosha ? 'à¤‰à¤ªà¤¾à¤¯ à¤…à¤¨à¥à¤¶à¤‚à¤¸à¤¿à¤¤' : 'à¤…à¤¨à¥à¤•à¥‚à¤² à¤¸à¤‚à¤¯à¥‹à¤œà¤¨'}à¥¤`;
+        return analysis;
+    }
+}
+
+// 9. DASHA PREDICTIONS
+function analyzeDashaPredictions(dashas, planets, language) {
+    if (!dashas || !dashas.current) return language === 'en' ? 'Dasha information not available' : 'à¤¦à¤¶à¤¾ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤‰à¤ªà¤²à¤¬à¥à¤§ à¤¨à¤¹à¥€à¤‚';
+
+    const currentDasha = dashas.current;
+    const currentPlanet = currentDasha.planet;
+    const planetObj = getPlanetByName(planets, currentPlanet);
+    const mahadashas = dashas.mahadashas || [];
+
+    if (language === 'en') {
+        let analysis = `Current Mahadasha: ${currentPlanet} (${currentDasha.years} years). `;
+        if (planetObj) {
+            analysis += `${currentPlanet} in ${planetObj.house}th house brings `;
+            if (planetObj.house === 10) analysis += 'career growth and recognition. ';
+            else if (planetObj.house === 2 || planetObj.house === 11) analysis += 'financial gains. ';
+            else if (planetObj.house === 4) analysis += 'property gains and domestic happiness. ';
+            else if (planetObj.house === 7) analysis += 'relationship focus. ';
+            else analysis += 'mixed results. ';
+        }
+        const nextDashas = mahadashas.slice(0, 2);
+        if (nextDashas.length > 0) {
+            analysis += 'Next 5-10 years: ';
+            nextDashas.forEach((dasha, index) => {
+                analysis += `${dasha.planet} dasha ${index === 0 ? 'brings' : 'will bring'} ${dasha.planet === 'Jupiter' ? 'expansion' : dasha.planet === 'Saturn' ? 'discipline' : dasha.planet === 'Venus' ? 'comfort' : 'changes'}. `;
+            });
+        }
+        return analysis;
+    } else {
+        let analysis = `à¤µà¤°à¥à¤¤à¤®à¤¾à¤¨ à¤®à¤¹à¤¾à¤¦à¤¶à¤¾: ${currentPlanet} (${currentDasha.years} à¤µà¤°à¥à¤·)à¥¤ `;
+        if (planetObj) {
+            analysis += `${currentPlanet} ${planetObj.house}à¤µà¥‡à¤‚ à¤­à¤¾à¤µ à¤®à¥‡à¤‚ `;
+            if (planetObj.house === 10) analysis += 'à¤•à¤°à¤¿à¤¯à¤° à¤µà¥ƒà¤¦à¥à¤§à¤¿ à¤”à¤° à¤®à¤¾à¤¨à¥à¤¯à¤¤à¤¾ à¤²à¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤ ';
+            else if (planetObj.house === 2 || planetObj.house === 11) analysis += 'à¤µà¤¿à¤¤à¥à¤¤à¥€à¤¯ à¤²à¤¾à¤­ à¤²à¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤ ';
+            else if (planetObj.house === 4) analysis += 'à¤¸à¤‚à¤ªà¤¤à¥à¤¤à¤¿ à¤²à¤¾à¤­ à¤”à¤° à¤˜à¤°à¥‡à¤²à¥‚ à¤–à¥à¤¶à¥€ à¤²à¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤ ';
+            else if (planetObj.house === 7) analysis += 'à¤¸à¤‚à¤¬à¤‚à¤§ à¤«à¥‹à¤•à¤¸ à¤²à¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤ ';
+            else analysis += 'à¤®à¤¿à¤¶à¥à¤°à¤¿à¤¤ à¤ªà¤°à¤¿à¤£à¤¾à¤® à¤²à¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤ ';
+        }
+        const nextDashas = mahadashas.slice(0, 2);
+        if (nextDashas.length > 0) {
+            analysis += 'à¤…à¤—à¤²à¥‡ 5-10 à¤µà¤°à¥à¤·: ';
+            nextDashas.forEach((dasha, index) => {
+                analysis += `${dasha.planet} à¤¦à¤¶à¤¾ ${index === 0 ? 'à¤²à¤¾à¤¤à¥€ à¤¹à¥ˆ' : 'à¤²à¤¾à¤à¤—à¥€'} ${dasha.planet === 'Jupiter' ? 'à¤µà¤¿à¤¸à¥à¤¤à¤¾à¤°' : dasha.planet === 'Saturn' ? 'à¤…à¤¨à¥à¤¶à¤¾à¤¸à¤¨' : dasha.planet === 'Venus' ? 'à¤†à¤°à¤¾à¤®' : 'à¤ªà¤°à¤¿à¤µà¤°à¥à¤¤à¤¨'}à¥¤ `;
+            });
+        }
+        return analysis;
+    }
+}
+
+// 10. REMEDIES
+function generateRemedies(planets, mangalDosha, language) {
+    const saturn = getPlanetByName(planets, 'Saturn');
+    const mars = getPlanetByName(planets, 'Mars');
+    const mercury = getPlanetByName(planets, 'Mercury');
+    const weakPlanets = [];
+
+    if (language === 'en') {
+        let analysis = 'Remedies: ';
+        if (saturn && saturn.isRetrograde) {
+            analysis += 'For Saturn: Donate black items on Saturdays. Respect elders. Practice discipline. ';
+            weakPlanets.push('Saturn');
+        }
+        if (mangalDosha === 'Yes') {
+            analysis += 'For Mars: Donate red items on Tuesdays. Practice patience. Avoid conflicts. ';
+            weakPlanets.push('Mars');
+        }
+        if (mercury && mercury.isRetrograde) {
+            analysis += 'For Mercury: Donate green items on Wednesdays. Improve communication. ';
+            weakPlanets.push('Mercury');
+        }
+        if (weakPlanets.length === 0) analysis += 'No major weaknesses. General: Regular meditation, charity, positive thinking.';
+        else analysis += `Focus on: ${weakPlanets.join(', ')}. Consult expert for mantras/gemstones.`;
+        return analysis;
+    } else {
+        let analysis = 'à¤‰à¤ªà¤¾à¤¯: ';
+        if (saturn && saturn.isRetrograde) {
+            analysis += 'à¤¶à¤¨à¤¿ à¤•à¥‡ à¤²à¤¿à¤: à¤¶à¤¨à¤¿à¤µà¤¾à¤° à¤•à¥‹ à¤•à¤¾à¤²à¥€ à¤µà¤¸à¥à¤¤à¥à¤“à¤‚ à¤•à¤¾ à¤¦à¤¾à¤¨à¥¤ à¤¬à¤¡à¤¼à¥‹à¤‚ à¤•à¤¾ à¤¸à¤®à¥à¤®à¤¾à¤¨à¥¤ à¤…à¤¨à¥à¤¶à¤¾à¤¸à¤¨à¥¤ ';
+            weakPlanets.push('à¤¶à¤¨à¤¿');
+        }
+        if (mangalDosha === 'Yes') {
+            analysis += 'à¤®à¤‚à¤—à¤² à¤•à¥‡ à¤²à¤¿à¤: à¤®à¤‚à¤—à¤²à¤µà¤¾à¤° à¤•à¥‹ à¤²à¤¾à¤² à¤µà¤¸à¥à¤¤à¥à¤“à¤‚ à¤•à¤¾ à¤¦à¤¾à¤¨à¥¤ à¤§à¥ˆà¤°à¥à¤¯à¥¤ à¤¸à¤‚à¤˜à¤°à¥à¤· à¤¸à¥‡ à¤¬à¤šà¥‡à¤‚à¥¤ ';
+            weakPlanets.push('à¤®à¤‚à¤—à¤²');
+        }
+        if (mercury && mercury.isRetrograde) {
+            analysis += 'à¤¬à¥à¤§ à¤•à¥‡ à¤²à¤¿à¤: à¤¬à¥à¤§à¤µà¤¾à¤° à¤•à¥‹ à¤¹à¤°à¥€ à¤µà¤¸à¥à¤¤à¥à¤“à¤‚ à¤•à¤¾ à¤¦à¤¾à¤¨à¥¤ à¤¸à¤‚à¤šà¤¾à¤° à¤¸à¥à¤§à¤¾à¤°à¥‡à¤‚à¥¤ ';
+            weakPlanets.push('à¤¬à¥à¤§');
+        }
+        if (weakPlanets.length === 0) analysis += 'à¤•à¥‹à¤ˆ à¤¬à¤¡à¤¼à¥€ à¤•à¤®à¤œà¥‹à¤°à¥€ à¤¨à¤¹à¥€à¤‚à¥¤ à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯: à¤¨à¤¿à¤¯à¤®à¤¿à¤¤ à¤§à¥à¤¯à¤¾à¤¨, à¤¦à¤¾à¤¨, à¤¸à¤•à¤¾à¤°à¤¾à¤¤à¥à¤®à¤• à¤¸à¥‹à¤šà¥¤';
+        else analysis += `à¤§à¥à¤¯à¤¾à¤¨ à¤¦à¥‡à¤‚: ${weakPlanets.join(', ')}à¥¤ à¤®à¤‚à¤¤à¥à¤°/à¤°à¤¤à¥à¤¨ à¤•à¥‡ à¤²à¤¿à¤ à¤µà¤¿à¤¶à¥‡à¤·à¤œà¥à¤ž à¤¸à¥‡ à¤ªà¤°à¤¾à¤®à¤°à¥à¤¶à¥¤`;
+        return analysis;
+    }
+}
+

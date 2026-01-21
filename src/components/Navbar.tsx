@@ -21,7 +21,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import NotificationBell from "@/components/NotificationBell";
 import LogoutConfirmModal from "@/components/LogoutConfirmModal";
 
-export default function Navbar() {
+interface NavbarProps {
+  kundaliData?: any;
+  onDownloadPDF?: () => void;
+}
+
+export default function Navbar({ kundaliData, onDownloadPDF }: NavbarProps = {}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { user, logout, adminLogout, isAdminLoggedIn } = useAuth();

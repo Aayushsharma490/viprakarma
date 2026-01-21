@@ -75,34 +75,71 @@ export default function KundaliMatchingPage() {
             const boyTime = `${boy.hour || '12'}:${boy.minute || '00'}:${boy.second || '00'}`;
             const girlTime = `${girl.hour || '12'}:${girl.minute || '00'}:${girl.second || '00'}`;
 
-            const response = await fetch('/api/kundali/match', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    person1: {
+            // Generate full kundalis for both persons to get charts
+            const [matchResponse, boyKundaliResponse, girlKundaliResponse] = await Promise.all([
+                fetch('/api/kundali/match', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        person1: {
+                            name: boy.name,
+                            gender: 'male',
+                            dob: boyDob,
+                            time: boyTime,
+                            latitude: parseFloat(boy.latitude) || 26.4499,
+                            longitude: parseFloat(boy.longitude) || 74.6399
+                        },
+                        person2: {
+                            name: girl.name,
+                            gender: 'female',
+                            dob: girlDob,
+                            time: girlTime,
+                            latitude: parseFloat(girl.latitude) || 24.5854,
+                            longitude: parseFloat(girl.longitude) || 73.7125
+                        }
+                    })
+                }),
+                fetch('/api/kundali/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
                         name: boy.name,
-                        gender: 'male',
-                        dob: boyDob,
-                        time: boyTime,
+                        day: parseInt(boy.day),
+                        month: parseInt(boy.month),
+                        year: parseInt(boy.year),
+                        hour: parseInt(boy.hour) || 12,
+                        minute: parseInt(boy.minute) || 0,
+                        second: parseInt(boy.second) || 0,
                         latitude: parseFloat(boy.latitude) || 26.4499,
                         longitude: parseFloat(boy.longitude) || 74.6399
-                    },
-                    person2: {
+                    })
+                }),
+                fetch('/api/kundali/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
                         name: girl.name,
-                        gender: 'female',
-                        dob: girlDob,
-                        time: girlTime,
+                        day: parseInt(girl.day),
+                        month: parseInt(girl.month),
+                        year: parseInt(girl.year),
+                        hour: parseInt(girl.hour) || 12,
+                        minute: parseInt(girl.minute) || 0,
+                        second: parseInt(girl.second) || 0,
                         latitude: parseFloat(girl.latitude) || 24.5854,
                         longitude: parseFloat(girl.longitude) || 73.7125
-                    }
+                    })
                 })
-            });
+            ]);
 
-            const data = await response.json();
-            if (response.ok) {
+            const data = await matchResponse.json();
+            const boyKundali = await boyKundaliResponse.json();
+            const girlKundali = await girlKundaliResponse.json();
+
+            if (matchResponse.ok) {
+                // Use data as-is from server - no client-side corrections
                 setMatchResult(data);
 
-                // Prepare display data
+                // Prepare display data with full kundali
                 setBoyData({
                     name: boy.name,
                     date: `${boy.day}/${boy.month}/${boy.year}`,
@@ -110,7 +147,8 @@ export default function KundaliMatchingPage() {
                     place: boy.city || 'Ajmer',
                     longitudeStr: formatCoordinate(parseFloat(boy.longitude) || 74.6399, false),
                     latitudeStr: formatCoordinate(parseFloat(boy.latitude) || 26.4499, true),
-                    ...data.boyDetails
+                    ...data.boyDetails,
+                    kundali: boyKundali
                 });
 
                 setGirlData({
@@ -120,7 +158,8 @@ export default function KundaliMatchingPage() {
                     place: girl.city || 'Udaipur',
                     longitudeStr: formatCoordinate(parseFloat(girl.longitude) || 73.7125, false),
                     latitudeStr: formatCoordinate(parseFloat(girl.latitude) || 24.5854, true),
-                    ...data.girlDetails
+                    ...data.girlDetails,
+                    kundali: girlKundali
                 });
 
                 toast.success(language === 'en' ? 'Matching completed!' : 'मिलान पूर्ण!');

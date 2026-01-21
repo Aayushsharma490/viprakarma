@@ -2,6 +2,14 @@
 
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import NorthIndianChart from './NorthIndianChart';
+
+// Hindi zodiac sign names
+const HINDI_SIGNS: Record<string, string> = {
+    Aries: "मेष", Taurus: "वृषभ", Gemini: "मिथुन", Cancer: "कर्क",
+    Leo: "सिंह", Virgo: "कन्या", Libra: "तुला", Scorpio: "वृश्चिक",
+    Sagittarius: "धनु", Capricorn: "मकर", Aquarius: "कुंभ", Pisces: "मीन"
+};
 
 interface MatchingResultsProps {
     boyData: any;
@@ -116,6 +124,90 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                 </div>
             </Card>
 
+            {/* Lagna Charts - Var and Vadhu */}
+            <Card className="p-8 bg-card/40 backdrop-blur-xl border-border rounded-[2.5rem]">
+                <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-tighter text-center">
+                    {language === 'en' ? 'Lagna Kundali Charts' : 'लग्न कुंडली चार्ट'}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Boy's Lagna Chart */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-bold text-primary text-center">
+                            {language === 'en' ? `Var (${boyData.name})` : `वर (${boyData.name})`}
+                        </h3>
+                        {boyData.kundali ? (
+                            <div className="flex justify-center w-full">
+                                <div className="w-full max-w-md">
+                                    <NorthIndianChart chartData={boyData.kundali} />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="aspect-square bg-background/50 rounded-2xl flex items-center justify-center border-2 border-dashed border-border">
+                                <p className="text-muted-foreground text-sm">
+                                    {language === 'en' ? 'Chart not available' : 'चार्ट उपलब्ध नहीं'}
+                                </p>
+                            </div>
+                        )}
+                        <div className="text-center text-sm text-muted-foreground">
+                            <p>
+                                {language === 'en' ? 'Ascendant:' : 'लग्न:'}{' '}
+                                <span className="font-bold text-foreground">
+                                    {language === 'hi' && boyData.ascendant
+                                        ? (HINDI_SIGNS[boyData.ascendant] || boyData.ascendant)
+                                        : (boyData.ascendant || 'N/A')}
+                                </span>
+                            </p>
+                            <p>
+                                {language === 'en' ? 'Moon Sign:' : 'चंद्र राशि:'}{' '}
+                                <span className="font-bold text-foreground">
+                                    {language === 'hi' && boyData.moonSign
+                                        ? (HINDI_SIGNS[boyData.moonSign] || boyData.moonSign)
+                                        : (boyData.moonSign || 'N/A')}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Girl's Lagna Chart */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-bold text-primary text-center">
+                            {language === 'en' ? `Vadhu (${girlData.name})` : `वधू (${girlData.name})`}
+                        </h3>
+                        {girlData.kundali ? (
+                            <div className="flex justify-center w-full">
+                                <div className="w-full max-w-md">
+                                    <NorthIndianChart chartData={girlData.kundali} />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="aspect-square bg-background/50 rounded-2xl flex items-center justify-center border-2 border-dashed border-border">
+                                <p className="text-muted-foreground text-sm">
+                                    {language === 'en' ? 'Chart not available' : 'चार्ट उपलब्ध नहीं'}
+                                </p>
+                            </div>
+                        )}
+                        <div className="text-center text-sm text-muted-foreground">
+                            <p>
+                                {language === 'en' ? 'Ascendant:' : 'लग्न:'}{' '}
+                                <span className="font-bold text-foreground">
+                                    {language === 'hi' && girlData.ascendant
+                                        ? (HINDI_SIGNS[girlData.ascendant] || girlData.ascendant)
+                                        : (girlData.ascendant || 'N/A')}
+                                </span>
+                            </p>
+                            <p>
+                                {language === 'en' ? 'Moon Sign:' : 'चंद्र राशि:'}{' '}
+                                <span className="font-bold text-foreground">
+                                    {language === 'hi' && girlData.moonSign
+                                        ? (HINDI_SIGNS[girlData.moonSign] || girlData.moonSign)
+                                        : (girlData.moonSign || 'N/A')}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+
             {/* Guna Milan Table */}
             <Card className="p-8 bg-card/40 backdrop-blur-xl border-border rounded-[2.5rem]">
                 <h2 className="text-2xl font-black text-foreground mb-6 uppercase tracking-tighter">
@@ -146,6 +238,15 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                                     <td className="p-3 text-muted-foreground text-xs">{detail.areaOfLife || detail.description}</td>
                                 </tr>
                             ))}
+                            {/* Subtotal Row */}
+                            <tr className="border-t-2 border-primary bg-primary/5">
+                                <td colSpan={4} className="p-3 font-black text-foreground text-right">
+                                    {language === 'en' ? 'Total:' : 'कुल:'}
+                                </td>
+                                <td className="p-3 font-black text-foreground">36</td>
+                                <td className="p-3 font-black text-primary text-lg">{matchResult.totalScore}</td>
+                                <td className="p-3"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
