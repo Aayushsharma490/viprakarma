@@ -25,27 +25,34 @@ const RASHI_ABBR: Record<string, string> = {
   Libra: "Lib", Scorpio: "Sco", Sagittarius: "Sag", Capricorn: "Cap", Aquarius: "Aqu", Pisces: "Pis",
 };
 
-const WIDTH = 700;
-const HEIGHT = 700;
-const PADDING = 40;  // Increased from 20 to 40
+// Hindi zodiac sign names
+const HINDI_SIGNS: Record<string, string> = {
+  Aries: "मेष", Taurus: "वृषभ", Gemini: "मिथुन", Cancer: "कर्क",
+  Leo: "सिंह", Virgo: "कन्या", Libra: "तुला", Scorpio: "वृश्चिक",
+  Sagittarius: "धनु", Capricorn: "मकर", Aquarius: "कुंभ", Pisces: "मीन"
+};
+
+const WIDTH = 800;  // Increased from 700
+const HEIGHT = 800; // Increased from 700
+const PADDING = 50;  // Increased from 40
 const CENTER_X = WIDTH / 2;
 const CENTER_Y = HEIGHT / 2;
 
 // House positions for PLANET/CONTENT placement (center of the cell).
 // ADJUSTED for larger chart with more padding and to keep content inside boundaries
 const HOUSE_POSITIONS: Record<number, { x: number; y: number }> = {
-  1: { x: CENTER_X, y: 180 },              // Top center - House 1
-  2: { x: 220, y: 100 },                   // Top left - House 2  
-  3: { x: 100, y: 220 },                   // Left top - House 3
-  4: { x: 160, y: CENTER_Y },              // Left center - House 4
-  5: { x: 100, y: 480 },                   // Left bottom - House 5
-  6: { x: 220, y: 600 },                   // Bottom left - House 6
-  7: { x: CENTER_X, y: 520 },              // Bottom center - House 7
-  8: { x: 480, y: 600 },                   // Bottom right - House 8
-  9: { x: 600, y: 480 },                   // Right bottom - House 9
-  10: { x: 540, y: CENTER_Y },             // Right center - House 10
-  11: { x: 600, y: 220 },                  // Right top - House 11
-  12: { x: 480, y: 100 },                  // Top right - House 12
+  1: { x: CENTER_X, y: 200 },              // Top center - House 1
+  2: { x: 240, y: 110 },                   // Top left - House 2  
+  3: { x: 110, y: 240 },                   // Left top - House 3
+  4: { x: 180, y: CENTER_Y },              // Left center - House 4
+  5: { x: 110, y: 560 },                   // Left bottom - House 5
+  6: { x: 240, y: 690 },                   // Bottom left - House 6
+  7: { x: CENTER_X, y: 600 },              // Bottom center - House 7
+  8: { x: 560, y: 690 },                   // Bottom right - House 8
+  9: { x: 690, y: 560 },                   // Right bottom - House 9
+  10: { x: 620, y: CENTER_Y },             // Right center - House 10
+  11: { x: 690, y: 240 },                  // Right top - House 11
+  12: { x: 560, y: 110 },                  // Top right - House 12
 };
 
 const RASHI_CORNER_POSITIONS: Record<number, { x: number; y: number }> = {
@@ -70,7 +77,7 @@ const SIGN_INDEX: Record<string, number> = {
 
 type PlanetInput = {
   name?: string; planet?: string; house?: number; rashi?: string; sign?: string;
-  degree?: number; isRetrograde?: boolean;
+  degree?: number; degreeInSign?: number; isRetrograde?: boolean;
 };
 
 type NorthIndianKundaliProps = {
@@ -148,27 +155,27 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
           fontSize: number;
           degreeSize: number;
         } => {
-          if (count === 0) return { positions: [], fontSize: 22, degreeSize: 16 };
+          if (count === 0) return { positions: [], fontSize: 24, degreeSize: 18 };
 
-          // LARGER font sizes for better visibility
-          let itemHeight = 38; // More spacing
-          let fontSize = 20;   // Larger planet names
-          let degreeSize = 15; // Larger degrees
+          // LARGER font sizes and spacing for better visibility
+          let itemHeight = 45; // More spacing between planets
+          let fontSize = 22;   // Larger planet names
+          let degreeSize = 17; // Larger degrees
 
           if (count >= 3) {
+            itemHeight = 38;
+            fontSize = 20;
+            degreeSize = 16;
+          }
+          if (count >= 5) {
             itemHeight = 32;
             fontSize = 18;
             degreeSize = 14;
           }
-          if (count >= 5) {
+          if (count >= 7) {
             itemHeight = 28;
             fontSize = 16;
-            degreeSize = 12;
-          }
-          if (count >= 7) {
-            itemHeight = 24;
-            fontSize = 14;
-            degreeSize = 11;
+            degreeSize = 13;
           }
 
           const totalHeight = (count * itemHeight);
@@ -203,51 +210,58 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
             </text>
 
             {planetsInHouse.map((planet, i) => {
-              const rawName = planet.name || planet.planet || "";
-              // Use Hindi names if language is 'hi', otherwise use English abbreviations
-              const display = language === 'hi'
-                ? (HINDI_NAMES[rawName as keyof typeof HINDI_NAMES] || rawName)
-                : (HINDU_NAMES[rawName as keyof typeof HINDU_NAMES] || rawName);
-              const retro = planet.isRetrograde ? "*" : "";
-              // Format degree: e.g., 23.45 -> 23°27' (approx) or just 23.5°
-              // Using simple fixed decimal for clarity: 23.5°
-              const degDisplay = planet.degree !== undefined
-                ? `${planet.degree.toFixed(1)}°`
-                : "";
+              const planetName = planet.name || planet.planet || "?";
+              const planetLabel = language === 'hi'
+                ? (HINDI_NAMES[planetName as keyof typeof HINDI_NAMES] || planetName)
+                : (HINDU_NAMES[planetName as keyof typeof HINDU_NAMES] || planetName);
+              // Use degreeInSign if available, fallback to degree
+              const degreeValue = planet.degreeInSign ?? planet.degree;
+              const degree = degreeValue !== undefined ? `${Math.floor(degreeValue)}°` : '';
+              const retrograde = planet.isRetrograde ? "(R)" : "";
 
-              const color = PLANET_COLORS[rawName as keyof typeof PLANET_COLORS] || "#000000";
+              // Debug log for first planet
+              if (i === 0 && houseNumber === 1) {
+                console.log('[Chart Debug] Planet data:', {
+                  name: planetName,
+                  degreeInSign: planet.degreeInSign,
+                  degree: planet.degree,
+                  degreeValue,
+                  displayDegree: degree
+                });
+              }
+
+              const color = PLANET_COLORS[planetName as keyof typeof PLANET_COLORS] || "#000000";
               const pPos = positions[i];
               if (!pPos) return null;
 
               return (
-                <g key={`${houseNumber}-${rawName}-${i}`}>
-                  {/* Degree - centered above name */}
-                  {degDisplay && (
+                <g key={i}>
+                  {/* Degree - above planet name */}
+                  {degree && (
                     <text
                       x={pPos.x}
-                      y={pPos.y - (fontSize * 0.85)} // Shifted up further
+                      y={pPos.y - (fontSize * 0.6)}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fill="#374151" // Dark Gray for Degree
+                      fill="#6b7280"
                       fontSize={degreeSize}
                       fontWeight={500}
-                      opacity={0.9}
+                      opacity={0.85}
                     >
-                      {degDisplay}
+                      {degree}
                     </text>
                   )}
-
-                  {/* Planet name - centered */}
+                  {/* Planet Name */}
                   <text
                     x={pPos.x}
-                    y={pPos.y + (degreeSize * 0.4)} // Shifted down further
+                    y={pPos.y}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill={color}
                     fontSize={fontSize}
-                    fontWeight={700}
+                    fontWeight={600}
                   >
-                    {display}{retro}
+                    {planetLabel}{retrograde}
                   </text>
                 </g>
               );

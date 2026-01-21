@@ -12,6 +12,7 @@ import {
   Clock,
   Calendar,
   Target,
+  Download,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -34,7 +35,11 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import NorthIndianKundali from "@/components/NorthIndianKundali";
 import ChandraKundaliChart from "@/components/ChandraKundaliChart";
 import NavmaanshKundaliChart from "@/components/NavmaanshKundaliChart";
+import KundaliDetailsPanel from "@/components/KundaliDetailsPanel";
+import PanchangPanel from "@/components/PanchangPanel";
+import PhallitPanel from "@/components/PhallitPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { generateKundaliPDF } from "@/utils/pdfGenerator";
 
 type ChartPlacement = {
   house: number;
@@ -113,6 +118,37 @@ interface AstroEngineResponse {
         years: number;
       }>;
     }>;
+  };
+  enhancedDetails?: {
+    vikramSamvat?: number;
+    tithi?: { number: number; name: string; fraction: number };
+    paksha?: string;
+    masa?: string;
+    yoga?: string;
+    karana?: string;
+    dayOfWeek?: string;
+    mangalDosha?: string;
+    yoni?: string;
+    gana?: string;
+    nadi?: string;
+    varna?: string;
+    nakshatraPaya?: string;
+    rashiSwami?: string;
+    nakshatraSwami?: string;
+    ishtaKaal?: string;
+    namakshar?: string;
+  };
+  phallit?: {
+    lagnaPersonality: { en: string; hi: string };
+    moonEmotions: { en: string; hi: string };
+    education: { en: string; hi: string };
+    career: { en: string; hi: string };
+    wealth: { en: string; hi: string };
+    relationships: { en: string; hi: string };
+    health: { en: string; hi: string };
+    doshasYogas: { en: string; hi: string };
+    dashaPredictions: { en: string; hi: string };
+    remedies: { en: string; hi: string };
   };
 }
 
@@ -413,7 +449,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: planetData?.degreeInSign, // Add degree from planet data
+            degreeInSign: planetData?.degreeInSign, // Use degreeInSign field
           };
         })
       )
@@ -449,7 +485,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: planetData?.degreeInSign,
+            degreeInSign: planetData?.degreeInSign,
           };
         })
       )
@@ -485,7 +521,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: mainPlanet?.degreeInSign || 0,
+            degreeInSign: mainPlanet?.degreeInSign || 0,
           };
         })
       )
@@ -506,7 +542,7 @@ export default function KundaliPage() {
             rashi: house.sign,
             sign: house.sign,
             isRetrograde: planet.retrograde,
-            degree: mainPlanet?.degreeInSign || 0,
+            degreeInSign: mainPlanet?.degreeInSign || 0,
           };
         })
       )
@@ -519,13 +555,91 @@ export default function KundaliPage() {
         <ChatBot />
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12 relative">
-            <div className="absolute top-0 right-0">
+            <div className="absolute top-0 right-0 flex gap-3">
               <Button
                 onClick={toggleLanguage}
                 className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold"
               >
                 {language === "en" ? "हिंदी" : "EN"}
               </Button>
+              {kundaliData && (
+                <Button
+                  onClick={async () => {
+                    try {
+                      toast.info(language === 'en' ? 'Generating PDF...' : 'PDF बन रहा है...');
+
+                      // Use html2canvas for chart capture (simpler and more reliable)
+                      const captureChart = async (selector: string): Promise<string | null> => {
+                        const element = document.querySelector(selector) as HTMLElement;
+                        if (!element) {
+                          console.warn(`Chart not found: ${selector}`);
+                          return null;
+                        }
+
+                        try {
+                          const canvas = await html2canvas(element, {
+                            scale: 2,
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            useCORS: true,
+                            allowTaint: true,
+                          });
+                          return canvas.toDataURL('image/png');
+                        } catch (error) {
+                          console.error('Chart capture error:', error);
+                          return null;
+                        }
+                      };
+
+                      toast.info(language === 'en' ? 'Capturing charts...' : 'चार्ट कैप्चर हो रहे हैं...');
+
+                      // Capture all charts
+                      const chartImages = {
+                        lagna: await captureChart('[data-chart-type="lagna"]'),
+                        chandra: await captureChart('[data-chart-type="chandra"]'),
+                        navamsa: await captureChart('[data-chart-type="navamsa"]'),
+                        d10: await captureChart('[data-chart-type="d10"]'),
+                      };
+
+                      toast.info(language === 'en' ? 'Creating PDF...' : 'PDF बन रहा है...');
+
+                      const response = await fetch('/api/kundali/pdf', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          ...kundaliData,
+                          chartImages,
+                          language
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.details || 'PDF generation failed');
+                      }
+
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `Kundali_${kundaliData.basicDetails?.name || 'Report'}_${Date.now()}.pdf`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      window.URL.revokeObjectURL(url);
+
+                      toast.success(language === 'en' ? 'Kundali PDF downloaded!' : 'कुंडली PDF डाउनलोड हुई!');
+                    } catch (error) {
+                      console.error('PDF error:', error);
+                      toast.error(language === 'en' ? 'Failed to generate PDF' : 'PDF बनाने में विफल');
+                    }
+                  }}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  {language === "en" ? "Download PDF" : "PDF डाउनलोड"}
+                </Button>
+              )}
             </div>
             <p className="uppercase tracking-[0.3em] text-sm text-amber-600 mb-3">
               {t("kundali.subtitle") || "Precision Vedic Astrology"}
@@ -1043,7 +1157,7 @@ export default function KundaliPage() {
                     </motion.div>
 
                     {selectedChart === "d1" && (
-                      <Card className="p-4 shadow-sm border border-amber-100">
+                      <Card className="p-4 shadow-sm border border-amber-100" data-chart-type="lagna">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
                           {t("kundali.lagnaKundaliTitle")}
                         </h3>
@@ -1056,7 +1170,7 @@ export default function KundaliPage() {
                     )}
 
                     {selectedChart === "chandra" && (
-                      <Card className="p-4 shadow-sm border border-blue-100">
+                      <Card className="p-4 shadow-sm border border-blue-100" data-chart-type="chandra">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
                           {t("kundali.chandraKundaliTitle")}
                         </h3>
@@ -1069,7 +1183,7 @@ export default function KundaliPage() {
                     )}
 
                     {selectedChart === "d9" && (
-                      <Card className="p-4 shadow-sm border border-purple-100">
+                      <Card className="p-4 shadow-sm border border-purple-100" data-chart-type="navamsa">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
                           {t("kundali.navamsaTitle")}
                         </h3>
@@ -1083,7 +1197,7 @@ export default function KundaliPage() {
                     )}
 
                     {selectedChart === "d10" && (
-                      <Card className="p-4 shadow-sm border border-indigo-100">
+                      <Card className="p-4 shadow-sm border border-indigo-100" data-chart-type="d10">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
                           {t("kundali.dashamsaTitle")}
                         </h3>
@@ -1250,6 +1364,29 @@ export default function KundaliPage() {
                       </Card>
                     )}
                   </div>
+
+                  {/* Enhanced Kundali Details Panel */}
+                  {kundaliData?.enhancedDetails && (
+                    <KundaliDetailsPanel
+                      enhancedDetails={kundaliData.enhancedDetails}
+                      moonSign={kundaliData.moonSign}
+                      ascendant={kundaliData.ascendant}
+                    />
+                  )}
+
+                  {/* Panchang Panel */}
+                  {kundaliData?.enhancedDetails && (
+                    <PanchangPanel
+                      enhancedDetails={kundaliData.enhancedDetails}
+                      birthDate={new Date(parseInt(formData.year), parseInt(formData.month) - 1, parseInt(formData.day))}
+                      location={formData.place}
+                    />
+                  )}
+
+                  {/* Phallit Panel - Real Dynamic Predictions */}
+                  {kundaliData?.phallit && (
+                    <PhallitPanel phallit={kundaliData.phallit} />
+                  )}
 
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     <Card className="p-6 shadow-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 overflow-x-auto">

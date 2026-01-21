@@ -9,6 +9,7 @@ type ChartData = {
     house?: number;
     rashi?: string;
     degree?: number;
+    degreeInSign?: number;
   }>;
   houses?: any[];
 };
@@ -24,7 +25,7 @@ export default function NorthIndianChart({
     name: p.name || p.planet,
     house: p.house,
     sign: p.rashi,
-    degree: p.degree,
+    degreeInSign: p.degreeInSign || p.degree, // Use degreeInSign for chart display
   }));
 
   const houses = chartData?.houses || [];
