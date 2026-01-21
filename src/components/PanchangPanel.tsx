@@ -68,11 +68,11 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Ashwini': 'अश्विनी', 'Bharani': 'भरणी', 'Krittika': 'कृत्तिका',
             'Rohini': 'रोहिणी', 'Mrigashira': 'मृगशिरा', 'Ardra': 'आर्द्रा',
             'Punarvasu': 'पुनर्वसु', 'Pushya': 'पुष्य', 'Ashlesha': 'आश्लेषा',
-            'Magha': 'मघा', 'Purva Phalguni': 'पूर्व फाल्गुनी', 'Uttara Phalguni': 'उत्तर फाल्गुनी',
+            'Purva Phalguni': 'पूर्व फाल्गुनी', 'Uttara Phalguni': 'उत्तर फाल्गुनी',
             'Hasta': 'हस्त', 'Chitra': 'चित्रा', 'Swati': 'स्वाति',
-            'Vishakha': 'विशाखा', 'Anuradha': 'अनुराधा', 'Jyeshtha': 'ज्येष्ठा',
+            'Vishakha': 'विशाखा', 'Anuradha': 'अनुराधा',
             'Mula': 'मूल', 'Purva Ashadha': 'पूर्वाषाढ़ा', 'Uttara Ashadha': 'उत्तराषाढ़ा',
-            'Shravana': 'श्रवण', 'Dhanishta': 'धनिष्ठा', 'Shatabhisha': 'शतभिषा',
+            'Dhanishta': 'धनिष्ठा', 'Shatabhisha': 'शतभिषा',
             'Purva Bhadrapada': 'पूर्वभाद्रपदा', 'Uttara Bhadrapada': 'उत्तरभाद्रपदा', 'Revati': 'रेवती',
             'Moon': 'चंद्र', 'Sun': 'सूर्य', 'Mars': 'मंगल', 'Mercury': 'बुध',
             'Jupiter': 'गुरु', 'Venus': 'शुक्र', 'Saturn': 'शनि',
@@ -85,7 +85,7 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Vyaghata': 'व्याघात', 'Harshana': 'हर्षण', 'Vajra': 'वज्र',
             'Siddhi': 'सिद्धि', 'Vyatipata': 'व्यतीपात', 'Variyan': 'वरीयान',
             'Parigha': 'परिघ', 'Shiva': 'शिव', 'Siddha': 'सिद्ध',
-            'Sadhya': 'साध्य', 'Shubha': 'शुभ', 'Shukla': 'शुक्ल',
+            'Sadhya': 'साध्य', 'Shubha': 'शुभ',
             'Brahma': 'ब्रह्म', 'Indra': 'इन्द्र', 'Vaidhriti': 'वैधृति',
 
             // Karana
