@@ -1680,6 +1680,13 @@ export default function KundaliPage() {
                       })}
                     </div>
                   </Card>
+
+                  {/* Phallit (Predictions) Section - Added below Mahadasha */}
+                  {kundaliData.phallit && (
+                    <div className="mt-6">
+                      <PhallitPanel phallit={kundaliData.phallit} />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

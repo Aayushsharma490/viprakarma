@@ -157,25 +157,25 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
         } => {
           if (count === 0) return { positions: [], fontSize: 24, degreeSize: 18 };
 
-          // LARGER font sizes and spacing for better visibility
-          let itemHeight = 45; // More spacing between planets
-          let fontSize = 22;   // Larger planet names
-          let degreeSize = 17; // Larger degrees
+          // OPTIMIZED font sizes and spacing for maximum clarity
+          let itemHeight = 48; // Better spacing between planets
+          let fontSize = 24;   // Larger planet names for clarity
+          let degreeSize = 18; // Larger degrees for visibility
 
           if (count >= 3) {
-            itemHeight = 38;
-            fontSize = 20;
-            degreeSize = 16;
+            itemHeight = 42;
+            fontSize = 22;
+            degreeSize = 17;
           }
           if (count >= 5) {
-            itemHeight = 32;
-            fontSize = 18;
-            degreeSize = 14;
+            itemHeight = 36;
+            fontSize = 20;
+            degreeSize = 15;
           }
           if (count >= 7) {
-            itemHeight = 28;
-            fontSize = 16;
-            degreeSize = 13;
+            itemHeight = 30;
+            fontSize = 18;
+            degreeSize = 14;
           }
 
           const totalHeight = (count * itemHeight);
@@ -195,16 +195,17 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
         return (
           <g key={houseNumber}>
-            {/* Rashi Number - MOVED INSIDE HOUSE */}
+            {/* Rashi Number - CLEARLY VISIBLE */}
             <text
               x={cx}
-              y={numPlanets > 0 ? cy - (numPlanets * 14 + 30) : cy - 35}
+              y={numPlanets > 0 ? cy - (numPlanets * 16 + 35) : cy - 40}
               textAnchor="middle"
               dominantBaseline="middle"
-              fill="#d90429" // Red color for Rashi Number
-              fontSize={18}  // Increased from 14 to 18
-              fontWeight={700}  // Increased from 600 to 700
-              opacity={0.75}    // Increased from 0.6 to 0.75
+              fill="#c1121f" // Darker red for better visibility
+              fontSize={22}  // Larger for clarity
+              fontWeight={800}  // Bolder
+              opacity={0.9}    // More opaque
+              style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
             >
               {rashiIndex}
             </text>
@@ -236,22 +237,23 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
 
               return (
                 <g key={i}>
-                  {/* Degree - above planet name */}
+                  {/* Degree - clearly visible above planet */}
                   {degree && (
                     <text
                       x={pPos.x}
-                      y={pPos.y - (fontSize * 0.6)}
+                      y={pPos.y - (fontSize * 0.65)}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fill="#6b7280"
+                      fill="#374151" // Darker gray for better contrast
                       fontSize={degreeSize}
-                      fontWeight={500}
-                      opacity={0.85}
+                      fontWeight={600}  // Bolder
+                      opacity={0.95}    // More opaque
+                      style={{ textShadow: '0 1px 1px rgba(255,255,255,0.5)' }}
                     >
                       {degree}
                     </text>
                   )}
-                  {/* Planet Name */}
+                  {/* Planet Name - clearly visible */}
                   <text
                     x={pPos.x}
                     y={pPos.y}
@@ -259,7 +261,8 @@ export default function NorthIndianKundali({ planets = [], houses = [], title }:
                     dominantBaseline="middle"
                     fill={color}
                     fontSize={fontSize}
-                    fontWeight={600}
+                    fontWeight={700}  // Bolder for clarity
+                    style={{ textShadow: '0 1px 2px rgba(255,255,255,0.3)' }}
                   >
                     {planetLabel}{retrograde}
                   </text>
