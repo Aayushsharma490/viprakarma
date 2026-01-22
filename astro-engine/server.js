@@ -1308,10 +1308,15 @@ function computeKundali(payload) {
   }
 
   const [jdEt, jdUt] = jdResult.data;
+
+  // CRITICAL: Set sidereal mode to Lahiri ayanamsa BEFORE calculating positions
+  sweph.set_sid_mode(constants.SE_SIDM_LAHIRI, 0, 0);
+
   const ayanamsaResult = sweph.get_ayanamsa_ex(jdEt, constants.SEFLG_SWIEPH);
   const ayanamsa = ayanamsaResult.data;
 
   console.log("[astro-engine] Ayanamsa (Lahiri):", ayanamsa.toFixed(8));
+  console.log("[astro-engine] Sidereal mode set to: SE_SIDM_LAHIRI");
 
   const flags =
     constants.SEFLG_SWIEPH | constants.SEFLG_SPEED | constants.SEFLG_SIDEREAL;
