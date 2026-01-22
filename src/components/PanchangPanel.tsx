@@ -12,39 +12,25 @@ interface PanchangPanelProps {
 }
 
 export default function PanchangPanel({ enhancedDetails, birthDate, location }: PanchangPanelProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (!enhancedDetails) return null;
 
-    // Calculate Shalivahan Shake (Vikram Samvat - 135)
-    const shalivahanaShake = enhancedDetails.vikramSamvat ? enhancedDetails.vikramSamvat - 135 : null;
-
-    // Determine Ritu (Season) based on month
-    const getRitu = (month: number) => {
-        if (month >= 3 && month <= 4) return language === 'en' ? 'Vasant (Spring)' : 'वसंत (Spring)';
-        if (month >= 5 && month <= 6) return language === 'en' ? 'Grishma (Summer)' : 'ग्रीष्म (Summer)';
-        if (month >= 7 && month <= 8) return language === 'en' ? 'Varsha (Monsoon)' : 'वर्षा (Monsoon)';
-        if (month >= 9 && month <= 10) return language === 'en' ? 'Sharad (Autumn)' : 'शरद (Autumn)';
-        if (month >= 11 && month <= 12) return language === 'en' ? 'Hemant (Pre-winter)' : 'हेमंत (Pre-winter)';
-        return language === 'en' ? 'Shishir (Winter)' : 'शिशिर (Winter)';
-    };
-
-    // Determine Ayana based on month (simplified)
-    const getAyana = (month: number) => {
-        if (month >= 1 && month <= 6) {
-            return language === 'en' ? 'Uttarayana (Northward)' : 'उत्तरायण (Northward)';
-        }
-        return language === 'en' ? 'Dakshinayana (Southward)' : 'दक्षिणायन (Southward)';
-    };
-
-    const month = birthDate.getMonth() + 1;
-    const ritu = getRitu(month);
-    const ayana = getAyana(month);
-
     // Hindi translations for Panchang values
     const translateValue = (value: string | null | undefined): string => {
-        if (!value || language === 'en') return value || 'N/A';
+        if (!value) return 'N/A';
+        if (language === 'en') return value;
+
+        // Try to translate using context keys first
+        const planetaryLordKey = `planet.Lord.${value}`;
+        const payaKey = `paya.${value}`;
+
+        const translatedLord = t(planetaryLordKey);
+        if (translatedLord !== planetaryLordKey) return translatedLord;
+
+        const translatedPaya = t(payaKey);
+        if (translatedPaya !== payaKey) return translatedPaya;
 
         const translations: Record<string, string> = {
             // Masa (Months)
@@ -52,10 +38,8 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Ashadha': 'आषाढ़', 'Shravana': 'श्रावण', 'Bhadrapada': 'भाद्रपद',
             'Ashwin': 'आश्विन', 'Kartik': 'कार्तिक', 'Margashirsha': 'मार्गशीर्ष',
             'Pausha': 'पौष', 'Magha': 'माघ', 'Phalguna': 'फाल्गुन',
-
             // Paksha
             'Shukla': 'शुक्ल', 'Krishna': 'कृष्ण',
-
             // Tithi
             'Pratipada': 'प्रतिपदा', 'Dwitiya': 'द्वितीया', 'Tritiya': 'तृतीया',
             'Chaturthi': 'चतुर्थी', 'Panchami': 'पंचमी', 'Shashthi': 'षष्ठी',
@@ -63,7 +47,6 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Dashami': 'दशमी', 'Ekadashi': 'एकादशी', 'Dwadashi': 'द्वादशी',
             'Trayodashi': 'त्रयोदशी', 'Chaturdashi': 'चतुर्दशी',
             'Purnima': 'पूर्णिमा', 'Amavasya': 'अमावस्या',
-
             // Nakshatra
             'Ashwini': 'अश्विनी', 'Bharani': 'भरणी', 'Krittika': 'कृत्तिका',
             'Rohini': 'रोहिणी', 'Mrigashira': 'मृगशिरा', 'Ardra': 'आर्द्रा',
@@ -74,9 +57,6 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Mula': 'मूल', 'Purva Ashadha': 'पूर्वाषाढ़ा', 'Uttara Ashadha': 'उत्तराषाढ़ा',
             'Dhanishta': 'धनिष्ठा', 'Shatabhisha': 'शतभिषा',
             'Purva Bhadrapada': 'पूर्वभाद्रपदा', 'Uttara Bhadrapada': 'उत्तरभाद्रपदा', 'Revati': 'रेवती',
-            'Moon': 'चंद्र', 'Sun': 'सूर्य', 'Mars': 'मंगल', 'Mercury': 'बुध',
-            'Jupiter': 'गुरु', 'Venus': 'शुक्र', 'Saturn': 'शनि',
-
             // Yoga
             'Vishkambha': 'विष्कम्भ', 'Priti': 'प्रीति', 'Ayushman': 'आयुष्मान',
             'Saubhagya': 'सौभाग्य', 'Shobhana': 'शोभन', 'Atiganda': 'अतिगण्ड',
@@ -87,13 +67,11 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Parigha': 'परिघ', 'Shiva': 'शिव', 'Siddha': 'सिद्ध',
             'Sadhya': 'साध्य', 'Shubha': 'शुभ',
             'Brahma': 'ब्रह्म', 'Indra': 'इन्द्र', 'Vaidhriti': 'वैधृति',
-
             // Karana
             'Bava': 'बव', 'Balava': 'बालव', 'Kaulava': 'कौलव',
             'Taitila': 'तैतिल', 'Garaja': 'गरज', 'Vanija': 'वणिज',
             'Vishti': 'विष्टि', 'Shakuni': 'शकुनि', 'Chatushpada': 'चतुष्पद',
             'Naga': 'नाग', 'Kimstughna': 'किंस्तुघ्न',
-
             // Days
             'Sunday': 'रविवार', 'Monday': 'सोमवार', 'Tuesday': 'मंगलवार',
             'Wednesday': 'बुधवार', 'Thursday': 'गुरुवार', 'Friday': 'शुक्रवार',
@@ -104,62 +82,29 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
     };
 
     const panchangData = [
-        {
-            label: language === 'en' ? 'Vikram Samvat' : 'विक्रम संवत',
-            value: enhancedDetails.vikramSamvat || 'N/A'
-        },
-        {
-            label: language === 'en' ? 'Shalivahan Shake' : 'शालिवाहन शाके',
-            value: shalivahanaShake || 'N/A'
-        },
-        {
-            label: language === 'en' ? 'Masa (Month)' : 'मास',
-            value: translateValue(enhancedDetails.masa)
-        },
-        {
-            label: language === 'en' ? 'Paksha (Fortnight)' : 'पक्ष',
-            value: translateValue(enhancedDetails.paksha)
-        },
-        {
-            label: language === 'en' ? 'Tithi (Lunar Day)' : 'तिथि',
-            value: enhancedDetails.tithi ? `${translateValue(enhancedDetails.tithi.name)} (${enhancedDetails.tithi.number})` : 'N/A'
-        },
-        {
-            label: language === 'en' ? 'Nakshatra' : 'नक्षत्र',
-            value: translateValue(enhancedDetails.nakshatraSwami)
-        },
-        {
-            label: language === 'en' ? 'Yoga' : 'योग',
-            value: translateValue(enhancedDetails.yoga)
-        },
-        {
-            label: language === 'en' ? 'Karana' : 'करण',
-            value: translateValue(enhancedDetails.karana)
-        },
-        {
-            label: language === 'en' ? 'Day (Var)' : 'दिन (वार)',
-            value: translateValue(enhancedDetails.dayOfWeek)
-        },
-        {
-            label: language === 'en' ? 'Ritu (Season)' : 'ऋतू',
-            value: ritu
-        },
-        {
-            label: language === 'en' ? 'Ayana' : 'आयन',
-            value: ayana
-        },
-        {
-            label: language === 'en' ? 'Nakshatra Paya' : 'नक्षत्र पाया',
-            value: enhancedDetails.nakshatraPaya || 'N/A'
-        },
-        {
-            label: language === 'en' ? 'Rahu Kaal (Inauspicious Time)' : 'राहु काल',
-            value: enhancedDetails.rahuKaal || 'N/A'
-        },
-        {
-            label: language === 'en' ? 'Sunrise Time' : 'सूर्योदय समय',
-            value: enhancedDetails.sunriseTime || 'N/A'
-        },
+        { label: language === 'en' ? 'Rashi (Moon Sign)' : 'राशि (चंद्र राशि)', value: translateValue(enhancedDetails.moonSign || enhancedDetails.rashi || enhancedDetails.chandraRashi) },
+        { label: language === 'en' ? 'Nakshatra' : 'नक्षत्र', value: translateValue(enhancedDetails.nakshatra) },
+        { label: language === 'en' ? 'Nakshatra Pada' : 'नक्षत्र चरण', value: enhancedDetails.nakshatraPada || 'N/A' },
+        { label: language === 'en' ? 'Lagna (Ascendant)' : 'लग्न', value: enhancedDetails.lagna || 'N/A' },
+        { label: language === 'en' ? 'Masa (Month)' : 'मास', value: translateValue(enhancedDetails.masa) },
+        { label: language === 'en' ? 'Tithi (Lunar Day)' : 'तिथि', value: enhancedDetails.tithi ? `${translateValue(enhancedDetails.tithi.name || enhancedDetails.tithi)} (${enhancedDetails.tithi.number || ''})` : 'N/A' },
+        { label: language === 'en' ? 'Paksha' : 'पक्ष', value: translateValue(enhancedDetails.paksha) },
+        { label: language === 'en' ? 'Yoga' : 'योग', value: translateValue(enhancedDetails.yoga) },
+        { label: language === 'en' ? 'Karana' : 'करण', value: translateValue(enhancedDetails.karana) },
+        { label: language === 'en' ? 'Day (Var)' : 'दिन (वार)', value: translateValue(enhancedDetails.day || enhancedDetails.dayOfWeek) },
+        { label: language === 'en' ? 'Ishta Kaal' : 'इष्ट काल', value: enhancedDetails.ishtaKaal || 'N/A' },
+        { label: language === 'en' ? 'Sunrise' : 'सूर्योदय', value: enhancedDetails.sunrise || 'N/A' },
+        { label: language === 'en' ? 'Sunset' : 'सूर्यास्त', value: enhancedDetails.sunset || 'N/A' },
+        { label: language === 'en' ? 'Mangal Dosha' : 'मंगल दोष', value: enhancedDetails.mangalDosha === 'Yes' ? (language === 'en' ? 'Yes' : 'हाँ') : (language === 'en' ? 'No' : 'नहीं') },
+        { label: language === 'en' ? 'Nakshatra Paya' : 'नक्षत्र पाया', value: translateValue(enhancedDetails.nakshatraPaya) },
+        { label: language === 'en' ? 'Yoni' : 'योनी', value: translateValue(enhancedDetails.yoni) },
+        { label: language === 'en' ? 'Gana' : 'गण', value: translateValue(enhancedDetails.gana) },
+        { label: language === 'en' ? 'Nadi' : 'नाडी', value: translateValue(enhancedDetails.nadi) },
+        { label: language === 'en' ? 'Varna' : 'वर्ण', value: translateValue(enhancedDetails.varna) },
+        { label: t('panchang.rashiSwami'), value: translateValue(enhancedDetails.rashiSwami) },
+        { label: t('panchang.nakshatraSwami'), value: translateValue(enhancedDetails.nakshatraSwami) },
+        { label: t('panchang.vikramSamvat'), value: enhancedDetails.vikramSamvat || 'N/A' },
+        { label: t('panchang.samvatName'), value: enhancedDetails.samvatName || 'N/A' },
     ];
 
     return (

@@ -39,6 +39,26 @@ export default function ConsultationContent() {
         concerns: "",
     });
     const [submitting, setSubmitting] = useState(false);
+    const [dynamicRate, setDynamicRate] = useState(299);
+    const [selectedAstro, setSelectedAstro] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchDefaultRate = async () => {
+            try {
+                const response = await fetch('/api/astrologers?isApproved=true&limit=1');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        setDynamicRate(data[0].hourlyRate);
+                        setSelectedAstro(data[0]);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching default rate:', error);
+            }
+        };
+        fetchDefaultRate();
+    }, []);
 
     useEffect(() => {
         // Pre-fill user data if available
@@ -286,13 +306,17 @@ export default function ConsultationContent() {
             <PaymentModal
                 open={paymentModalOpen}
                 onOpenChange={setPaymentModalOpen}
-                amount={299}
+                amount={dynamicRate}
                 title="Chat Consultation"
-                description="30 minutes chat consultation session"
+                description={`30 minutes chat consultation session`}
                 onSuccess={handlePaymentSuccess}
                 userId={user?.id}
                 consultationMode="chat"
-                consultationDetails={formData}
+                consultationDetails={{
+                    ...formData,
+                    astrologerId: selectedAstro?.id,
+                    astrologerName: selectedAstro?.name
+                }}
             />
 
             <Footer />

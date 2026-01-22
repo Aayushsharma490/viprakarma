@@ -1365,16 +1365,7 @@ export default function KundaliPage() {
                     )}
                   </div>
 
-                  {/* Enhanced Kundali Details Panel */}
-                  {kundaliData?.enhancedDetails && (
-                    <KundaliDetailsPanel
-                      enhancedDetails={kundaliData.enhancedDetails}
-                      moonSign={kundaliData.moonSign}
-                      ascendant={kundaliData.ascendant}
-                    />
-                  )}
-
-                  {/* Panchang Panel */}
+                  {/* Unified Details Panel */}
                   {kundaliData?.enhancedDetails && (
                     <PanchangPanel
                       enhancedDetails={kundaliData.enhancedDetails}
@@ -1383,10 +1374,7 @@ export default function KundaliPage() {
                     />
                   )}
 
-                  {/* Phallit Panel - Real Dynamic Predictions */}
-                  {kundaliData?.phallit && (
-                    <PhallitPanel phallit={kundaliData.phallit} />
-                  )}
+
 
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     <Card className="p-6 shadow-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 overflow-x-auto">
@@ -1681,19 +1669,20 @@ export default function KundaliPage() {
                     </div>
                   </Card>
 
-                  {/* Phallit (Predictions) Section - Added below Mahadasha */}
-                  {kundaliData.phallit && (
-                    <div className="mt-6">
-                      <PhallitPanel phallit={kundaliData.phallit} />
-                    </div>
-                  )}
+
+                </div>
+              )}
+              {/* Phallit Panel at the VERY bottom */}
+              {kundaliData?.phallit && (
+                <div className="mt-8">
+                  <PhallitPanel phallit={kundaliData.phallit} />
                 </div>
               )}
             </div>
           </div>
-        </div>
 
-        <Footer />
+          <Footer />
+        </div>
       </div>
     </>
   );

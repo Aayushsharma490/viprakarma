@@ -361,6 +361,7 @@ export default function TalkToAstrologerContent() {
                     }}
                     astrologerId={selectedAstrologerData.id}
                     astrologerName={selectedAstrologerData.name}
+                    hourlyRate={selectedAstrologerData.hourlyRate}
                 />
             )}
         </>

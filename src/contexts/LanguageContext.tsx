@@ -601,6 +601,23 @@ const translations = {
     "planet.Uranus": "Uranus",
     "planet.Neptune": "Neptune",
     "planet.Pluto": "Pluto",
+    "planet.Lord.Sun": "Sun",
+    "planet.Lord.Moon": "Moon",
+    "planet.Lord.Mars": "Mars",
+    "planet.Lord.Mercury": "Mercury",
+    "planet.Lord.Jupiter": "Jupiter",
+    "planet.Lord.Venus": "Venus",
+    "planet.Lord.Saturn": "Saturn",
+    "planet.Lord.Rahu": "Rahu",
+    "planet.Lord.Ketu": "Ketu",
+    "paya.Gold": "Gold",
+    "paya.Silver": "Silver",
+    "paya.Copper": "Copper",
+    "paya.Iron": "Iron",
+    "panchang.rashiSwami": "Rashi Swami",
+    "panchang.nakshatraSwami": "Nakshatra Swami",
+    "panchang.vikramSamvat": "Vikram Samvat",
+    "panchang.samvatName": "Samvat Name",
 
     // Other Dynamic Terms
     "benefic": "Benefic",
@@ -847,7 +864,7 @@ const translations = {
     "consultation.yourConcerns": "Your Concerns/Questions",
     "consultation.concernsPlaceholder":
       "Please describe your concerns, questions, or what you'd like guidance on...",
-    "consultation.bookNowButton": "Book Now - ₹299",
+    "consultation.bookNowButton": "Book Now",
     "consultation.creatingRequest": "Creating Request...",
 
     // Talk to Astrologer Page
@@ -1709,6 +1726,23 @@ const translations = {
     "planet.Uranus": "अरुण",
     "planet.Neptune": "वरुण",
     "planet.Pluto": "यम",
+    "planet.Lord.Sun": "Surya",
+    "planet.Lord.Moon": "Chandra",
+    "planet.Lord.Mars": "Mangal",
+    "planet.Lord.Mercury": "Budh",
+    "planet.Lord.Jupiter": "Guru",
+    "planet.Lord.Venus": "Shukra",
+    "planet.Lord.Saturn": "Shani",
+    "planet.Lord.Rahu": "Rahu",
+    "planet.Lord.Ketu": "Ketu",
+    "paya.Gold": "Swarna (Gold)",
+    "paya.Silver": "Rajat (Silver)",
+    "paya.Copper": "Tamra (Copper)",
+    "paya.Iron": "Loha (Iron)",
+    "panchang.rashiSwami": "राशि स्वामी",
+    "panchang.nakshatraSwami": "नक्षत्र स्वामी",
+    "panchang.vikramSamvat": "विक्रम संवत",
+    "panchang.samvatName": "संवत नाम",
 
     // Numerology Page
     "numerology.title": "अंकशास्त्र कैलकुलेटर",
@@ -1764,7 +1798,7 @@ const translations = {
     "consultation.yourConcerns": "आपकी चिंताएं/प्रश्न",
     "consultation.concernsPlaceholder":
       "कृपया अपनी चिंताओं, प्रश्नों या जिस बारे में आप मार्गदर्शन चाहते हैं, उसका वर्णन करें...",
-    "consultation.bookNowButton": "अभी बुक करें - ₹299",
+    "consultation.bookNowButton": "अभी बुक करें",
     "consultation.creatingRequest": "अनुरोध बनाया जा रहा है...",
 
     // Talk to Astrologer Page

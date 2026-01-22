@@ -17,13 +17,15 @@ interface ConsultationFormModalProps {
     onClose: () => void;
     astrologerId: number;
     astrologerName: string;
+    hourlyRate?: number;
 }
 
 export default function ConsultationFormModal({
     isOpen,
     onClose,
     astrologerId,
-    astrologerName
+    astrologerName,
+    hourlyRate = 299 // Default fallback
 }: ConsultationFormModalProps) {
     const { user } = useAuth();
     const { t } = useLanguage();
@@ -233,7 +235,7 @@ export default function ConsultationFormModal({
             <PaymentModal
                 open={paymentModalOpen}
                 onOpenChange={setPaymentModalOpen}
-                amount={299}
+                amount={hourlyRate}
                 title="Chat Consultation"
                 description={`30 minutes chat with ${astrologerName}`}
                 onSuccess={handlePaymentSuccess}

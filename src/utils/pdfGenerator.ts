@@ -184,24 +184,24 @@ export const generateKundaliPDF = async (kundaliData: any, language: string) => 
     yPos += 8;
 
     const panchangData = [
+        ['नाम', kundaliData.basicDetails?.name || 'N/A'],
+        ['जन्म तिथि', kundaliData.basicDetails?.localTime || 'N/A'],
         ['विक्रम संवत', kundaliData.enhancedDetails?.vikramSamvat || 'N/A'],
-        ['शालिवाहन शके', kundaliData.enhancedDetails?.shalivahanaShake || 'N/A'],
-        ['तिथि', kundaliData.enhancedDetails?.tithi?.name || 'N/A'],
+        ['तिथि', kundaliData.enhancedDetails?.tithi?.name || kundaliData.enhancedDetails?.tithi || 'N/A'],
         ['पक्ष', kundaliData.enhancedDetails?.paksha || 'N/A'],
         ['मास', kundaliData.enhancedDetails?.masa || 'N/A'],
+        ['नक्षत्र', kundaliData.enhancedDetails?.nakshatra || 'N/A'],
+        ['नक्षत्र चरण', kundaliData.enhancedDetails?.nakshatraPada || 'N/A'],
+        ['नक्षत्र पाया', kundaliData.enhancedDetails?.nakshatraPaya || 'N/A'],
         ['योग', kundaliData.enhancedDetails?.yoga || 'N/A'],
         ['करण', kundaliData.enhancedDetails?.karana || 'N/A'],
-        ['दिन', kundaliData.enhancedDetails?.dayOfWeek || 'N/A'],
-        ['चंद्र राशि', kundaliData.enhancedDetails?.chandraRashi || 'N/A'],
-        ['सूर्य राशि', kundaliData.enhancedDetails?.suryaRashi || 'N/A'],
-        ['बृहस्पति राशि', kundaliData.enhancedDetails?.brihaspatiRashi || 'N/A'],
-        ['ऋतू', kundaliData.enhancedDetails?.ritu || 'N/A'],
-        ['आयन', kundaliData.enhancedDetails?.ayana || 'N/A'],
+        ['दिन', kundaliData.enhancedDetails?.day || kundaliData.enhancedDetails?.dayOfWeek || 'N/A'],
+        ['इष्ट काल', kundaliData.enhancedDetails?.ishtaKaal || 'N/A'],
         ['सूर्योदय', kundaliData.enhancedDetails?.sunrise || 'N/A'],
         ['सूर्यास्त', kundaliData.enhancedDetails?.sunset || 'N/A'],
-        ['चंद्रोदय', kundaliData.enhancedDetails?.moonrise || 'N/A'],
-        ['चंद्रास्त', kundaliData.enhancedDetails?.moonset || 'N/A'],
-        ['सूर्योदय पर लग्न', kundaliData.enhancedDetails?.lagnaAtSunrise || 'N/A'],
+        ['दिन की अवधि', kundaliData.enhancedDetails?.dayDuration || 'N/A'],
+        ['रात की अवधि', kundaliData.enhancedDetails?.nightDuration || 'N/A'],
+        ['दशा शेष', kundaliData.enhancedDetails?.remainingDasha || 'N/A'],
     ];
 
     autoTable(doc, {

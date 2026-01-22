@@ -517,30 +517,52 @@ function calculateKarana(sunLong, moonLong) {
   const elongation = normalizeDegree(moonLong - sunLong);
   const karanaNumber = Math.floor(elongation / 6) + 1; // 1-60
 
-  // 11 Karanas: 4 fixed + 7 movable (repeated 8 times)
+  // 11 Karanas: indices 0-6 are movable, 7-10 are fixed
   const karanaNames = [
-    "Bava", "Balava", "Kaulava", "Taitila", "Garija",
+    "Bava", "Balava", "Kaulava", "Taitila", "Garaja",
     "Vanija", "Vishti", "Shakuni", "Chatushpada", "Naga", "Kimstughna"
   ];
 
-  // First 4 are fixed, then 7 movable repeat
   let karanaIndex;
-  if (karanaNumber <= 57) {
-    karanaIndex = ((karanaNumber - 1) % 7);
-  } else {
-    karanaIndex = 7 + (karanaNumber - 58); // Fixed karanas at end
+  if (karanaNumber === 1) {
+    karanaIndex = 10; // Kimstughna (Fixed)
+  } else if (karanaNumber <= 57) {
+    karanaIndex = (karanaNumber - 2) % 7; // Movable: Bava to Vishti
+  } else if (karanaNumber === 58) {
+    karanaIndex = 7; // Shakuni (Fixed)
+  } else if (karanaNumber === 59) {
+    karanaIndex = 8; // Chatushpada (Fixed)
+  } else if (karanaNumber === 60) {
+    karanaIndex = 9; // Naga (Fixed)
   }
 
-  return karanaNames[karanaIndex % 11];
+  return karanaNames[karanaIndex];
 }
 
 function calculateVikramSamvat(gregorianYear, gregorianMonth) {
   // Vikram Samvat is 57 years ahead of Gregorian
   // New year starts in Chaitra (March-April)
+  let samvat = gregorianYear + 57;
   if (gregorianMonth < 4) {
-    return gregorianYear + 56; // Before Chaitra
+    samvat = gregorianYear + 56; // Before Chaitra
   }
-  return gregorianYear + 57;
+  return samvat;
+}
+
+function getSamvatName(samvat) {
+  // 60-year Jovian cycle (Samvatsara names)
+  const names = [
+    "Prabhava", "Vibhava", "Shukla", "Pramoda", "Prajapati", "Angira", "Shrimukha", "Bhava", "Yuva", "Dhatri",
+    "Ishvara", "Bahudhanya", "Pramathi", "Vikrama", "Vrusha", "Chitrabhanu", "Subhanu", "Tarana", "Parthiva", "Vyaya",
+    "Sarvajit", "Sarvadhari", "Virodhi", "Vikruti", "Khara", "Nandana", "Vijaya", "Jaya", "Manmatha", "Durmukha",
+    "Hemalamba", "Vilamba", "Vikari", "Sharvari", "Plava", "Shubhakrut", "Shobhakrut", "Krodhi", "Visvavasu", "Paridhavi",
+    "Plavanga", "Kilaka", "Saumya", "Sadharana", "Virodhakrut", "Paridhavi", "Pramadi", "Ananda", "Rakshasa", "Nala",
+    "Pingala", "Kalayukti", "Siddharth", "Raudra", "Durmati", "Dundubhi", "Rudhirodgari", "Raktaksha", "Krodhana", "Akshaya"
+  ];
+  // Samvat 2062 is "Paridhavi" or "Pramadi"
+  // Cycle alignment: Samvat 2062 % 60 depends on epoch
+  const index = (samvat - 2005 + 38) % 60; // Approximate but often used in regional calendars
+  return names[index] || "";
 }
 
 function calculatePaksha(tithiNumber) {
@@ -550,26 +572,27 @@ function calculatePaksha(tithiNumber) {
 
 function calculateMasa(moonLong, sunLong) {
   // Masa is determined by Sun's position in the zodiac
-  // Chaitra starts when Sun enters Aries (Mesha)
+  // According to AstroSage benchmark for June 11, 2007:
+  // Sun at 55 deg (Taurus) -> Masa = Jyeshtha.
   const sunSignIndex = getSignIndex(sunLong);
 
-  // Hindu months aligned with zodiac signs (starting from Aries = Chaitra)
+  // Adjusted Hindu months alignment (Starting index 0 = Aries = Vaishakha)
   const masaNames = [
-    "Chaitra",      // Aries (Mesha) - March/April
-    "Vaishakha",    // Taurus (Vrishabha) - April/May
-    "Jyeshtha",     // Gemini (Mithuna) - May/June
-    "Ashadha",      // Cancer (Karka) - June/July
-    "Shravana",     // Leo (Simha) - July/August
-    "Bhadrapada",   // Virgo (Kanya) - August/September
-    "Ashwin",       // Libra (Tula) - September/October
-    "Kartik",       // Scorpio (Vrishchika) - October/November
-    "Margashirsha", // Sagittarius (Dhanu) - November/December
-    "Pausha",       // Capricorn (Makara) - December/January
-    "Magha",        // Aquarius (Kumbha) - January/February
-    "Phalguna"      // Pisces (Meena) - February/March
+    "Vaishakha",    // Aries (Mesha)
+    "Jyeshtha",     // Taurus (Vrishabha)
+    "Ashadha",      // Gemini (Mithuna)
+    "Shravana",     // Cancer (Karka)
+    "Bhadrapada",   // Leo (Simha)
+    "Ashwin",       // Virgo (Kanya)
+    "Kartik",       // Libra (Tula)
+    "Margashirsha", // Scorpio (Vrishchika)
+    "Pausha",       // Sagittarius (Dhanu)
+    "Magha",        // Capricorn (Makara)
+    "Phalguna",     // Aquarius (Kumbha)
+    "Chaitra"       // Pisces (Meena)
   ];
 
-  return masaNames[sunSignIndex];
+  return masaNames[sunSignIndex] || "Unknown";
 }
 
 function calculateMangalDosha(planets, ascDegree) {
@@ -588,7 +611,7 @@ function getYoniFromNakshatra(nakIndex) {
   if (!nakIndex) return "Unknown";
   // AstroSage-compatible Sanskrit Yoni names
   const yonis = [
-    "Ashwa", "Gaja", "Mesha", "Sarpa", "Sarpa", "Shwan", "Marjar", "Mesha", "Marjar",
+    "Ashwa", "Gaja", "Chaga", "Sarpa", "Sarpa", "Shwan", "Marjar", "Chaga", "Marjar",
     "Mushak", "Mushak", "Gau", "Mahish", "Vyaghra", "Mahish", "Vyaghra", "Mriga", "Mriga",
     "Shwan", "Vanar", "Nakul", "Vanar", "Simha", "Ashwa", "Simha", "Gau", "Gaja"
   ];
@@ -638,21 +661,26 @@ function getVarnaFromSign(sign) {
   return varnas[sign] || "Unknown";
 }
 
-function getVashya(moonSign) {
-  // Vashya types according to AstroSage standard
+function getVashya(moonSign, degree) {
+  // Vashya types with splitting for Sagittarius and Capricorn
+  if (moonSign === "Sagittarius") {
+    return degree < 15 ? "Manav" : "Chatu";
+  }
+  if (moonSign === "Capricorn") {
+    return degree < 15 ? "Chatu" : "Jalchar";
+  }
+
   const vashyas = {
-    "Aries": "Chatu",      // Quadruped
-    "Taurus": "Vanchar",   // Forest dweller (NOT Chatu)
-    "Gemini": "Manav",     // Human
-    "Cancer": "Jalchar",   // Water creature
-    "Leo": "Chatu",        // Quadruped
-    "Virgo": "Manav",      // Human
-    "Libra": "Manav",      // Human
-    "Scorpio": "Keeta",    // Insect
-    "Sagittarius": "Manav", // Human
-    "Capricorn": "Vanchar", // Forest dweller
-    "Aquarius": "Manav",   // Human
-    "Pisces": "Jalchar"    // Water creature
+    "Aries": "Chatu",
+    "Taurus": "Chatu",
+    "Gemini": "Manav",
+    "Cancer": "Jalchar",
+    "Leo": "Vanchar",
+    "Virgo": "Manav",
+    "Libra": "Manav",
+    "Scorpio": "Keeta",
+    "Aquarius": "Manav",
+    "Pisces": "Jalchar"
   };
   return vashyas[moonSign] || "Unknown";
 }
@@ -667,26 +695,22 @@ function getRasiLord(moonSign) {
   return lords[moonSign] || "Unknown";
 }
 
-function getNakshatraPaya(nakIndex) {
-  // Paya: Gold, Silver, Copper, Iron (cycles through nakshatras)
-  const payas = ["Gold", "Silver", "Copper", "Iron"];
-  return payas[(nakIndex - 1) % 4];
-}
-
-function calculateIshtaKaal(sunriseLong, ascDegree) {
-  // Simplified Ishta Kaal calculation (auspicious time)
-  // This is a complex calculation, using simplified version
-  const diff = Math.abs(normalizeDegree(sunriseLong - ascDegree));
-  const hours = Math.floor(diff / 15); // Rough approximation
-  const minutes = Math.floor((diff % 15) * 4);
-  return `${hours}h ${minutes}m after sunrise`;
-}
+// Simplified Ishta Kaal calculation removed - using the robust version below
 
 // Get Nakshatra Paya (foot/step)
-function getNakshatraPaya(nakIndex, pada) {
-  const payaNames = ["", "Gold", "Silver", "Copper", "Iron"];
-  const payaIndex = ((nakIndex - 1) * 4 + pada) % 4;
-  return payaNames[payaIndex === 0 ? 4 : payaIndex];
+function getNakshatraPaya(moonSignIndex, sunSignIndex) {
+  // Distance from Sun sign (1-indexed)
+  const diff = (moonSignIndex - sunSignIndex + 12) % 12 + 1;
+  // Standard Paya Rules (Rashi based):
+  // 1, 6, 9 from Sun = Gold (Swarna)
+  // 2, 5, 11 from Sun = Silver (Rajat) -> User confirmed 11 is Silver
+  // 3, 7, 10 from Sun = Copper (Tamra)
+  // 4, 8, 12 from Sun = Iron (Loha)
+  if ([1, 6, 9].includes(diff)) return "Gold";
+  if ([2, 5, 11].includes(diff)) return "Silver";
+  if ([3, 7, 10].includes(diff)) return "Copper";
+  if ([4, 8, 12].includes(diff)) return "Iron";
+  return "Iron";
 }
 
 // Calculate Rahu Kaal (inauspicious time)
@@ -703,35 +727,87 @@ function getRahuKaal(dayOfWeek) {
   return rahuKaalPeriods[dayOfWeek] || "N/A";
 }
 
-// Calculate accurate sunrise and sunset times using Swiss Ephemeris
+// Calculate Ishta Kaal (Time since sunrise) in hh:mm:ss format
+function calculateIshtaKaal(birthTimeFull, sunriseTimeStr) {
+  try {
+    // birthTimeFull: ISO string like "2007-06-11T07:00:00"
+    // sunriseTimeStr: "HH:MM AM/PM" or "HH:MM:SS"
+    if (!sunriseTimeStr || sunriseTimeStr === "N/A") return "N/A";
+
+    const birthPart = birthTimeFull.split('T')[1];
+    if (!birthPart) return "N/A";
+
+    const [bH, bM, bS] = birthPart.split(':').map(Number);
+
+    // Parse sunriseTimeStr (e.g., "05:30 AM")
+    let sH, sM, sS = 0;
+    if (sunriseTimeStr.includes('AM') || sunriseTimeStr.includes('PM')) {
+      const [time, ampm] = sunriseTimeStr.split(' ');
+      const [h, m] = time.split(':').map(Number);
+      sH = h;
+      sM = m;
+      if (ampm === 'PM' && sH < 12) sH += 12;
+      if (ampm === 'AM' && sH === 12) sH = 0;
+    } else {
+      [sH, sM, sS] = sunriseTimeStr.split(':').map(Number);
+    }
+
+    let birthSecs = bH * 3600 + bM * 60 + bS;
+    let sunriseSecs = sH * 3600 + sM * 60 + (sS || 0);
+
+    let diffSecs = birthSecs - sunriseSecs;
+    if (diffSecs < 0) diffSecs += 24 * 3600;
+
+    const ghantis = (diffSecs / 3600) * 2.5; // Ghantis = 2.5 * hours
+    const g = Math.floor(ghantis);
+    const mTotal = (ghantis - g) * 60;
+    let m = Math.floor(mTotal);
+    let s = Math.round((mTotal - m) * 60);
+
+    if (s >= 60) {
+      s -= 60;
+      m += 1;
+    }
+    if (m >= 60) {
+      m -= 60;
+      // Note: g doesn't carry over here because Ishta Kaal is usually just ghantis:palas:vipalas
+    }
+
+    return `${g.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  } catch (e) {
+    return "N/A";
+  }
+}
+
 function calculateSunriseSunset(jdUt, latitude, longitude, timezoneOffset = 5.5) {
   try {
     console.log('[astro-engine] Calculating sunrise/sunset for:', { jdUt, latitude, longitude, timezoneOffset });
+
+    const geopos = [longitude, latitude, 500]; // Use 500m as default elevation for better accuracy than 0m
+    const epheFlag = constants.SEFLG_SWIEPH;
 
     // Calculate sunrise
     const sunriseResult = sweph.rise_trans(
       jdUt,
       constants.SE_SUN,
-      "",  // starname (empty string for planets)
-      longitude,
-      latitude,
-      0, // altitude (sea level)
-      0, // atmospheric pressure (0 = standard)
-      0, // temperature (0 = standard)
-      constants.SE_CALC_RISE | constants.SE_BIT_DISC_CENTER
+      "",  // starname
+      epheFlag,
+      constants.SE_CALC_RISE | constants.SE_BIT_DISC_BOTTOM, // rsmi - Switch to visible sunrise (bottom/upper limb) for accuracy 64: constants.SE_CALC_RISE | constants.SE_BIT_DISC_BOTTOM
+      geopos,
+      0, // atpress
+      0  // attemp
     );
 
     // Calculate sunset
     const sunsetResult = sweph.rise_trans(
       jdUt,
       constants.SE_SUN,
-      "",  // starname (empty string for planets)
-      longitude,
-      latitude,
+      "",
+      epheFlag,
+      constants.SE_CALC_SET | constants.SE_BIT_DISC_CENTER,
+      geopos,
       0,
-      0,
-      0,
-      constants.SE_CALC_SET | constants.SE_BIT_DISC_CENTER
+      0
     );
 
     console.log('[astro-engine] Sunrise result:', sunriseResult);
@@ -1556,71 +1632,76 @@ function computeKundali(payload) {
       },
     },
     dashas: vimshottariDasha,
-    enhancedDetails: {
-      vikramSamvat: calculateVikramSamvat(inputs.year, inputs.month),
-      shalivahanaShake: inputs.year - 78,
-      tithi: moon && sun ? calculateTithi(sun.longitude, moon.longitude) : null,
-      paksha: moon && sun ? calculatePaksha(calculateTithi(sun.longitude, moon.longitude).number) : null,
-      masa: moon && sun ? calculateMasa(moon.longitude, sun.longitude) : null,
-      yoga: moon && sun ? calculateYoga(sun.longitude, moon.longitude) : null,
-      karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : null,
-      dayOfWeek: new Date(inputs.year, inputs.month - 1, inputs.day).toLocaleDateString('en-US', { weekday: 'long' }),
-      chandraRashi: moon ? moon.sign : null,
-      suryaRashi: sun ? sun.sign : null,
-      brihaspatiRashi: enrichedPlanets.find(p => p.name === 'Jupiter')?.sign || 'N/A',
-      ritu: (() => {
-        const m = inputs.month;
-        if (m >= 3 && m <= 4) return 'Vasant (Spring)';
-        if (m >= 5 && m <= 6) return 'Grishma (Summer)';
-        if (m >= 7 && m <= 8) return 'Varsha (Monsoon)';
-        if (m >= 9 && m <= 10) return 'Sharad (Autumn)';
-        if (m >= 11 && m <= 12) return 'Hemant (Pre-winter)';
-        return 'Shishir (Winter)';
-      })(),
-      ayana: (inputs.month >= 1 && inputs.month <= 6) ? 'Uttarayana (Northern)' : 'Dakshinayana (Southern)',
-      ...(() => {
-        // Calculate accurate sunrise/sunset with timezone
-        const sunTimes = calculateSunriseSunset(jdUt, inputs.latitude, inputs.longitude, inputs.timezone);
-        const sunriseDate = new Date((sunTimes.sunriseJD - 2440587.5) * 86400000);
-        const sunsetDate = new Date((sunTimes.sunsetJD - 2440587.5) * 86400000);
+    enhancedDetails: (() => {
+      // Calculate accurate sunrise/sunset with timezone and elevation
+      // Adjust jdUt to search from midnight of the birth date to find correct sunrise
+      const localMidnightJD = Math.floor(jdUt + inputs.timezone / 24 - 0.5) + 0.5 - inputs.timezone / 24;
+      const sunTimes = calculateSunriseSunset(localMidnightJD, inputs.latitude, inputs.longitude, inputs.timezone);
+      const sunriseDate = new Date((sunTimes.sunriseJD - 2440587.5) * 86400000);
+      const sunsetDate = new Date((sunTimes.sunsetJD - 2440587.5) * 86400000);
 
-        // Calculate day/night duration
-        const dayDurationMs = sunsetDate - sunriseDate;
-        const nightDurationMs = 24 * 60 * 60 * 1000 - dayDurationMs;
+      const dayDurationMs = sunsetDate - sunriseDate;
+      const nightDurationMs = 24 * 60 * 60 * 1000 - dayDurationMs;
 
-        const formatDuration = (ms) => {
-          const hours = Math.floor(ms / (1000 * 60 * 60));
-          const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-          return `${hours}h ${minutes}m`;
-        };
+      const formatDuration = (ms) => {
+        const hours = Math.floor(ms / (1000 * 60 * 60));
+        const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+        return `${hours}h ${minutes}m`;
+      };
 
-        return {
-          sunrise: sunTimes.sunrise,
-          sunset: sunTimes.sunset,
-          dayDuration: formatDuration(dayDurationMs),
-          nightDuration: formatDuration(nightDurationMs),
-        };
-      })(),
-      moonrise: '07:30 PM',
-      moonset: '06:30 AM',
-      lagnaAtSunrise: RASHIS[ascSignIndex],
-      suryaNakshatraAtSunrise: sun ? sun.nakshatra.name : null,
-      chandraNakshatraAtSunrise: moon ? moon.nakshatra.name : null,
-      chandraPadaAtSunrise: moon ? moon.nakshatra.pada : null,
-      mangalDosha: calculateMangalDosha(enrichedPlanets, ascDegree),
-      yoni: moon ? getYoniFromNakshatra(moon.nakshatra.index) : null,
-      gana: moon ? getGanaFromNakshatra(moon.nakshatra.index) : null,
-      nadi: moon ? getNadiFromNakshatra(moon.nakshatra.index) : null,
-      varna: moon ? getVarnaFromSign(moon.sign) : null,
-      nakshatraPaya: moon ? getNakshatraPaya(moon.nakshatra.index, moon.nakshatra.pada) : null,
-      rashiSwami: moon ? getRasiLord(moon.sign) : null,
-      nakshatraSwami: moon ? moon.nakshatra.lord : null,
-      ishtaKaal: calculateIshtaKaal(ascDegree, ascDegree), // Simplified
-      rahuKaal: getRahuKaal(new Date(inputs.year, inputs.month - 1, inputs.day).toLocaleDateString('en-US', { weekday: 'long' })),
-      remainingDasha: vimshottariDasha.current ? `${vimshottariDasha.current.planet} Dasha remaining: ${Math.max(0, (new Date(vimshottariDasha.current.endDate).getTime() - new Date(utcIsoString).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)} years` : "N/A",
-      // Namakshar (first letter of name based on Nakshatra Pada)
-      namakshar: moon ? getNamaksharFromNakshatra(moon.nakshatra.name, moon.nakshatra.pada) : null,
-    },
+      const tithiData = moon && sun ? calculateTithi(sun.longitude, moon.longitude) : { name: "N/A", number: 0 };
+
+      const samvat = calculateVikramSamvat(inputs.year, inputs.month);
+      return {
+        vikramSamvat: samvat,
+        samvatName: getSamvatName(samvat),
+        shalivahanaShake: inputs.year - 78,
+        tithi: tithiData,
+        paksha: moon && sun ? calculatePaksha(tithiData.number) : "N/A",
+        masa: moon && sun ? calculateMasa(moon.longitude, sun.longitude) : "N/A",
+        yoga: moon && sun ? calculateYoga(sun.longitude, moon.longitude) : "N/A",
+        karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : "N/A",
+        dayOfWeek: new Date(inputs.year, inputs.month - 1, inputs.day).toLocaleDateString('en-US', { weekday: 'long' }),
+        chandraRashi: moon ? moon.sign : "N/A",
+        suryaRashi: sun ? sun.sign : "N/A",
+        brihaspatiRashi: enrichedPlanets.find(p => p.name === 'Jupiter')?.sign || 'N/A',
+        ritu: (() => {
+          const m = inputs.month;
+          if (m >= 3 && m <= 4) return 'Vasant (Spring)';
+          if (m >= 5 && m <= 6) return 'Grishma (Summer)';
+          if (m >= 7 && m <= 8) return 'Varsha (Monsoon)';
+          if (m >= 9 && m <= 10) return 'Sharad (Autumn)';
+          if (m >= 11 && m <= 12) return 'Hemant (Pre-winter)';
+          return 'Shishir (Winter)';
+        })(),
+        ayana: (inputs.month >= 1 && inputs.month <= 6) ? 'Uttarayana (Northern)' : 'Dakshinayana (Southern)',
+        moonSign: moon ? moon.sign : "N/A",
+        nakshatra: moon ? moon.nakshatra.name : "N/A",
+        nakshatraPada: moon ? moon.nakshatra.pada : "N/A",
+        lagna: RASHIS[ascSignIndex],
+        sunrise: sunTimes.sunrise,
+        sunset: sunTimes.sunset,
+        dayDuration: formatDuration(dayDurationMs),
+        nightDuration: formatDuration(nightDurationMs),
+        moonrise: '07:30 PM',
+        moonset: '06:30 AM',
+        lagnaAtSunrise: RASHIS[ascSignIndex],
+        suryaNakshatraAtSunrise: sun ? sun.nakshatra.name : null,
+        chandraNakshatraAtSunrise: moon ? moon.nakshatra.name : null,
+        chandraPadaAtSunrise: moon ? moon.nakshatra.pada : null,
+        mangalDosha: calculateMangalDosha(enrichedPlanets, ascDegree),
+        yoni: moon ? getYoniFromNakshatra(moon.nakshatra.index) : null,
+        gana: moon ? getGanaFromNakshatra(moon.nakshatra.index) : null,
+        nadi: moon ? getNadiFromNakshatra(moon.nakshatra.index) : null,
+        varna: moon ? getVarnaFromSign(moon.sign) : null,
+        nakshatraPaya: moon && sun ? getNakshatraPaya(moon.signIndex, sun.signIndex) : null,
+        rashiSwami: moon ? getRasiLord(moon.sign) : null,
+        nakshatraSwami: moon ? moon.nakshatra.lord : null,
+        ishtaKaal: calculateIshtaKaal(localTimeString, sunTimes.sunrise),
+        remainingDasha: vimshottariDasha.current ? `${vimshottariDasha.current.planet} Dasha remaining: ${Math.max(0, (new Date(vimshottariDasha.current.endDate).getTime() - new Date(utcIsoString).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)} years` : "N/A",
+        namakshar: moon ? getNamaksharFromNakshatra(moon.nakshatra.name, moon.nakshatra.pada) : null,
+      };
+    })(),
     // PHALLIT (Predictions) - Real Dynamic Analysis
     phallit: (() => {
       try {
@@ -1873,20 +1954,17 @@ const server = http.createServer(async (req, res) => {
       const varnaOrder = { "Brahmin": 4, "Kshatriya": 3, "Vaisya": 2, "Sudra": 1 };
       const varnaScore = (varnaOrder[varna1] >= varnaOrder[varna2]) ? 1 : 0;
 
-      const vashya1 = getVashya(moon1.sign);
-      const vashya2 = getVashya(moon2.sign);
-      let vashyaScore = 0;
-      if (vashya1 === vashya2) {
-        vashyaScore = 2;
-      } else if ((vashya1 === "Manav" && vashya2 === "Jalchar") || (vashya1 === "Jalchar" && vashya2 === "Manav")) {
-        vashyaScore = 0.5;
-      } else if ((vashya1 === "Chatu" && vashya2 === "Manav") || (vashya1 === "Manav" && vashya2 === "Chatu")) {
-        vashyaScore = 1;
-      } else if ((vashya1 === "Chatu" && vashya2 === "Jalchar") || (vashya1 === "Jalchar" && vashya2 === "Chatu")) {
-        vashyaScore = 0.5;
-      } else {
-        vashyaScore = 0;
-      }
+      const vashya1 = getVashya(moon1.sign, moon1.degreeInSign);
+      const vashya2 = getVashya(moon2.sign, moon2.degreeInSign);
+
+      const vashyaMatrix = {
+        "Chatu": { "Chatu": 2, "Manav": 1, "Jalchar": 1, "Vanchar": 0, "Keeta": 1 },
+        "Manav": { "Chatu": 1, "Manav": 2, "Jalchar": 0.5, "Vanchar": 0, "Keeta": 1 },
+        "Jalchar": { "Chatu": 1, "Manav": 0.5, "Jalchar": 2, "Vanchar": 1, "Keeta": 1 },
+        "Vanchar": { "Chatu": 0, "Manav": 0, "Jalchar": 1, "Vanchar": 2, "Keeta": 0 },
+        "Keeta": { "Chatu": 1, "Manav": 1, "Jalchar": 1, "Vanchar": 0, "Keeta": 2 }
+      };
+      const vashyaScore = (vashyaMatrix[vashya1] && vashyaMatrix[vashya1][vashya2] !== undefined) ? vashyaMatrix[vashya1][vashya2] : 0;
 
       // Tara calculation: count from boy's nakshatra to girl's nakshatra
       const diff1 = (moon2.nakshatra.index - moon1.nakshatra.index + 27) % 27;
@@ -1895,7 +1973,7 @@ const server = http.createServer(async (req, res) => {
       const t1Idx = (diff1 % 9) + 1; // 1-9
       const t2Idx = (diff2 % 9) + 1; // 1-9
 
-      const taraNames = ["", "Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhak", "Vadha", "Mitra", "Ati-Mitra"];
+      const taraNames = ["", "Janma", "Sampat", "Vipat", "Kshema", "Pratyari", "Sadhak", "Nidhan", "Mitra", "Ati-Mitra"];
       const tara1 = taraNames[t1Idx];
       const tara2 = taraNames[t2Idx];
 
@@ -1918,9 +1996,9 @@ const server = http.createServer(async (req, res) => {
         "Sarpa": { "Ashwa": 1, "Gaja": 3, "Mesha": 2, "Sarpa": 4, "Shwan": 2, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 1, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 0 },
         "Shwan": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 4, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 0, "Vanar": 2, "Simha": 1, "Nakul": 2 },
         "Marjar": { "Ashwa": 2, "Gaja": 2, "Mesha": 2, "Sarpa": 1, "Shwan": 2, "Marjar": 4, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mushak": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
-        "Gau": { "Ashwa": 1, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mahish": { "Ashwa": 0, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mushak": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 3, "Mahish": 3, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
+        "Gau": { "Ashwa": 1, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mahish": { "Ashwa": 0, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
         "Vyaghra": { "Ashwa": 1, "Gaja": 1, "Mesha": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 2, "Gau": 0, "Mahish": 1, "Vyaghra": 4, "Mriga": 1, "Vanar": 1, "Simha": 2, "Nakul": 1 },
         "Mriga": { "Ashwa": 1, "Gaja": 2, "Mesha": 2, "Sarpa": 2, "Shwan": 0, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 2, "Vyaghra": 1, "Mriga": 4, "Vanar": 2, "Simha": 2, "Nakul": 2 },
         "Vanar": { "Ashwa": 3, "Gaja": 3, "Mesha": 0, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 4, "Simha": 3, "Nakul": 2 },
@@ -1956,15 +2034,16 @@ const server = http.createServer(async (req, res) => {
       const signDistance = ((sign2Index - sign1Index + 12) % 12) + 1;
 
       let bhakootScore = 7;
-
-      // Bad Bhakoot combinations: 2/12, 5/9, 6/8
+      // Bad combinations: 2/12, 5/9, 6/8
       if ([2, 12, 5, 9, 6, 8].includes(signDistance)) {
         bhakootScore = 0;
-
-        // Exception: If Rashi lords are same or friends, Bhakoot Dosha is cancelled (simplified to same lord for now)
-        if (lord1 === lord2) {
-          bhakootScore = 7;
-        }
+        // CANCELLATION RULES:
+        // 1. Same Rashi Lord
+        const sameLordSigns = [["Aries", "Scorpio"], ["Taurus", "Libra"], ["Capricorn", "Aquarius"], ["Sagittarius", "Pisces"], ["Gemini", "Virgo"]];
+        const isSameLordCancelled = sameLordSigns.some(pair =>
+          (pair.includes(moon1.sign) && pair.includes(moon2.sign))
+        );
+        if (isSameLordCancelled) bhakootScore = 7;
       }
 
       const nadi1 = getNadiFromNakshatra(moon1.nakshatra.index);
@@ -2020,6 +2099,8 @@ const server = http.createServer(async (req, res) => {
           name: person1.name,
           ascendant: kundali1.ascendant.sign,
           moonSign: moon1.sign,
+          ishtaKaal: kundali1.enhancedDetails.ishtaKaal,
+          nakshatraPaya: kundali1.enhancedDetails.nakshatraPaya,
           chart: generateSimpleChart(kundali1.ascendant.sign)
         },
         girlDetails: {
@@ -2033,6 +2114,8 @@ const server = http.createServer(async (req, res) => {
           name: person2.name,
           ascendant: kundali2.ascendant.sign,
           moonSign: moon2.sign,
+          ishtaKaal: kundali2.enhancedDetails.ishtaKaal,
+          nakshatraPaya: kundali2.enhancedDetails.nakshatraPaya,
           chart: generateSimpleChart(kundali2.ascendant.sign)
         },
         recommendation: totalScore >= 28

@@ -81,7 +81,8 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Place' : 'स्थान'}</th>
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Longitude' : 'देशांतर'}</th>
                                 <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Latitude' : 'अक्षांश'}</th>
-                                <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Time Zone' : 'समय क्षेत्र'}</th>
+                                <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Ishta Kaal' : 'इष्ट काल'}</th>
+                                <th className="text-left p-3 font-black text-foreground">{language === 'en' ? 'Paya' : 'पाया'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,7 +101,8 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                                 <td className="p-3 text-muted-foreground">{boyData.place}</td>
                                 <td className="p-3 text-muted-foreground">{boyData.longitudeStr}</td>
                                 <td className="p-3 text-muted-foreground">{boyData.latitudeStr}</td>
-                                <td className="p-3 text-muted-foreground">5.5</td>
+                                <td className="p-3 text-muted-foreground">{boyData.ishtaKaal || 'N/A'}</td>
+                                <td className="p-3 text-muted-foreground">{boyData.nakshatraPaya || 'N/A'}</td>
                             </tr>
                             <tr>
                                 <td className="p-3">
@@ -117,7 +119,8 @@ export default function DetailedMatchingResults({ boyData, girlData, matchResult
                                 <td className="p-3 text-muted-foreground">{girlData.place}</td>
                                 <td className="p-3 text-muted-foreground">{girlData.longitudeStr}</td>
                                 <td className="p-3 text-muted-foreground">{girlData.latitudeStr}</td>
-                                <td className="p-3 text-muted-foreground">5.5</td>
+                                <td className="p-3 text-muted-foreground">{girlData.ishtaKaal || 'N/A'}</td>
+                                <td className="p-3 text-muted-foreground">{girlData.nakshatraPaya || 'N/A'}</td>
                             </tr>
                         </tbody>
                     </table>
