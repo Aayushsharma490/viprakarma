@@ -639,11 +639,20 @@ function getVarnaFromSign(sign) {
 }
 
 function getVashya(moonSign) {
+  // Vashya types according to AstroSage standard
   const vashyas = {
-    "Aries": "Chatu", "Taurus": "Chatu", "Leo": "Chatu",
-    "Gemini": "Manav", "Virgo": "Manav", "Libra": "Manav", "Aquarius": "Manav", "Sagittarius": "Manav",
-    "Cancer": "Jalchar", "Pisces": "Jalchar", "Capricorn": "Chatu",
-    "Scorpio": "Keeta"
+    "Aries": "Chatu",      // Quadruped
+    "Taurus": "Vanchar",   // Forest dweller (NOT Chatu)
+    "Gemini": "Manav",     // Human
+    "Cancer": "Jalchar",   // Water creature
+    "Leo": "Chatu",        // Quadruped
+    "Virgo": "Manav",      // Human
+    "Libra": "Manav",      // Human
+    "Scorpio": "Keeta",    // Insect
+    "Sagittarius": "Manav", // Human
+    "Capricorn": "Vanchar", // Forest dweller
+    "Aquarius": "Manav",   // Human
+    "Pisces": "Jalchar"    // Water creature
   };
   return vashyas[moonSign] || "Unknown";
 }
@@ -703,9 +712,10 @@ function calculateSunriseSunset(jdUt, latitude, longitude, timezoneOffset = 5.5)
     const sunriseResult = sweph.rise_trans(
       jdUt,
       constants.SE_SUN,
+      "",  // starname (empty string for planets)
       longitude,
       latitude,
-      0, // sea level
+      0, // altitude (sea level)
       0, // atmospheric pressure (0 = standard)
       0, // temperature (0 = standard)
       constants.SE_CALC_RISE | constants.SE_BIT_DISC_CENTER
@@ -715,6 +725,7 @@ function calculateSunriseSunset(jdUt, latitude, longitude, timezoneOffset = 5.5)
     const sunsetResult = sweph.rise_trans(
       jdUt,
       constants.SE_SUN,
+      "",  // starname (empty string for planets)
       longitude,
       latitude,
       0,
