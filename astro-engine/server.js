@@ -278,7 +278,7 @@ function calculateNakshatra(degree) {
   // 4 padas per nakshatra → 3°20' each = 3.333333... degrees
   // Add small epsilon to handle floating point precision at boundaries
   const padaSpan = span / 4;
-  const pada = Math.ceil((withinNak + 0.0001) / padaSpan) || 1;
+  const pada = Math.floor(withinNak / padaSpan) + 1;
   return {
     name: NAKSHATRAS[index],
     lord: NAKSHATRA_LORDS[index],
@@ -1670,8 +1670,8 @@ function computeKundali(payload) {
         karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : "N/A",
         dayOfWeek: (() => {
           // Calculate day of week from Julian Day for accuracy
-          const jdForDay = Math.floor(jdUt + 0.5);
-          const dayIndex = (jdForDay + 1) % 7; // JD 0 was Monday
+          // JD 0 = Monday, so we use (JD + 1.5) % 7
+          const dayIndex = Math.floor(jdUt + 1.5) % 7;
           const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
           return days[dayIndex];
         })(),
