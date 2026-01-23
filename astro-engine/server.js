@@ -701,23 +701,19 @@ function getRasiLord(moonSign) {
 
 // Get Nakshatra Paya (foot/step) - Pada-based calculation
 function getNakshatraPaya(moonSignIndex, sunSignIndex, moonNakshatraIndex, moonPada) {
-  // Nakshatra Paya is based on the pada (quarter) of the nakshatra
-  // Simple pattern: Pada 1 = Gold, Pada 2 = Silver, Pada 3 = Copper, Pada 4 = Iron
-  // This pattern repeats for every nakshatra
+  if (!moonNakshatraIndex) return "Unknown";
 
-  if (!moonPada || moonPada < 1 || moonPada > 4) {
-    // Fallback to rashi-based if pada data unavailable
-    const diff = (moonSignIndex - sunSignIndex + 12) % 12 + 1;
-    if ([1, 6, 9].includes(diff)) return "Gold";
-    if ([2, 5, 11].includes(diff)) return "Silver";
-    if ([3, 7, 10].includes(diff)) return "Copper";
-    if ([4, 8, 12].includes(diff)) return "Iron";
-    return "Iron";
-  }
+  const swarna = [1, 9, 13, 15, 24, 26];
+  const rajat = [2, 5, 8, 17, 18, 21, 25];
+  const tamra = [7, 10, 11, 12, 16, 19, 23, 27];
+  const loha = [3, 4, 6, 14, 20, 22];
 
-  // Pada-based calculation (simple and direct)
-  const payas = ["Gold", "Silver", "Copper", "Iron"];
-  return payas[moonPada - 1];
+  if (swarna.includes(moonNakshatraIndex)) return "Gold";
+  if (rajat.includes(moonNakshatraIndex)) return "Silver";
+  if (tamra.includes(moonNakshatraIndex)) return "Copper";
+  if (loha.includes(moonNakshatraIndex)) return "Iron";
+
+  return "Iron";
 }
 
 // Calculate Rahu Kaal (inauspicious time)
@@ -799,7 +795,7 @@ function calculateSunriseSunset(jdUt, latitude, longitude, timezoneOffset = 5.5)
       constants.SE_SUN,
       "",  // starname
       epheFlag,
-      constants.SE_CALC_RISE | constants.SE_BIT_DISC_BOTTOM, // rsmi - Switch to visible sunrise (bottom/upper limb) for accuracy 64: constants.SE_CALC_RISE | constants.SE_BIT_DISC_BOTTOM
+      constants.SE_CALC_RISE | constants.SE_BIT_DISC_CENTER, // rsmi - Switch to center for AstroSage compatibility
       geopos,
       0, // atpress
       0  // attemp
@@ -1670,9 +1666,9 @@ function computeKundali(payload) {
         karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : "N/A",
         dayOfWeek: (() => {
           // Calculate day of week from Julian Day for accuracy
-          // JD 0 = Monday, so we use (JD + 1.5) % 7
-          const dayIndex = Math.floor(jdUt + 1.5) % 7;
-          const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          // JD 0 = Monday, but (JD + 1.5) % 7 gives 0=Sunday, 1=Monday...
+          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const dayIndex = Math.floor(jdUt + 0.5) % 7;
           return days[dayIndex];
         })(),
         chandraRashi: moon ? moon.sign : "N/A",
