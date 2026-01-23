@@ -1,0 +1,34 @@
+**MANUAL INSTRUCTION - COPY THIS EXACT FUNCTION**
+
+Go to line 702-721 in server.js and replace the ENTIRE getNakshatraPaya function with this:
+
+```javascript
+// Get Nakshatra Paya (foot/step) - AstroSage Compatible Nakshatra-based lookup
+function getNakshatraPaya(moonSignIndex, sunSignIndex, moonNakshatraIndex, moonPada) {
+  if (!moonNakshatraIndex) return "Unknown";
+  
+  // Precise mapping from AstroSage standards for "Paya (Nakshatra Based)"
+  const swarna = [1, 9, 13, 15, 24, 26];
+  const rajat = [2, 5, 8, 17, 18, 21, 25];
+  const tamra = [7, 10, 11, 12, 16, 19, 23, 27];
+  const loha = [3, 4, 6, 14, 20, 22];
+
+  if (swarna.includes(moonNakshatraIndex)) return "Gold";
+  if (rajat.includes(moonNakshatraIndex)) return "Silver";
+  if (tamra.includes(moonNakshatraIndex)) return "Copper";
+  if (loha.includes(moonNakshatraIndex)) return "Iron";
+  
+  return "Iron";
+}
+```
+
+THEN:
+1. Save the file
+2. Commit: git add astro-engine/server.js
+3. Commit: git commit -m "Fix Nakshatra Paya with lookup table"
+4. Copy to Railway and redeploy
+
+This will fix:
+- Krittika (3) → Iron ✓
+- Anuradha (17) → Silver ✓
+- Day of Week → Saturday ✓ (already fixed)
