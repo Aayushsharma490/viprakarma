@@ -276,7 +276,9 @@ function calculateNakshatra(degree) {
   const index = Math.floor(normalized / span);
   const withinNak = normalized % span;
   // 4 padas per nakshatra → 3°20' each = 3.333333... degrees
-  const pada = Math.floor(withinNak / (span / 4)) + 1;
+  // Add small epsilon to handle floating point precision at boundaries
+  const padaSpan = span / 4;
+  const pada = Math.ceil((withinNak + 0.0001) / padaSpan);
   return {
     name: NAKSHATRAS[index],
     lord: NAKSHATRA_LORDS[index],
@@ -697,20 +699,25 @@ function getRasiLord(moonSign) {
 
 // Simplified Ishta Kaal calculation removed - using the robust version below
 
-// Get Nakshatra Paya (foot/step)
-function getNakshatraPaya(moonSignIndex, sunSignIndex) {
-  // Distance from Sun sign (1-indexed)
-  const diff = (moonSignIndex - sunSignIndex + 12) % 12 + 1;
-  // Standard Paya Rules (Rashi based):
-  // 1, 6, 9 from Sun = Gold (Swarna)
-  // 2, 5, 11 from Sun = Silver (Rajat) -> User confirmed 11 is Silver
-  // 3, 7, 10 from Sun = Copper (Tamra)
-  // 4, 8, 12 from Sun = Iron (Loha)
-  if ([1, 6, 9].includes(diff)) return "Gold";
-  if ([2, 5, 11].includes(diff)) return "Silver";
-  if ([3, 7, 10].includes(diff)) return "Copper";
-  if ([4, 8, 12].includes(diff)) return "Iron";
-  return "Iron";
+// Get Nakshatra Paya (foot/step) - Pada-based calculation
+function getNakshatraPaya(moonSignIndex, sunSignIndex, moonNakshatraIndex, moonPada) {
+  // Nakshatra Paya is based on the pada (quarter) of the nakshatra
+  // Simple pattern: Pada 1 = Gold, Pada 2 = Silver, Pada 3 = Copper, Pada 4 = Iron
+  // This pattern repeats for every nakshatra
+
+  if (!moonPada || moonPada < 1 || moonPada > 4) {
+    // Fallback to rashi-based if pada data unavailable
+    const diff = (moonSignIndex - sunSignIndex + 12) % 12 + 1;
+    if ([1, 6, 9].includes(diff)) return "Gold";
+    if ([2, 5, 11].includes(diff)) return "Silver";
+    if ([3, 7, 10].includes(diff)) return "Copper";
+    if ([4, 8, 12].includes(diff)) return "Iron";
+    return "Iron";
+  }
+
+  // Pada-based calculation (simple and direct)
+  const payas = ["Gold", "Silver", "Copper", "Iron"];
+  return payas[moonPada - 1];
 }
 
 // Calculate Rahu Kaal (inauspicious time)
@@ -1661,7 +1668,13 @@ function computeKundali(payload) {
         masa: moon && sun ? calculateMasa(moon.longitude, sun.longitude) : "N/A",
         yoga: moon && sun ? calculateYoga(sun.longitude, moon.longitude) : "N/A",
         karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : "N/A",
-        dayOfWeek: new Date(inputs.year, inputs.month - 1, inputs.day).toLocaleDateString('en-US', { weekday: 'long' }),
+        dayOfWeek: (() => {
+          // Calculate day of week from Julian Day for accuracy
+          const jdForDay = Math.floor(jdUt + 0.5);
+          const dayIndex = (jdForDay + 1) % 7; // JD 0 was Monday
+          const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          return days[dayIndex];
+        })(),
         chandraRashi: moon ? moon.sign : "N/A",
         suryaRashi: sun ? sun.sign : "N/A",
         brihaspatiRashi: enrichedPlanets.find(p => p.name === 'Jupiter')?.sign || 'N/A',
@@ -1694,7 +1707,7 @@ function computeKundali(payload) {
         gana: moon ? getGanaFromNakshatra(moon.nakshatra.index) : null,
         nadi: moon ? getNadiFromNakshatra(moon.nakshatra.index) : null,
         varna: moon ? getVarnaFromSign(moon.sign) : null,
-        nakshatraPaya: moon && sun ? getNakshatraPaya(moon.signIndex, sun.signIndex) : null,
+        nakshatraPaya: moon && sun ? getNakshatraPaya(moon.signIndex, sun.signIndex, moon.nakshatra.index, moon.nakshatra.pada) : null,
         rashiSwami: moon ? getRasiLord(moon.sign) : null,
         nakshatraSwami: moon ? moon.nakshatra.lord : null,
         ishtaKaal: calculateIshtaKaal(localTimeString, sunTimes.sunrise),
@@ -1967,11 +1980,12 @@ const server = http.createServer(async (req, res) => {
       const vashyaScore = (vashyaMatrix[vashya1] && vashyaMatrix[vashya1][vashya2] !== undefined) ? vashyaMatrix[vashya1][vashya2] : 0;
 
       // Tara calculation: count from boy's nakshatra to girl's nakshatra
-      const diff1 = (moon2.nakshatra.index - moon1.nakshatra.index + 27) % 27;
-      const diff2 = (moon1.nakshatra.index - moon2.nakshatra.index + 27) % 27;
+      // When same nakshatra, count should be 27, not 0
+      const count1 = ((moon2.nakshatra.index - moon1.nakshatra.index + 27) % 27) || 27;
+      const count2 = ((moon1.nakshatra.index - moon2.nakshatra.index + 27) % 27) || 27;
 
-      const t1Idx = (diff1 % 9) + 1; // 1-9
-      const t2Idx = (diff2 % 9) + 1; // 1-9
+      const t1Idx = (count1 % 9) || 9; // 1-9, where 9 means Ati-Mitra
+      const t2Idx = (count2 % 9) || 9; // 1-9
 
       const taraNames = ["", "Janma", "Sampat", "Vipat", "Kshema", "Pratyari", "Sadhak", "Nidhan", "Mitra", "Ati-Mitra"];
       const tara1 = taraNames[t1Idx];
@@ -1990,20 +2004,20 @@ const server = http.createServer(async (req, res) => {
       const yoni1 = getYoniFromNakshatra(moon1.nakshatra.index);
       const yoni2 = getYoniFromNakshatra(moon2.nakshatra.index);
       const yoniMatrix = {
-        "Ashwa": { "Ashwa": 4, "Gaja": 2, "Mesha": 2, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 1, "Mahish": 0, "Vyaghra": 1, "Mriga": 1, "Vanar": 3, "Simha": 1, "Nakul": 2 },
-        "Gaja": { "Ashwa": 2, "Gaja": 4, "Mesha": 3, "Sarpa": 3, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 3, "Simha": 0, "Nakul": 2 },
-        "Mesha": { "Ashwa": 2, "Gaja": 3, "Mesha": 4, "Sarpa": 2, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 3, "Mahish": 3, "Vyaghra": 1, "Mriga": 2, "Vanar": 0, "Simha": 1, "Nakul": 2 },
-        "Sarpa": { "Ashwa": 1, "Gaja": 3, "Mesha": 2, "Sarpa": 4, "Shwan": 2, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 1, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 0 },
-        "Shwan": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 4, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 0, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Marjar": { "Ashwa": 2, "Gaja": 2, "Mesha": 2, "Sarpa": 1, "Shwan": 2, "Marjar": 4, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mushak": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 3, "Mahish": 3, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
-        "Gau": { "Ashwa": 1, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mahish": { "Ashwa": 0, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Vyaghra": { "Ashwa": 1, "Gaja": 1, "Mesha": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 2, "Gau": 0, "Mahish": 1, "Vyaghra": 4, "Mriga": 1, "Vanar": 1, "Simha": 2, "Nakul": 1 },
-        "Mriga": { "Ashwa": 1, "Gaja": 2, "Mesha": 2, "Sarpa": 2, "Shwan": 0, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 2, "Vyaghra": 1, "Mriga": 4, "Vanar": 2, "Simha": 2, "Nakul": 2 },
-        "Vanar": { "Ashwa": 3, "Gaja": 3, "Mesha": 0, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 4, "Simha": 3, "Nakul": 2 },
-        "Simha": { "Ashwa": 1, "Gaja": 0, "Mesha": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 1, "Mushak": 1, "Gau": 1, "Mahish": 1, "Vyaghra": 2, "Mriga": 2, "Vanar": 3, "Simha": 4, "Nakul": 2 },
-        "Nakul": { "Ashwa": 2, "Gaja": 2, "Mesha": 2, "Sarpa": 0, "Shwan": 2, "Marjar": 2, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 4 }
+        "Ashwa": { "Ashwa": 4, "Gaja": 2, "Chaga": 2, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 1, "Mahish": 0, "Vyaghra": 1, "Mriga": 1, "Vanar": 3, "Simha": 1, "Nakul": 2 },
+        "Gaja": { "Ashwa": 2, "Gaja": 4, "Chaga": 3, "Sarpa": 3, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 3, "Simha": 0, "Nakul": 2 },
+        "Chaga": { "Ashwa": 2, "Gaja": 3, "Chaga": 4, "Sarpa": 2, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 3, "Mahish": 3, "Vyaghra": 1, "Mriga": 2, "Vanar": 0, "Simha": 1, "Nakul": 2 },
+        "Sarpa": { "Ashwa": 1, "Gaja": 3, "Chaga": 2, "Sarpa": 4, "Shwan": 2, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 1, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 0 },
+        "Shwan": { "Ashwa": 1, "Gaja": 2, "Chaga": 1, "Sarpa": 2, "Shwan": 4, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 0, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Marjar": { "Ashwa": 2, "Gaja": 2, "Chaga": 2, "Sarpa": 1, "Shwan": 2, "Marjar": 4, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mushak": { "Ashwa": 1, "Gaja": 2, "Chaga": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 3, "Mahish": 3, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
+        "Gau": { "Ashwa": 1, "Gaja": 2, "Chaga": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mahish": { "Ashwa": 0, "Gaja": 2, "Chaga": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Vyaghra": { "Ashwa": 1, "Gaja": 1, "Chaga": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 2, "Gau": 0, "Mahish": 1, "Vyaghra": 4, "Mriga": 1, "Vanar": 1, "Simha": 2, "Nakul": 1 },
+        "Mriga": { "Ashwa": 1, "Gaja": 2, "Chaga": 2, "Sarpa": 2, "Shwan": 0, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 2, "Vyaghra": 1, "Mriga": 4, "Vanar": 2, "Simha": 2, "Nakul": 2 },
+        "Vanar": { "Ashwa": 3, "Gaja": 3, "Chaga": 0, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 4, "Simha": 3, "Nakul": 2 },
+        "Simha": { "Ashwa": 1, "Gaja": 0, "Chaga": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 1, "Mushak": 1, "Gau": 1, "Mahish": 1, "Vyaghra": 2, "Mriga": 2, "Vanar": 3, "Simha": 4, "Nakul": 2 },
+        "Nakul": { "Ashwa": 2, "Gaja": 2, "Chaga": 2, "Sarpa": 0, "Shwan": 2, "Marjar": 2, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 4 }
       };
       let yoniScore = (yoniMatrix[yoni1] && yoniMatrix[yoni1][yoni2] !== undefined) ? yoniMatrix[yoni1][yoni2] : 2;
 
