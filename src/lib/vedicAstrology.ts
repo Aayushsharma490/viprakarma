@@ -399,7 +399,7 @@ export class VedicAstrologyCalculator {
       startDate: new Date(currentDate),
       endDate: new Date(
         currentDate.getTime() +
-          remainingInCurrent * 365.25 * 24 * 60 * 60 * 1000
+        remainingInCurrent * 365.25 * 24 * 60 * 60 * 1000
       ),
       years: remainingInCurrent,
     });
@@ -601,6 +601,75 @@ export class VedicAstrologyCalculator {
     };
 
     return significations[houseNumber] || [];
+  }
+
+  /**
+   * Calculate Shalivahan Shake year
+   */
+  calculateShalivahanShake(vikramSamvat: number): number {
+    return vikramSamvat - 135;
+  }
+
+  /**
+   * Determine Ritu (Season) based on Vedic masa (month)
+   */
+  calculateRitu(masa: string | undefined): string {
+    if (!masa) return "N/A";
+    const seasons: Record<string, string[]> = {
+      Vasanta: ["Chaitra", "Vaisakha"],
+      Grishma: ["Jyaistha", "Ashadha"],
+      Varsha: ["Shravana", "Bhadrapada"],
+      Sharad: ["Ashvin", "Kartika"],
+      Hemanta: ["Margashirsha", "Pausha"],
+      Shishira: ["Magha", "Phalguna"],
+    };
+    for (const [ritu, maas] of Object.entries(seasons)) {
+      if (maas.includes(masa)) return ritu;
+    }
+    return "N/A";
+  }
+
+  /**
+   * Determine Ayan based on Sun's tropical longitude
+   */
+  calculateAyan(sunLongitude: number): string {
+    return sunLongitude < 180 ? "Uttarayana" : "Dakshinayana";
+  }
+
+  /**
+   * Get Namakshar (birth syllable) based on Nakshatra and Pada
+   */
+  getNamakshar(nakshatra: string, pada: number): string {
+    const syllables: Record<string, string[]> = {
+      Ashwini: ["Chu", "Che", "Cho", "La"],
+      Bharani: ["Lee", "Lu", "Le", "Lo"],
+      Krittika: ["A", "Ee", "U", "E"],
+      Rohini: ["O", "Va", "Vi", "Vu"],
+      Mrigashira: ["Ve", "Vo", "Ka", "Ke"],
+      Ardra: ["Ku", "Gha", "Ng", "Chha"],
+      Punarvasu: ["Ke", "Ko", "Ha", "Hi"],
+      Pushya: ["Hu", "He", "Ho", "Da"],
+      Ashlesha: ["Dee", "Du", "De", "Do"],
+      Magha: ["Ma", "Mi", "Mu", "Me"],
+      "Purva Phalguni": ["Mo", "Ta", "Ti", "Tu"],
+      "Uttara Phalguni": ["Te", "To", "Pa", "Pi"],
+      Hasta: ["Pu", "Sha", "Na", "Tha"],
+      Chitra: ["Pe", "Po", "Ra", "Ri"],
+      Swati: ["Ru", "Re", "Ro", "Ta"],
+      Vishakha: ["Ti", "Tu", "Te", "To"],
+      Anuradha: ["Na", "Ni", "Nu", "Ne"],
+      Jyeshtha: ["No", "Ya", "Yi", "Yu"],
+      Mula: ["Ye", "Yo", "Ba", "Bi"],
+      "Purva Ashadha": ["Bu", "Dha", "Bha", "Dha"],
+      "Uttara Ashadha": ["Be", "Bo", "Ja", "Ji"],
+      Shravana: ["Ju", "Je", "Jo", "Gha"],
+      Dhanishta: ["Ga", "Gi", "Gu", "Ge"],
+      Shatabhisha: ["Go", "Sa", "Si", "Su"],
+      "Purva Bhadrapada": ["Se", "So", "Da", "Di"],
+      "Uttara Bhadrapada": ["Du", "Tha", "Jha", "Na"],
+      Revati: ["De", "Do", "Cha", "Chi"],
+    };
+    return syllables[nakshatra]?.[pada - 1] || "N/A";
   }
 }
 

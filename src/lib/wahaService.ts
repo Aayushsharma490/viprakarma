@@ -1,5 +1,5 @@
 // Baileys WhatsApp Service - Updated to use astro-engine endpoints
-const ASTRO_ENGINE_URL = process.env.NEXT_PUBLIC_ASTRO_ENGINE_URL || 'https://astro-engine-production.up.railway.app';
+const ASTRO_ENGINE_URL = process.env.NEXT_PUBLIC_ASTRO_ENGINE_URL || 'https://astro-engine-production-e9fd.up.railway.app';
 
 interface WhatsAppStatus {
     status: 'DISCONNECTED' | 'CONNECTING' | 'SCAN_QR' | 'CONNECTED';

@@ -28,12 +28,12 @@ your_razorpay_key_secret
 
 ### 5. NEXT_PUBLIC_ASTRO_ENGINE_URL
 ```
-https://astro-engine-production.up.railway.app
+https://astro-engine-production-e9fd.up.railway.app
 ```
 
 ### 6. ASTRO_ENGINE_URL
 ```
-https://astro-engine-production.up.railway.app
+https://astro-engine-production-e9fd.up.railway.app
 ```
 
 ---

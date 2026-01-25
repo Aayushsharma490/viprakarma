@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PanchangPanelProps {
     enhancedDetails: any;
@@ -21,6 +22,14 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
     const translateValue = (value: string | null | undefined): string => {
         if (!value) return 'N/A';
         if (language === 'en') return value;
+
+        // Extract time if it looks like a time string (HH:MM AM/PM)
+        const timeMatch = value.match(/(\d{1,2}:\d{2})\s*(AM|PM)/i);
+        if (timeMatch) {
+            const timePart = timeMatch[1];
+            const ampm = timeMatch[2].toUpperCase();
+            return `${timePart} ${ampm === 'AM' ? 'पूर्वाहन' : 'अपराह्न'}`;
+        }
 
         // Try to translate using context keys first
         const planetaryLordKey = `planet.Lord.${value}`;
@@ -76,35 +85,72 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
             'Sunday': 'रविवार', 'Monday': 'सोमवार', 'Tuesday': 'मंगलवार',
             'Wednesday': 'बुधवार', 'Thursday': 'गुरुवार', 'Friday': 'शुक्रवार',
             'Saturday': 'शनिवार',
+            // Ayan
+            'Uttarayana': 'उत्तरायण', 'Dakshinayana': 'दक्षिणायण',
+            // Ritu
+            'Vasanta': 'वसन्त', 'Grishma': 'ग्रीष्म', 'Varsha': 'वर्षा',
+            'Sharad': 'शरद', 'Hemanta': 'हेमन्त', 'Shishira': 'शिशिर',
+            'Hemant (Pre-winter)': 'हेमंत (शिशिर पूर्व)',
+            // Signs
+            'Aries': 'मेष', 'Taurus': 'वृषभ', 'Gemini': 'मिथुन', 'Cancer': 'कर्क', 'Leo': 'सिंह', 'Virgo': 'कन्या',
+            'Libra': 'तुला', 'Scorpio': 'वृश्चिक', 'Sagittarius': 'धनु', 'Capricorn': 'मकर', 'Aquarius': 'कुंभ', 'Pisces': 'मीन',
+            // Lords/Planets
+            'Surya': 'सूर्य', 'Chandra': 'चंद्र', 'Mangal': 'मंगल', 'Budh': 'बुध', 'Guru': 'गुरु', 'Shukra': 'शुक्र', 'Shani': 'शनि', 'Rahu': 'राहु', 'Ketu': 'केतु',
+            'Sun': 'सूर्य', 'Moon': 'चंद्र', 'Mars': 'मंगल', 'Mercury': 'बुध', 'Jupiter': 'गुरु', 'Venus': 'शुक्र', 'Saturn': 'शनि',
+            'Budha': 'बुध',
+            // Yoni
+            'Ashwa': 'अश्व', 'Gaja': 'गज', 'Mesha': 'मेष', 'Sarpa': 'सर्प', 'Shwan': 'श्वान', 'Marjar': 'मार्जार', 'Mushika': 'मूषिक',
+            'Gau': 'गौ', 'Mahish': 'महिष', 'Vyaghra': 'व्याघ्र', 'Mriga': 'मृग', 'Vanar': 'वानर', 'Nakul': 'नकुल', 'Singha': 'सिंह',
+            // Gana
+            'Devta': 'देवता', 'Manushya': 'मनुष्य', 'Rakshas': 'राक्षस',
+            'Deva': 'देवता', 'Rakshasa': 'राक्षस',
+            // Nadi
+            'Adi': 'आदि', 'Madhya': 'मध्य', 'Antya': 'अंत्य',
+            // Varna
+            'Brahmin': 'ब्राह्मण', 'Kshatriya': 'क्षत्रिय', 'Vaisya': 'वैश्य', 'Shudra': 'शूद्र',
+            'Vaishya': 'वैश्य',
+            // Paya
+            'Loha': 'लोहा (Loha)', 'Rajat': 'रजत (Rajat)', 'Tamra': 'ताम्र (Tamra)', 'Suvarna': 'सुवर्ण (Suvarna)',
+            'Iron': 'लोहा (Iron)', 'Silver': 'चांदी (Silver)', 'Copper': 'तांबा (Copper)', 'Gold': 'सोना (Gold)',
+            'Rajat (Silver)': 'रजत (चांदी)', 'Tamra (Copper)': 'ताम्र (तांबा)', 'Swarna (Gold)': 'स्वर्ण (सोना)', 'Loha (Iron)': 'लोहा (लोहा)',
         };
 
-        return translations[value] || value;
+        const trimmedValue = value.trim();
+        return translations[trimmedValue] ||
+            translations[trimmedValue.charAt(0).toUpperCase() + trimmedValue.slice(1).toLowerCase()] ||
+            value;
     };
 
     const panchangData = [
         { label: language === 'en' ? 'Rashi (Moon Sign)' : 'राशि (चंद्र राशि)', value: translateValue(enhancedDetails.moonSign || enhancedDetails.rashi || enhancedDetails.chandraRashi) },
-        { label: language === 'en' ? 'Nakshatra' : 'नक्षत्र', value: translateValue(enhancedDetails.nakshatra) },
-        { label: language === 'en' ? 'Nakshatra Pada' : 'नक्षत्र चरण', value: enhancedDetails.nakshatraPada || 'N/A' },
-        { label: language === 'en' ? 'Lagna (Ascendant)' : 'लग्न', value: enhancedDetails.lagna || 'N/A' },
+        { label: t('panchang.rashiSwami') || 'Rashi Swami', value: translateValue(enhancedDetails.rashiSwami) },
+        { label: language === 'en' ? 'Nakshatra (Charan)' : 'नक्षत्र (चरण)', value: `${translateValue(enhancedDetails.nakshatra)} (${enhancedDetails.nakshatraPada || '1'})` },
+        { label: t('panchang.nakshatraSwami') || 'Nakshatra Swami', value: translateValue(enhancedDetails.nakshatraSwami) },
+        { label: language === 'en' ? 'Namakshar' : 'नामाक्षर', value: enhancedDetails.namakshar || 'N/A' },
+        { label: language === 'en' ? 'Lagna with Degree' : 'लग्न (डिग्री के साथ)', value: `${translateValue(enhancedDetails.lagna) || 'N/A'} (${enhancedDetails.lagnaDegree?.toFixed(2) || '0.00'}°)` },
+        { label: language === 'en' ? 'Shalivahan Shake' : 'शालिवाहन शक', value: enhancedDetails.shalivahanShake || 'N/A' },
+        { label: t('panchang.vikramSamvat') || 'Vikram Samvat', value: enhancedDetails.vikramSamvat || 'N/A' },
         { label: language === 'en' ? 'Masa (Month)' : 'मास', value: translateValue(enhancedDetails.masa) },
-        { label: language === 'en' ? 'Tithi (Lunar Day)' : 'तिथि', value: enhancedDetails.tithi ? `${translateValue(enhancedDetails.tithi.name || enhancedDetails.tithi)} (${enhancedDetails.tithi.number || ''})` : 'N/A' },
         { label: language === 'en' ? 'Paksha' : 'पक्ष', value: translateValue(enhancedDetails.paksha) },
+        { label: language === 'en' ? 'Tithi (Lunar Day)' : 'तिथि', value: enhancedDetails.tithi ? `${translateValue(enhancedDetails.tithi.name || enhancedDetails.tithi)} (${enhancedDetails.tithi.number || ''})` : 'N/A' },
+        { label: language === 'en' ? 'Day (Var)' : 'दिन (वार)', value: translateValue(enhancedDetails.day || enhancedDetails.dayOfWeek) },
+        { label: language === 'en' ? 'Ritu (Season)' : 'ऋतु', value: translateValue(enhancedDetails.ritu) },
+        { label: language === 'en' ? 'Ayan' : 'अयन', value: translateValue(enhancedDetails.ayan) },
         { label: language === 'en' ? 'Yoga' : 'योग', value: translateValue(enhancedDetails.yoga) },
         { label: language === 'en' ? 'Karana' : 'करण', value: translateValue(enhancedDetails.karana) },
-        { label: language === 'en' ? 'Day (Var)' : 'दिन (वार)', value: translateValue(enhancedDetails.day || enhancedDetails.dayOfWeek) },
-        { label: language === 'en' ? 'Ishta Kaal' : 'इष्ट काल', value: enhancedDetails.ishtaKaal || 'N/A' },
-        { label: language === 'en' ? 'Sunrise' : 'सूर्योदय', value: enhancedDetails.sunrise || 'N/A' },
-        { label: language === 'en' ? 'Sunset' : 'सूर्यास्त', value: enhancedDetails.sunset || 'N/A' },
-        { label: language === 'en' ? 'Mangal Dosha' : 'मंगल दोष', value: enhancedDetails.mangalDosha === 'Yes' ? (language === 'en' ? 'Yes' : 'हाँ') : (language === 'en' ? 'No' : 'नहीं') },
-        { label: language === 'en' ? 'Nakshatra Paya' : 'नक्षत्र पाया', value: translateValue(enhancedDetails.nakshatraPaya) },
         { label: language === 'en' ? 'Yoni' : 'योनी', value: translateValue(enhancedDetails.yoni) },
         { label: language === 'en' ? 'Gana' : 'गण', value: translateValue(enhancedDetails.gana) },
         { label: language === 'en' ? 'Nadi' : 'नाडी', value: translateValue(enhancedDetails.nadi) },
         { label: language === 'en' ? 'Varna' : 'वर्ण', value: translateValue(enhancedDetails.varna) },
-        { label: t('panchang.rashiSwami'), value: translateValue(enhancedDetails.rashiSwami) },
-        { label: t('panchang.nakshatraSwami'), value: translateValue(enhancedDetails.nakshatraSwami) },
-        { label: t('panchang.vikramSamvat'), value: enhancedDetails.vikramSamvat || 'N/A' },
-        { label: t('panchang.samvatName'), value: enhancedDetails.samvatName || 'N/A' },
+        { label: language === 'en' ? 'Nakshatra Paya' : 'नक्षत्र पाया', value: translateValue(enhancedDetails.nakshatraPaya) },
+        {
+            label: language === 'en' ? 'Mangal Dosha' : 'मंगल दोष',
+            value: enhancedDetails.mangalDosha === 'Yes' ? (language === 'en' ? 'Yes' : 'हाँ') : (language === 'en' ? 'No' : 'नहीं'),
+            highlight: enhancedDetails.mangalDosha === 'Yes'
+        },
+        { label: language === 'en' ? 'Sunrise' : 'सूर्योदय', value: translateValue(enhancedDetails.sunrise) || 'N/A' },
+        { label: language === 'en' ? 'Sunset' : 'सूर्यास्त', value: translateValue(enhancedDetails.sunset) || 'N/A' },
+        { label: language === 'en' ? 'Ishta Kaal' : 'इष्ट काल', value: enhancedDetails.ishtaKaal || 'N/A' },
     ];
 
     return (
@@ -121,53 +167,72 @@ export default function PanchangPanel({ enhancedDetails, birthDate, location }: 
                 </button>
             </div>
 
-            {isExpanded && (
-                <div className="mt-6 space-y-6">
-                    {/* Basic Panchang Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {panchangData.map((item, index) => (
-                            <div
-                                key={index}
-                                className="p-4 rounded-2xl border bg-background/50 border-border"
-                            >
-                                <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">
-                                    {item.label}
-                                </div>
-                                <div className="text-base font-bold text-foreground">
-                                    {item.value}
-                                </div>
+            <AnimatePresence>
+                {isExpanded && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-6 space-y-6 overflow-hidden"
+                    >
+                        {/* Basic Panchang Info */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {panchangData.map((item, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.02 }}
+                                    className={`p-4 rounded-2xl border bg-background/50 border-border ${item.highlight ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800' : ''}`}
+                                >
+                                    <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">
+                                        {item.label}
+                                    </div>
+                                    <div className={`text-base font-bold ${item.highlight ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
+                                        {item.value}
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* Location Info */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="p-4 rounded-2xl border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800"
+                        >
+                            <div className="text-xs font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 mb-2">
+                                {language === 'en' ? 'Location' : 'स्थान'}
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Location Info */}
-                    <div className="p-4 rounded-2xl border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-                        <div className="text-xs font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 mb-2">
-                            {language === 'en' ? 'Location' : 'स्थान'}
-                        </div>
-                        <div className="text-base font-bold text-blue-900 dark:text-blue-100">
-                            {location || 'N/A'}
-                        </div>
-                        <div className="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                            {language === 'en'
-                                ? '* Sunrise/Sunset times are location-specific'
-                                : '* सूर्योदय/सूर्यास्त समय स्थान-विशिष्ट हैं'}
-                        </div>
-                    </div>
-
-                    {/* Note */}
-                    <div className="p-4 rounded-2xl border bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
-                        <div className="flex items-start gap-3">
-                            <div className="text-2xl">ℹ️</div>
-                            <div className="text-sm text-amber-900 dark:text-amber-100">
+                            <div className="text-base font-bold text-blue-900 dark:text-blue-100">
+                                {location || 'N/A'}
+                            </div>
+                            <div className="text-xs text-blue-700 dark:text-blue-300 mt-2">
                                 {language === 'en'
-                                    ? 'Panchang calculations are based on your birth date, time, and location. For daily Panchang, please consult our Mahurat section.'
-                                    : 'पंचांग गणना आपकी जन्म तिथि, समय और स्थान पर आधारित है। दैनिक पंचांग के लिए, कृपया हमारे महूर्त अनुभाग से परामर्श करें।'}
+                                    ? '* Sunrise/Sunset times are location-specific'
+                                    : '* सूर्योदय/सूर्यास्त समय स्थान-विशिष्ट हैं'}
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        </motion.div>
+
+                        {/* Note */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-4 rounded-2xl border bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="text-2xl">ℹ️</div>
+                                <div className="text-sm text-amber-900 dark:text-amber-100">
+                                    {language === 'en'
+                                        ? 'Panchang calculations are based on your birth date, time, and location. For daily Panchang, please consult our Mahurat section.'
+                                        : 'पंचांग गणना आपकी जन्म तिथि, समय और स्थान पर आधारित है। दैनिक पंचांग के लिए, कृपया हमारे मुहूर्त अनुभाग से परामर्श करें।'}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </Card>
     );
 }

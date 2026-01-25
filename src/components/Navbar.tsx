@@ -47,14 +47,14 @@ export default function Navbar({ kundaliData, onDownloadPDF }: NavbarProps = {})
 
   const navLinks = [
     { href: "/kundali", label: t("nav.kundali") },
-    { href: "/kundali-matching", label: t("nav.kundaliMatching") || (language === "en" ? "Kundali Matching" : "कुंडली मिलान") },
+    { href: "/kundali-matching", label: t("nav.kundaliMatching") },
     { href: "/numerology", label: t("nav.numerology") },
     { href: "/palmistry", label: t("nav.palmistry") },
-    { href: "/mahurat", label: t("nav.mahurat") },
     { href: "/talk-to-astrologer", label: t("nav.talkToAstrologer") },
+    { href: "/mahurat", label: t("nav.mahurat") },
+    { href: "/pooja-booking", label: t("nav.poojaBooking") },
     { href: "/about", label: t("nav.about") },
     { href: "/contact", label: t("nav.contact") },
-    { href: "/pooja-booking", label: t("nav.poojaBooking") },
   ];
 
   return (

@@ -457,23 +457,11 @@ function formatDateParts(date) {
   };
 }
 
-function getNadiFromNakshatra(nakIndex) {
-  if (!nakIndex) return "Unknown";
-  // Groups: 1, 6, 7, 12, 13, 18, 19, 24, 25 -> Adi
-  const adi = [1, 6, 7, 12, 13, 18, 19, 24, 25];
-  const madhya = [2, 5, 8, 11, 14, 17, 20, 23, 26];
-  const antya = [3, 4, 9, 10, 15, 16, 21, 22, 27];
-  if (adi.includes(nakIndex)) return "Adi";
-  if (madhya.includes(nakIndex)) return "Madhya";
-  if (antya.includes(nakIndex)) return "Antya";
-  return "Unknown";
-}
+// Duplicate function removed - using the one below
 
-function getTara(nak1, nak2) {
-  const diff = (nak2 - nak1 + 27) % 9 || 9;
-  const taras = ["", "Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhak", "Vadha", "Mitra", "Ati-Mitra"];
-  return taras[diff];
-}
+
+// Duplicate function removed - using the robust one below at line 648
+
 
 // ===== PANCHANG CALCULATION FUNCTIONS =====
 
@@ -611,9 +599,10 @@ function calculateMangalDosha(planets, ascDegree) {
 
 function getYoniFromNakshatra(nakIndex) {
   if (!nakIndex) return "Unknown";
-  // AstroSage-compatible Sanskrit Yoni names
+  // AstroSage/Standard Compatible Yoni names (Mesha instead of Chaga)
+  // 1:Ashwa, 2:Gaja, 3:Mesha, 4:Sarpa, 5:Sarpa, 6:Shwan, 7:Marjar, 8:Mesha, ...
   const yonis = [
-    "Ashwa", "Gaja", "Chaga", "Sarpa", "Sarpa", "Shwan", "Marjar", "Chaga", "Marjar",
+    "Ashwa", "Gaja", "Mesha", "Sarpa", "Sarpa", "Shwan", "Marjar", "Mesha", "Marjar",
     "Mushak", "Mushak", "Gau", "Mahish", "Vyaghra", "Mahish", "Vyaghra", "Mriga", "Mriga",
     "Shwan", "Vanar", "Nakul", "Vanar", "Simha", "Ashwa", "Simha", "Gau", "Gaja"
   ];
@@ -699,21 +688,32 @@ function getRasiLord(moonSign) {
 
 // Simplified Ishta Kaal calculation removed - using the robust version below
 
-// Get Nakshatra Paya (foot/step) - Pada-based calculation
-function getNakshatraPaya(moonSignIndex, sunSignIndex, moonNakshatraIndex, moonPada) {
-  if (!moonNakshatraIndex) return "Unknown";
+// Get Nakshatra Paya (Nakshatra Based - AstroSage Compatible)
+// Gold: Ashwini, Bharani, Revati (Some texts: + Mull? No, let's stick to standard)
+// Silver: Ardra, Punarvasu, Pushya, Ashlesha, Magha, P.Phalguni, U.Phalguni, Hasta, Chitra, Swati, Vishakha, Anuradha
+// Copper: Jyeshtha, Mula, P.Ashadha, U.Ashadha, Shravana, Dhanishta, Shatabhisha, P.Bhadrapada, U.Bhadrapada
+// Iron: Krittika, Rohini, Mrigashira
+function getNakshatraPaya(nakIndex) {
+  if (!nakIndex) return "Unknown";
 
-  const swarna = [1, 9, 13, 15, 24, 26];
-  const rajat = [2, 5, 8, 17, 18, 21, 25];
-  const tamra = [7, 10, 11, 12, 16, 19, 23, 27];
-  const loha = [3, 4, 6, 14, 20, 22];
+  // Gold Paya (Swarna)
+  const gold = [1, 2, 27]; // Ashwini, Bharani, Revati
 
-  if (swarna.includes(moonNakshatraIndex)) return "Gold";
-  if (rajat.includes(moonNakshatraIndex)) return "Silver";
-  if (tamra.includes(moonNakshatraIndex)) return "Copper";
-  if (loha.includes(moonNakshatraIndex)) return "Iron";
+  // Silver Paya (Rajat)
+  const silver = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]; // Ardra to Anuradha
 
-  return "Iron";
+  // Copper Paya (Tamra)
+  const copper = [18, 19, 20, 21, 22, 23, 24, 25, 26]; // Jyeshtha to U.Bhadrapada
+
+  // Iron Paya (Loha)
+  const iron = [3, 4, 5]; // Krittika, Rohini, Mrigashira
+
+  if (gold.includes(nakIndex)) return "Gold";
+  if (silver.includes(nakIndex)) return "Silver";
+  if (copper.includes(nakIndex)) return "Copper";
+  if (iron.includes(nakIndex)) return "Iron";
+
+  return "Silver"; // Fallback to most common if unmatched
 }
 
 // Calculate Rahu Kaal (inauspicious time)
@@ -1665,11 +1665,53 @@ function computeKundali(payload) {
         yoga: moon && sun ? calculateYoga(sun.longitude, moon.longitude) : "N/A",
         karana: moon && sun ? calculateKarana(sun.longitude, moon.longitude) : "N/A",
         dayOfWeek: (() => {
-          // Calculate day of week from Julian Day for accuracy
-          // JD 0 = Monday, but (JD + 1.5) % 7 gives 0=Sunday, 1=Monday...
-          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-          const dayIndex = Math.floor(jdUt + 0.5) % 7;
-          return days[dayIndex];
+          // Vedic Day Calculation (Sunrise to Sunrise)
+          try {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            // Standard JD to Day formula: (JD + 1.5) % 7 -> 0=Sunday, 1=Monday...
+            const standardDayIndex = Math.floor(jdUt + 1.5) % 7;
+            let vedicDayIndex = standardDayIndex;
+
+            // Check if birth is before sunrise
+            if (sunTimes.sunrise) {
+              // Parse sunrise
+              let sH, sM;
+              const srStr = sunTimes.sunrise; // e.g. "06:24 AM"
+              if (srStr.includes('AM') || srStr.includes('PM')) {
+                const [time, ampm] = srStr.split(' ');
+                const [h, m] = time.split(':').map(Number);
+                sH = h;
+                sM = m;
+                if (ampm === 'PM' && sH < 12) sH += 12;
+                if (ampm === 'AM' && sH === 12) sH = 0;
+              } else {
+                const [h, m] = srStr.split(':').map(Number);
+                sH = h;
+                sM = m;
+              }
+
+              // Birth local time
+              const bH = inputs.hour;
+              const bM = inputs.minute;
+
+              // Compare minutes from midnight
+              const birthMins = bH * 60 + bM;
+              const sunMins = sH * 60 + sM;
+
+              if (birthMins < sunMins) {
+                // Birth is before sunrise -> previous day
+                vedicDayIndex = (standardDayIndex - 1 + 7) % 7;
+                console.log(`[astro-engine] Birth (${bH}:${bM}) is before Sunrise (${sH}:${sM}). Using previous day.`);
+              }
+            }
+
+            return days[vedicDayIndex];
+          } catch (e) {
+            console.error("[astro-engine] Error calculating Vedic day:", e);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days[Math.floor(jdUt + 1.5) % 7];
+          }
         })(),
         chandraRashi: moon ? moon.sign : "N/A",
         suryaRashi: sun ? sun.sign : "N/A",
@@ -1703,7 +1745,7 @@ function computeKundali(payload) {
         gana: moon ? getGanaFromNakshatra(moon.nakshatra.index) : null,
         nadi: moon ? getNadiFromNakshatra(moon.nakshatra.index) : null,
         varna: moon ? getVarnaFromSign(moon.sign) : null,
-        nakshatraPaya: moon && sun ? getNakshatraPaya(moon.signIndex, sun.signIndex, moon.nakshatra.index, moon.nakshatra.pada) : null,
+        nakshatraPaya: moon ? getNakshatraPaya(moon.nakshatra.index) : null,
         rashiSwami: moon ? getRasiLord(moon.sign) : null,
         nakshatraSwami: moon ? moon.nakshatra.lord : null,
         ishtaKaal: calculateIshtaKaal(localTimeString, sunTimes.sunrise),
@@ -1967,13 +2009,17 @@ const server = http.createServer(async (req, res) => {
       const vashya2 = getVashya(moon2.sign, moon2.degreeInSign);
 
       const vashyaMatrix = {
-        "Chatu": { "Chatu": 2, "Manav": 1, "Jalchar": 1, "Vanchar": 0, "Keeta": 1 },
+        "Chatu": { "Chatu": 2, "Manav": 1, "Jalchar": 1, "Vanchar": 1, "Keeta": 1 }, // Updated Vanchar to 1 (compatible with typical) or 0.5? AstroSage says 0.5 for Vanchar-Chatu in this case? 
+        // Let's stick to standard tables but fix the specific Vanchar-Chatu case known to be 0.5 in some systems
+        // "Vanchar" vs "Chatu" is typically 0.5 or 0 depending on the table.
+        // AstroSage gives 0.5 for Leo(Vanchar) vs Capricorn(Chatu).
         "Manav": { "Chatu": 1, "Manav": 2, "Jalchar": 0.5, "Vanchar": 0, "Keeta": 0 },
         "Jalchar": { "Chatu": 1, "Manav": 0.5, "Jalchar": 2, "Vanchar": 1, "Keeta": 1 },
-        "Vanchar": { "Chatu": 0, "Manav": 0, "Jalchar": 1, "Vanchar": 2, "Keeta": 0 },
+        "Vanchar": { "Chatu": 0.5, "Manav": 0, "Jalchar": 1, "Vanchar": 2, "Keeta": 0 }, // FIXED: 0 -> 0.5
         "Keeta": { "Chatu": 1, "Manav": 1, "Jalchar": 1, "Vanchar": 0, "Keeta": 2 }
       };
       const vashyaScore = (vashyaMatrix[vashya1] && vashyaMatrix[vashya1][vashya2] !== undefined) ? vashyaMatrix[vashya1][vashya2] : 0;
+
 
       // Tara calculation: count from boy's nakshatra to girl's nakshatra
       // Tara counting is inclusive: boy's own nakshatra is count 1
@@ -2004,20 +2050,20 @@ const server = http.createServer(async (req, res) => {
       const yoni1 = getYoniFromNakshatra(moon1.nakshatra.index);
       const yoni2 = getYoniFromNakshatra(moon2.nakshatra.index);
       const yoniMatrix = {
-        "Ashwa": { "Ashwa": 4, "Gaja": 2, "Chaga": 2, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 1, "Mahish": 0, "Vyaghra": 1, "Mriga": 1, "Vanar": 3, "Simha": 1, "Nakul": 2 },
-        "Gaja": { "Ashwa": 2, "Gaja": 4, "Chaga": 3, "Sarpa": 3, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 3, "Simha": 0, "Nakul": 2 },
-        "Chaga": { "Ashwa": 2, "Gaja": 3, "Chaga": 4, "Sarpa": 2, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 3, "Mahish": 3, "Vyaghra": 1, "Mriga": 2, "Vanar": 0, "Simha": 1, "Nakul": 2 },
-        "Sarpa": { "Ashwa": 1, "Gaja": 3, "Chaga": 2, "Sarpa": 4, "Shwan": 2, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 1, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 0 },
-        "Shwan": { "Ashwa": 1, "Gaja": 2, "Chaga": 1, "Sarpa": 2, "Shwan": 4, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 0, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Marjar": { "Ashwa": 2, "Gaja": 2, "Chaga": 2, "Sarpa": 1, "Shwan": 2, "Marjar": 4, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mushak": { "Ashwa": 1, "Gaja": 2, "Chaga": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 3, "Mahish": 3, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
-        "Gau": { "Ashwa": 1, "Gaja": 2, "Chaga": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Mahish": { "Ashwa": 0, "Gaja": 2, "Chaga": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Vyaghra": { "Ashwa": 1, "Gaja": 1, "Chaga": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 2, "Gau": 0, "Mahish": 1, "Vyaghra": 4, "Mriga": 1, "Vanar": 1, "Simha": 2, "Nakul": 1 },
-        "Mriga": { "Ashwa": 1, "Gaja": 2, "Chaga": 2, "Sarpa": 2, "Shwan": 0, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 2, "Vyaghra": 1, "Mriga": 4, "Vanar": 2, "Simha": 1, "Nakul": 2 },
-        "Vanar": { "Ashwa": 3, "Gaja": 3, "Chaga": 0, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 4, "Simha": 3, "Nakul": 2 },
-        "Simha": { "Ashwa": 1, "Gaja": 0, "Chaga": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 1, "Mushak": 1, "Gau": 1, "Mahish": 1, "Vyaghra": 2, "Mriga": 1, "Vanar": 3, "Simha": 4, "Nakul": 2 },
-        "Nakul": { "Ashwa": 2, "Gaja": 2, "Chaga": 2, "Sarpa": 0, "Shwan": 2, "Marjar": 2, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 4 }
+        "Ashwa": { "Ashwa": 4, "Gaja": 2, "Mesha": 2, "Sarpa": 2, "Shwan": 1, "Marjar": 2, "Mushak": 1, "Gau": 1, "Mahish": 0, "Vyaghra": 1, "Mriga": 3, "Vanar": 3, "Simha": 1, "Nakul": 2 },
+        "Gaja": { "Ashwa": 2, "Gaja": 4, "Mesha": 3, "Sarpa": 3, "Shwan": 2, "Marjar": 2, "Mushak": 2, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 3, "Simha": 0, "Nakul": 2 },
+        "Mesha": { "Ashwa": 2, "Gaja": 3, "Mesha": 4, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 3, "Mahish": 3, "Vyaghra": 1, "Mriga": 2, "Vanar": 3, "Simha": 1, "Nakul": 2 },
+        "Sarpa": { "Ashwa": 2, "Gaja": 3, "Mesha": 2, "Sarpa": 4, "Shwan": 2, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 1, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 0 },
+        "Shwan": { "Ashwa": 1, "Gaja": 2, "Mesha": 2, "Sarpa": 2, "Shwan": 4, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 0, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Marjar": { "Ashwa": 2, "Gaja": 2, "Mesha": 2, "Sarpa": 1, "Shwan": 2, "Marjar": 4, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 2, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mushak": { "Ashwa": 1, "Gaja": 2, "Mesha": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 0, "Mushak": 4, "Gau": 3, "Mahish": 3, "Vyaghra": 2, "Mriga": 2, "Vanar": 1, "Simha": 1, "Nakul": 0 },
+        "Gau": { "Ashwa": 1, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 4, "Mahish": 3, "Vyaghra": 0, "Mriga": 1, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Mahish": { "Ashwa": 0, "Gaja": 2, "Mesha": 3, "Sarpa": 1, "Shwan": 2, "Marjar": 2, "Mushak": 3, "Gau": 3, "Mahish": 4, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Vyaghra": { "Ashwa": 1, "Gaja": 1, "Mesha": 1, "Sarpa": 1, "Shwan": 1, "Marjar": 2, "Mushak": 2, "Gau": 0, "Mahish": 1, "Vyaghra": 4, "Mriga": 1, "Vanar": 1, "Simha": 2, "Nakul": 1 },
+        "Mriga": { "Ashwa": 3, "Gaja": 2, "Mesha": 2, "Sarpa": 2, "Shwan": 0, "Marjar": 1, "Mushak": 2, "Gau": 1, "Mahish": 2, "Vyaghra": 1, "Mriga": 4, "Vanar": 2, "Simha": 1, "Nakul": 2 },
+        "Vanar": { "Ashwa": 3, "Gaja": 3, "Mesha": 3, "Sarpa": 2, "Shwan": 2, "Marjar": 2, "Mushak": 1, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 4, "Simha": 3, "Nakul": 2 },
+        "Simha": { "Ashwa": 1, "Gaja": 0, "Mesha": 1, "Sarpa": 2, "Shwan": 1, "Marjar": 1, "Mushak": 1, "Gau": 1, "Mahish": 1, "Vyaghra": 2, "Mriga": 1, "Vanar": 3, "Simha": 4, "Nakul": 2 },
+        "Nakul": { "Ashwa": 2, "Gaja": 2, "Mesha": 2, "Sarpa": 0, "Shwan": 2, "Marjar": 2, "Mushak": 0, "Gau": 2, "Mahish": 2, "Vyaghra": 1, "Mriga": 2, "Vanar": 2, "Simha": 2, "Nakul": 4 }
       };
       let yoniScore = (yoniMatrix[yoni1] && yoniMatrix[yoni1][yoni2] !== undefined) ? yoniMatrix[yoni1][yoni2] : 2;
 
@@ -2037,7 +2083,7 @@ const server = http.createServer(async (req, res) => {
       const gana1 = getGanaFromNakshatra(moon1.nakshatra.index);
       const gana2 = getGanaFromNakshatra(moon2.nakshatra.index);
       const ganaScoring = {
-        "Devta": { "Devta": 6, "Manushya": 6, "Rakshasa": 1 },
+        "Devta": { "Devta": 6, "Manushya": 6, "Rakshasa": 0 }, // Devta-Rakshasa 0 (Match rare)
         "Manushya": { "Devta": 5, "Manushya": 6, "Rakshasa": 0 },
         "Rakshasa": { "Devta": 0, "Manushya": 0, "Rakshasa": 6 }
       };
@@ -2114,7 +2160,7 @@ const server = http.createServer(async (req, res) => {
           ascendant: kundali1.ascendant.sign,
           moonSign: moon1.sign,
           ishtaKaal: kundali1.enhancedDetails.ishtaKaal,
-          nakshatraPaya: kundali1.enhancedDetails.nakshatraPaya,
+          nakshatraPaya: getNakshatraPaya(moon1.nakshatra.index),
           chart: generateSimpleChart(kundali1.ascendant.sign)
         },
         girlDetails: {
@@ -2129,7 +2175,7 @@ const server = http.createServer(async (req, res) => {
           ascendant: kundali2.ascendant.sign,
           moonSign: moon2.sign,
           ishtaKaal: kundali2.enhancedDetails.ishtaKaal,
-          nakshatraPaya: kundali2.enhancedDetails.nakshatraPaya,
+          nakshatraPaya: getNakshatraPaya(moon2.nakshatra.index),
           chart: generateSimpleChart(kundali2.ascendant.sign)
         },
         recommendation: totalScore >= 28

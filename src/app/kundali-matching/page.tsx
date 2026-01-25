@@ -63,8 +63,9 @@ export default function KundaliMatchingPage() {
             return;
         }
 
-        if (!boy.day || !boy.month || !boy.year || !girl.day || !girl.month || !girl.year) {
-            toast.error(language === 'en' ? 'Please enter complete birth dates' : 'कृपया पूर्ण जन्म तिथियां दर्ज करें');
+        if (!boy.day || !boy.month || !boy.year || !boy.hour || !boy.minute || !boy.second ||
+            !girl.day || !girl.month || !girl.year || !girl.hour || !girl.minute || !girl.second) {
+            toast.error(language === 'en' ? 'Please enter complete birth dates and times' : 'कृपया पूर्ण जन्म तिथियां और समय दर्ज करें');
             return;
         }
 
@@ -204,32 +205,42 @@ export default function KundaliMatchingPage() {
                     </Label>
                     <div className="grid grid-cols-3 gap-3 mt-2">
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'DD' : 'दिन'}
                             value={person.day}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                const value = e.target.value.replace(/\D/g, '');
                                 if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 31 && value.length <= 2)) {
                                     setPerson({ ...person, day: value });
                                 }
                             }}
-                            min="1"
-                            max="31"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val && val.length === 1) {
+                                    setPerson({ ...person, day: val.padStart(2, '0') });
+                                }
+                            }}
                             maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'MM' : 'महीना'}
                             value={person.month}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                const value = e.target.value.replace(/\D/g, '');
                                 if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12 && value.length <= 2)) {
                                     setPerson({ ...person, month: value });
                                 }
                             }}
-                            min="1"
-                            max="12"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val && val.length === 1) {
+                                    setPerson({ ...person, month: val.padStart(2, '0') });
+                                }
+                            }}
                             maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
@@ -259,51 +270,66 @@ export default function KundaliMatchingPage() {
 
                 <div>
                     <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
-                        {language === 'en' ? 'Time of Birth (Optional)' : 'जन्म समय (वैकल्पिक)'}
+                        {language === 'en' ? 'Time of Birth' : 'जन्म समय'} *
                     </Label>
                     <div className="grid grid-cols-3 gap-3 mt-2">
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'HH' : 'घंटा'}
                             value={person.hour}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                const value = e.target.value.replace(/\D/g, '');
                                 if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 23 && value.length <= 2)) {
                                     setPerson({ ...person, hour: value });
                                 }
                             }}
-                            min="0"
-                            max="23"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val) {
+                                    setPerson({ ...person, hour: val.padStart(2, '0') });
+                                }
+                            }}
                             maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'MM' : 'मिनट'}
                             value={person.minute}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                const value = e.target.value.replace(/\D/g, '');
                                 if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
                                     setPerson({ ...person, minute: value });
                                 }
                             }}
-                            min="0"
-                            max="59"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val) {
+                                    setPerson({ ...person, minute: val.padStart(2, '0') });
+                                }
+                            }}
                             maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />
                         <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={language === 'en' ? 'SS' : 'सेकंड'}
                             value={person.second}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                const value = e.target.value.replace(/\D/g, '');
                                 if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
                                     setPerson({ ...person, second: value });
                                 }
                             }}
-                            min="0"
-                            max="59"
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val) {
+                                    setPerson({ ...person, second: val.padStart(2, '0') });
+                                }
+                            }}
                             maxLength={2}
                             className="h-14 bg-background/50 border-border rounded-2xl"
                         />

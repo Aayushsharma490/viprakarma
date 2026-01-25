@@ -260,12 +260,17 @@ export function computeVimshottari(dobUtcDate /* JS Date UTC */, moonDeg) {
   let curStart = startDate;
   let curYears = startRemainingYears;
   let curEnd = addYearsToDate(curStart, curYears);
+
+  // Dasha Bhogya: Total years of birth mahadasha - remaining years
+  const dashaBhogya = startLordYears - startRemainingYears;
+
   result.push({
     lord: cycleOrder[0],
     years: +curYears.toFixed(6),
     start: new Date(curStart),
     end: new Date(curEnd),
-    partial: true
+    partial: true,
+    dashaBhogya: +dashaBhogya.toFixed(6)
   });
 
   // subsequent full dashas
@@ -280,7 +285,7 @@ export function computeVimshottari(dobUtcDate /* JS Date UTC */, moonDeg) {
       lord,
       years,
       start: new Date(curStart),
-      end: new Date(curEnd),
+      end: new Date(nextEnd),
       partial: false
     });
     curStart = nextEnd;

@@ -213,6 +213,7 @@ export default function Home() {
 
   const features = [
     {
+      tKey: 'feature1',
       icon: Star,
       title: 'Kundali Generator',
       description: 'Get your personalized birth chart with detailed planetary positions and accurate predictions based on Vedic astrology principles',
@@ -223,6 +224,7 @@ export default function Home() {
       popular: true
     },
     {
+      tKey: 'feature2',
       icon: BookOpen,
       title: 'Numerology',
       description: 'Discover your life path, destiny, and soul urge numbers with comprehensive insights into your personality and future',
@@ -232,6 +234,7 @@ export default function Home() {
       image: '/second.png'
     },
     {
+      tKey: 'feature3',
       icon: Globe,
       title: 'Palmistry Analysis',
       description: 'Upload your palm image for detailed analysis and accurate readings of your life lines and future predictions',
@@ -241,16 +244,7 @@ export default function Home() {
       image: '/third.png'
     },
     {
-      icon: MessageCircle,
-      title: 'AI Astro Chat',
-      description: 'Chat with our advanced AI astrologer anytime for instant cosmic guidance, daily horoscope, and personalized advice',
-      href: '/chat',
-      color: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-gradient-to-br from-green-50 to-emerald-50',
-      image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      new: true
-    },
-    {
+      tKey: 'feature5',
       icon: Users,
       title: 'Talk to Astrologer',
       description: 'Connect with certified expert astrologers for personalized consultations via call, video, or chat sessions',
@@ -260,6 +254,7 @@ export default function Home() {
       image: '/fourth.png'
     },
     {
+      tKey: 'feature6',
       icon: Calendar,
       title: 'Book Pandit',
       description: 'Book experienced pandits for pujas, ceremonies, and rituals at your home with complete arrangements',
@@ -267,6 +262,17 @@ export default function Home() {
       color: 'from-violet-500 to-purple-500',
       bgColor: 'bg-gradient-to-br from-violet-50 to-purple-50',
       image: '/fifth.png'
+    },
+    {
+      tKey: 'feature4',
+      icon: MessageCircle,
+      title: 'AI Astro Chat',
+      description: 'Chat with our advanced AI astrologer anytime for instant cosmic guidance, daily horoscope, and personalized advice',
+      href: '/chat',
+      color: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-gradient-to-br from-green-50 to-emerald-50',
+      image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+      new: true
     },
   ];
 
@@ -430,19 +436,19 @@ export default function Home() {
               <div className="mb-8">
                 <div className="inline-flex items-center gap-3 px-4 py-2 bg-accent/10 rounded-full border border-border mb-8 backdrop-blur-md animate-pulse">
                   <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-black text-foreground uppercase tracking-[0.2em]">Trusted by 10,000+ Seekers</span>
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.2em]">{t('hero.topper')}</span>
                 </div>
 
-                <h1 className="hero-title text-6xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground font-sans leading-[0.9] tracking-tighter">
-                  <span className="block drop-shadow-[0_0_30px_rgba(255,215,0,0.2)] mb-6">
+                <h1 className="hero-title text-5xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground font-sans leading-[1.5] tracking-tighter">
+                  <span className="block drop-shadow-[0_0_30px_rgba(255,215,0,0.2)] mb-4 pt-10 pb-4 px-2">
                     {t('hero.title1')}
                   </span>
-                  <span className="block golden-text">
+                  <span className="block golden-text pt-10 pb-4 px-2">
                     {t('hero.title2')}
                   </span>
                 </h1>
 
-                <p className="hero-subtitle text-lg md:text-xl text-muted-foreground mb-10 font-bold leading-relaxed max-w-xl font-sans uppercase tracking-[0.05em]">
+                <p className="hero-subtitle text-lg md:text-xl text-muted-foreground mb-10 font-bold leading-relaxed max-w-xl font-sans uppercase tracking-[0.05em] pt-4">
                   {t('hero.subtitle')}
                 </p>
               </div>
@@ -523,24 +529,7 @@ export default function Home() {
       {/* Features Section */}
       <section ref={featuresRef} className="relative py-24 bg-transparent">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="text-center mb-20"
-          >
-            <div className="inline-flex items-center gap-6 mb-8">
-              <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary"></div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground uppercase tracking-tighter font-sans">
-                {t('features.title').split(' ').slice(0, -2).join(' ')} <span className="golden-text">{t('features.title').split(' ').slice(-2, -1).join(' ')}</span> {t('features.title').split(' ').slice(-1).join(' ')}
-              </h2>
-              <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary"></div>
-            </div>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
-              {t('features.subtitle')}
-            </p>
-          </motion.div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
             {features.map((feature, index) => (
@@ -582,10 +571,10 @@ export default function Home() {
 
                     <div className="px-4 pb-4">
                       <h3 className="text-2xl font-black text-foreground mb-3 group-hover:text-primary transition-colors duration-300 font-sans tracking-tight">
-                        {t(`feature${features.indexOf(feature) + 1}.title`)}
+                        {t(`${feature.tKey}.title`)}
                       </h3>
                       <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-bold line-clamp-2">
-                        {t(`feature${features.indexOf(feature) + 1}.desc`)}
+                        {t(`${feature.tKey}.desc`)}
                       </p>
 
                       <div className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-primary group-hover:gap-5 transition-all">
@@ -669,13 +658,15 @@ export default function Home() {
               <div className="relative z-10">
                 <div className="w-20 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-12 rounded-full opacity-50"></div>
 
-                <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 uppercase tracking-tighter leading-[0.9] font-sans">
-                  {t('cta.title').split(' ').slice(0, -3).join(' ')} <span className="golden-text">{t('cta.title').split(' ').slice(-3, -2).join(' ')}</span><br />{t('cta.title').split(' ').slice(-2).join(' ')}
+                <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 uppercase tracking-tighter leading-[1.8] font-sans py-10">
+                  {t('cta.title').split(' ').slice(0, -3).join(' ')} <span className="golden-text px-2">{t('cta.title').split(' ').slice(-3, -2).join(' ')}</span><br />{t('cta.title').split(' ').slice(-2).join(' ')}
                 </h2>
 
-                <p className="text-lg md:text-xl text-muted-foreground mb-16 leading-relaxed max-w-2xl mx-auto font-bold uppercase tracking-widest">
-                  {t('cta.subtitle')}
-                </p>
+                {t('cta.subtitle') && (
+                  <p className="text-lg md:text-xl text-muted-foreground mb-16 leading-relaxed max-w-2xl mx-auto font-bold uppercase tracking-widest">
+                    {t('cta.subtitle')}
+                  </p>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
                   <Link href="/signup">

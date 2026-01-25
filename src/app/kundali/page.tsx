@@ -40,6 +40,9 @@ import PanchangPanel from "@/components/PanchangPanel";
 import PhallitPanel from "@/components/PhallitPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { generateKundaliPDF } from "@/utils/pdfGenerator";
+import { computeVimshottari } from "@/utils/kundaliCalc";
+import { vedicAstrology } from "@/lib/vedicAstrology";
+import html2canvas from 'html2canvas';
 
 type ChartPlacement = {
   house: number;
@@ -105,12 +108,14 @@ interface AstroEngineResponse {
       startDate: string;
       endDate: string;
       years: number;
+      dashaBhogya?: number;
     };
     mahadashas: Array<{
       planet: string;
       startDate: string;
       endDate: string;
       years: number;
+      dashaBhogya?: number;
       antardashas?: Array<{
         planet: string;
         startDate: string;
@@ -364,6 +369,119 @@ export default function KundaliPage() {
 
       if (!response.ok) {
         throw new Error(data?.error || "Failed to generate kundali");
+      }
+
+      // --- CORRECT MAHADASHA CALCULATION ---
+      // 1. Try to find the current dasha from the returned list first
+      const now = new Date();
+      let currentDashaFound = false;
+
+      const parseDate = (dateStr: string) => {
+        if (!dateStr) return null;
+        // Handle DD-MM-YYYY or DD/MM/YYYY
+        if (dateStr.match(/^\d{2}[-/]\d{2}[-/]\d{4}$/)) {
+          const [d, m, y] = dateStr.split(/[-/]/);
+          return new Date(Number(y), Number(m) - 1, Number(d));
+        }
+        // Handle YYYY-MM-DD
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}/)) {
+          return new Date(dateStr);
+        }
+        return new Date(dateStr);
+      };
+
+      if (data?.dashas?.mahadashas?.length) {
+        const found = data.dashas.mahadashas.find((d: any) => {
+          const start = parseDate(d.startDate);
+          const end = parseDate(d.endDate);
+          return start && end && now >= start && now < end;
+        });
+
+        if (found) {
+          console.log("Found current dasha in list:", found);
+          data.dashas.current = {
+            planet: found.planet,
+            startDate: found.startDate,
+            endDate: found.endDate,
+            years: found.years
+          };
+          currentDashaFound = true;
+        }
+      }
+
+      // 2. If not found in list, try to recalculate using Moon degree
+      if (!currentDashaFound) {
+        const moonPlanet = data?.planets.find((p: any) => p.name === 'Moon');
+
+        if (moonPlanet && data) {
+          try {
+            // Construct UTC Date object for birth
+            const birthDateStr = `${formData.year}-${String(formData.month).padStart(2, '0')}-${String(formData.day).padStart(2, '0')}T${String(formData.hour).padStart(2, '0')}:${String(formData.minute).padStart(2, '0')}:${String(formData.second).padStart(2, '0')}`;
+            const birthDate = new Date(birthDateStr);
+
+            const moonLon = moonPlanet.longitude;
+
+            const dashas = computeVimshottari(birthDate, moonLon);
+            const currentDasha = dashas.find(d => now >= d.start && now < d.end);
+            const birthDasha = dashas.find(d => d.partial) || dashas[0];
+
+            if (currentDasha) {
+              console.log("Recalculated Current Dasha:", currentDasha);
+
+              if (!data.dashas) data.dashas = { current: {} as any, mahadashas: [] };
+
+              data.dashas.current = {
+                planet: currentDasha.lord,
+                startDate: currentDasha.start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\//g, '-'),
+                endDate: currentDasha.end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\//g, '-'),
+                years: currentDasha.years,
+                dashaBhogya: birthDasha.dashaBhogya
+              };
+
+              // Only update full list if it was empty
+              if (!data.dashas.mahadashas.length) {
+                data.dashas.mahadashas = dashas.map(d => ({
+                  planet: d.lord,
+                  startDate: d.start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\//g, '-'),
+                  endDate: d.end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\//g, '-'),
+                  years: d.years,
+                  dashaBhogya: d.dashaBhogya
+                }));
+              }
+            }
+          } catch (e) {
+            console.error("Error recalculating dasha:", e);
+          }
+        }
+      }
+
+      // 3. Enrich enhancedDetails with missing fields
+      if (data && data.enhancedDetails) {
+        const details = data.enhancedDetails;
+        const moonPlanet = data.planets.find((p: any) => p.name === 'Moon');
+        const sunPlanet = data.planets.find((p: any) => p.name === 'Sun');
+
+        if (details.vikramSamvat && !details.shalivahanShake) {
+          details.shalivahanShake = vedicAstrology.calculateShalivahanShake(details.vikramSamvat);
+        }
+
+        if (!details.ritu) {
+          details.ritu = vedicAstrology.calculateRitu(details.masa);
+        }
+
+        if (sunPlanet && !details.ayan) {
+          details.ayan = vedicAstrology.calculateAyan(sunPlanet.longitude);
+        }
+
+        if (moonPlanet && !details.namakshar) {
+          const nak = moonPlanet.nakshatra?.name || details.nakshatra;
+          const pada = moonPlanet.nakshatra?.pada || details.nakshatraPada || 1;
+          details.namakshar = vedicAstrology.getNamakshar(nak, parseInt(pada.toString()));
+        }
+
+        if (data.ascendant && !details.lagnaDegree) {
+          details.lagnaDegree = data.ascendant.degree;
+        }
       }
 
       setKundaliData(data as AstroEngineResponse);
@@ -644,7 +762,7 @@ export default function KundaliPage() {
             <p className="uppercase tracking-[0.3em] text-sm text-amber-600 mb-3">
               {t("kundali.subtitle") || "Precision Vedic Astrology"}
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+            <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter decoration-primary decoration-4 underline-offset-8">
               {t("kundali.title") || "Kundali Generator"}
             </h1>
 
@@ -720,31 +838,41 @@ export default function KundaliPage() {
                   <div className="grid grid-cols-3 gap-3 mt-2">
                     <Input
                       placeholder={t("kundali.dayPlaceholder")}
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.day}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value.replace(/\D/g, '');
                         if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 31 && value.length <= 2)) {
                           setFormData({ ...formData, day: value });
                         }
                       }}
-                      min={1}
-                      max={31}
+                      onBlur={(event) => {
+                        const val = event.target.value;
+                        if (val && val.length === 1) {
+                          setFormData({ ...formData, day: val.padStart(2, '0') });
+                        }
+                      }}
                       maxLength={2}
                       required
                     />
                     <Input
                       placeholder={t("kundali.monthPlaceholder")}
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.month}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value.replace(/\D/g, '');
                         if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12 && value.length <= 2)) {
                           setFormData({ ...formData, month: value });
                         }
                       }}
-                      min={1}
-                      max={12}
+                      onBlur={(event) => {
+                        const val = event.target.value;
+                        if (val && val.length === 1) {
+                          setFormData({ ...formData, month: val.padStart(2, '0') });
+                        }
+                      }}
                       maxLength={2}
                       required
                     />
@@ -778,46 +906,61 @@ export default function KundaliPage() {
                   <div className="grid grid-cols-3 gap-3 mt-2">
                     <Input
                       placeholder={t("kundali.hourPlaceholder")}
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.hour}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value.replace(/\D/g, '');
                         if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 23 && value.length <= 2)) {
                           setFormData({ ...formData, hour: value });
                         }
                       }}
-                      min={0}
-                      max={23}
+                      onBlur={(event) => {
+                        const val = event.target.value;
+                        if (val) {
+                          setFormData({ ...formData, hour: val.padStart(2, '0') });
+                        }
+                      }}
                       maxLength={2}
                       required
                     />
                     <Input
                       placeholder={t("kundali.minutePlaceholder")}
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.minute}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value.replace(/\D/g, '');
                         if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
                           setFormData({ ...formData, minute: value });
                         }
                       }}
-                      min={0}
-                      max={59}
+                      onBlur={(event) => {
+                        const val = event.target.value;
+                        if (val) {
+                          setFormData({ ...formData, minute: val.padStart(2, '0') });
+                        }
+                      }}
                       maxLength={2}
                       required
                     />
                     <Input
                       placeholder="SS"
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={formData.second}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value.replace(/\D/g, '');
                         if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59 && value.length <= 2)) {
                           setFormData({ ...formData, second: value });
                         }
                       }}
-                      min={0}
-                      max={59}
+                      onBlur={(event) => {
+                        const val = event.target.value;
+                        if (val) {
+                          setFormData({ ...formData, second: val.padStart(2, '0') });
+                        }
+                      }}
                       maxLength={2}
                       required
                     />
@@ -1042,7 +1185,7 @@ export default function KundaliPage() {
                         <Target className="h-5 w-5 text-green-600" />
                         <div>
                           <p className="text-xs uppercase tracking-widest text-gray-500">
-                            {t("kundali.ayanamsa") || "Ayanamsa (Lahiri)"}
+                            {t("kundali.ayanamsa") || t("KUNDALI.AYANAMSA") || "Ayanamsa (Lahiri)"}
                           </p>
                           <p className="text-base font-semibold text-gray-900">
                             {kundaliData.ayanamsa?.toFixed(6) ?? 'N/A'}°
@@ -1071,7 +1214,7 @@ export default function KundaliPage() {
                       <div className="flex items-center gap-3 text-sm text-gray-700">
                         <Compass className="h-4 w-4 text-emerald-600" />
                         <span>
-                          {t("kundali.timezone") || "Timezone"} {kundaliData.basicDetails.timezone}
+                          {t("kundali.timezone") || t("KUNDALI.TIMEZONE") || "Timezone"} {kundaliData.basicDetails.timezone}
                         </span>
                       </div>
                     </div>
@@ -1325,7 +1468,7 @@ export default function KundaliPage() {
                                         {language === "hi" ? t(`planet.${planet.name}`) : planet.name}
                                       </span>
                                       <span className="text-sm text-amber-700 font-medium">
-                                        {planet.nakshatra.name} ({language === "hi" ? "पद" : "Pada"} {planet.nakshatra.pada})
+                                        {planet.nakshatra.name} ({t("kundali.pada") || "पद"} {planet.nakshatra.pada})
                                       </span>
                                     </div>
                                   </motion.div>
@@ -1421,7 +1564,7 @@ export default function KundaliPage() {
                                 {planet.degreeInSign.toFixed(2)}°
                               </td>
                               <td className="py-3 px-2 text-gray-700">
-                                {planet.nakshatra.name} ({t("kundali.pada")} {planet.nakshatra.pada})
+                                {planet.nakshatra.name} ({t("kundali.pada") || "पद"} {planet.nakshatra.pada})
                               </td>
                               <td className="py-3 px-2 text-xs">
                                 <div className="flex flex-col gap-1">
@@ -1490,7 +1633,7 @@ export default function KundaliPage() {
                             </span>
                             <span className="font-semibold text-gray-900">
                               {kundaliData.nakshatras.sun
-                                ? `${kundaliData.nakshatras.sun.name} (${t("kundali.pada")} ${kundaliData.nakshatras.sun.pada})`
+                                ? `${kundaliData.nakshatras.sun.name} (${t("kundali.pada") || "पद"} ${kundaliData.nakshatras.sun.pada})`
                                 : "—"}
                             </span>
                           </div>
@@ -1500,7 +1643,7 @@ export default function KundaliPage() {
                             </span>
                             <span className="font-semibold text-gray-900">
                               {kundaliData.nakshatras.moon
-                                ? `${kundaliData.nakshatras.moon.name} (${t("kundali.pada")} ${kundaliData.nakshatras.moon.pada})`
+                                ? `${kundaliData.nakshatras.moon.name} (${t("kundali.pada") || "पद"} ${kundaliData.nakshatras.moon.pada})`
                                 : "—"}
                             </span>
                           </div>
@@ -1509,7 +1652,7 @@ export default function KundaliPage() {
                               {t("kundali.ascendant")}
                             </span>
                             <span className="font-semibold text-gray-900">
-                              {kundaliData.nakshatras.ascendant.name} ({t("kundali.pada")} {kundaliData.nakshatras.ascendant.pada})
+                              {kundaliData.nakshatras.ascendant.name} ({t("kundali.pada") || "पद"} {kundaliData.nakshatras.ascendant.pada})
                             </span>
                           </div>
                         </div>
@@ -1549,16 +1692,28 @@ export default function KundaliPage() {
                           </p>
                         </div>
                       </div>
-                      <p className="text-sm text-emerald-800 font-medium flex items-center gap-2">
+                      <p className="text-sm text-emerald-800 font-medium flex flex-wrap items-center gap-2">
                         📅 {formatDateDDMMYYYY(kundaliData.dashas.current.startDate)} {t("kundali.to")} {formatDateDDMMYYYY(kundaliData.dashas.current.endDate)}
                         <span className="text-xs bg-emerald-200 px-2 py-1 rounded-full">
                           {kundaliData.dashas.current.years.toFixed(2)} {t("kundali.years")}
                         </span>
+                        {kundaliData.dashas.current.dashaBhogya && (
+                          <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full font-bold">
+                            {t("kundali.dashaBhogya")} {kundaliData.dashas.current.dashaBhogya.toFixed(2)} {t("kundali.yrs") || 'yrs'}
+                          </span>
+                        )}
                       </p>
                     </motion.div>
 
                     <div className="space-y-3">
                       {kundaliData.dashas.mahadashas.map((dasha, index) => {
+                        const standardPeriods: Record<string, number> = {
+                          'Ketu': 7, 'Venus': 20, 'Sun': 6, 'Moon': 10, 'Mars': 7,
+                          'Rahu': 18, 'Jupiter': 16, 'Saturn': 19, 'Mercury': 17
+                        };
+                        // Check if dasha has bhogya from API OR if its duration is less than standard
+                        const isBhogya = dasha.dashaBhogya !== undefined || dasha.years < (standardPeriods[dasha.planet] || 0) - 0.01;
+
                         const planetColors: Record<string, { bg: string; border: string; text: string; gradient: string }> = {
                           'Sun': { bg: 'bg-orange-100', border: 'border-orange-400', text: 'text-orange-900', gradient: 'from-orange-400 to-red-500' },
                           'Moon': { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-900', gradient: 'from-blue-400 to-cyan-500' },
@@ -1610,20 +1765,27 @@ export default function KundaliPage() {
                                     <p className={`text-lg font-bold ${colors.text} flex items-center gap-2`}>
                                       {t(`planet.${dasha.planet}`) || dasha.planet}
                                       {isCurrent && <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">{t("kundali.active") || "ACTIVE"}</span>}
+                                      {isBhogya && <span className="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded-full font-black tracking-widest shadow-sm border border-amber-400">BHOGYA</span>}
                                     </p>
                                     <p className="text-sm text-gray-700 font-medium">
                                       {formatDateDDMMYYYY(dasha.startDate)} → {formatDateDDMMYYYY(dasha.endDate)}
                                     </p>
+                                    {isBhogya && (
+                                      <div className="mt-2 text-xs font-black text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                                        <span className="p-1 bg-blue-100 rounded-lg">⏳</span> {t("kundali.dashaBhogya")} {dasha.years.toFixed(2)} {t("kundali.yrs") || 'yrs'}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
-                                <div className="text-right">
-                                  <p className={`text-xs font-semibold ${colors.text} bg-white px-3 py-1 rounded-full shadow-sm`}>
+                                <div className="text-right flex flex-col items-end justify-between">
+                                  <p className={`text-xs font-semibold ${colors.text} bg-white px-3 py-1 rounded-full shadow-sm flex items-center gap-1`}>
                                     {dasha.years.toFixed(2)} {t("kundali.years")}
+                                    {isBhogya && <span className="text-[10px] opacity-70 font-black italic">({language === 'en' ? 'Bhogya' : 'भोग्य'})</span>}
                                   </p>
                                   <motion.div
                                     animate={{ rotate: isExpanded ? 180 : 0 }}
                                     transition={{ duration: 0.3 }}
-                                    className="mt-2 text-gray-600"
+                                    className="text-gray-600"
                                   >
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                       <polyline points="6 9 12 15 18 9"></polyline>
@@ -1651,11 +1813,11 @@ export default function KundaliPage() {
                                           initial={{ opacity: 0, y: 10 }}
                                           animate={{ opacity: 1, y: 0 }}
                                           transition={{ delay: idx * 0.05 }}
-                                          className="bg-white bg-opacity-70 rounded-lg px-3 py-2 text-xs border border-gray-200 hover:shadow-md transition-shadow"
+                                          className="bg-white bg-opacity-75 rounded-lg px-4 py-3 text-xs border border-gray-200 hover:shadow-md transition-shadow min-h-[90px] flex flex-col justify-center gap-1"
                                         >
-                                          <p className="font-semibold text-gray-800">{t(`planet.${antardasha.planet}`) || antardasha.planet}</p>
-                                          <p className="text-gray-600">{formatDateDDMMYYYY(antardasha.startDate)} → {formatDateDDMMYYYY(antardasha.endDate)}</p>
-                                          <p className="text-gray-500">{antardasha.years.toFixed(2)} {t("kundali.yrs") || "yrs"}</p>
+                                          <p className="font-extrabold text-gray-900 text-sm">{t(`planet.${antardasha.planet}`) || antardasha.planet}</p>
+                                          <p className="text-gray-700 font-medium">{formatDateDDMMYYYY(antardasha.startDate)} → {formatDateDDMMYYYY(antardasha.endDate)}</p>
+                                          <p className="text-gray-600 font-semibold">{antardasha.years.toFixed(2)} {t("kundali.yrs") || "yrs"}</p>
                                         </motion.div>
                                       ))}
                                     </div>

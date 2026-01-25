@@ -80,10 +80,10 @@ export default function AboutContent() {
                             className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-primary/20 rounded-full mb-6"
                         >
                             <Sparkles className="w-4 h-4 text-primary" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Est. 2024</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t("about.established")}</span>
                         </motion.div>
                         <h1 className="text-6xl md:text-8xl font-black text-foreground mb-8 tracking-tighter uppercase font-sans leading-none">
-                            Our <span className="golden-text">Mission</span>
+                            {t("about.ourMissionTitle").split(' ')[0]} <span className="golden-text">{t("about.ourMissionTitle").split(' ')[1]}</span>
                         </h1>
                         <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
                             {t("about.subtitle")}

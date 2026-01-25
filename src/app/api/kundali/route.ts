@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Force Node.js runtime for Vercel compatibility
 export const runtime = 'nodejs';
 const ENGINE_URL =
-  process.env.ASTRO_ENGINE_URL || "https://astro-engine-production.up.railway.app/kundali";
+  process.env.ASTRO_ENGINE_URL || "https://astro-engine-production-e9fd.up.railway.app/kundali";
 
 // Force dynamic rendering - no caching
 export const dynamic = "force-dynamic";

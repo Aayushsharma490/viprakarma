@@ -24,14 +24,15 @@ const translations = {
     "nav.kundaliMatching": "Kundali Matching",
     "nav.numerology": "Numerology",
     "nav.palmistry": "Palmistry",
-    "nav.mahurat": "Mahurat",
+    "nav.mahurat": "Muhurat",
     "nav.consultation": "Consultation",
     "nav.talkToAstrologer": "Talk to Astrologer",
-    "nav.about": "About",
-    "nav.contact": "Contact",
+    "nav.about": "About Us",
+    "nav.contact": "Contact Us",
     "nav.subscribe": "Subscribe",
     "nav.login": "Login",
     "nav.poojaBooking": "Pooja Booking",
+    "nav.vastu": "Vastu",
 
     // Admin Panel
     "admin.title": "VipraKarma Admin",
@@ -358,12 +359,13 @@ const translations = {
       "All rights reserved. Made with ✨ for spiritual seekers.",
 
     // Hero Section
-    "hero.title1": "Discover",
-    "hero.title2": "Your Destiny",
+    "hero.topper": "Discover your divine destiny → Astrology is a science",
+    "hero.title1": "Unlock Your",
+    "hero.title2": "Cosmic Blueprint",
     "hero.subtitle":
-      "Unlock the secrets of the universe with personalized astrology, numerology, and expert guidance from renowned astrologers.",
-    "hero.cta1": "Get Free Kundali",
-    "hero.cta2": "Premium Features",
+      "Make your life easier with the guidance of expert astrologers.",
+    "hero.cta1": "Open Kundali",
+    "hero.cta2": "Talk to Pandit Ji",
     "hero.stats1": "Happy Users",
     "hero.stats2": "Expert Astrologers",
     "hero.stats3": "Years Experience",
@@ -400,7 +402,7 @@ const translations = {
     // Stats
     "stats.title": "Trusted by Thousands",
     "stats.subtitle":
-      "Join our growing community of enlightened souls finding guidance and transformation",
+      "Join Viprakarma for clear guidance and bring transformation to your life",
     "stats.testimonials": "Voice of the Universe",
     "stats.users": "Satisfied Clients",
     "stats.astrologers": "Expert Astrologers",
@@ -419,10 +421,9 @@ const translations = {
     "testimonial3.content": "AI chat feature is amazing! Got instant answers to all my astrology questions.",
 
     // CTA Section
-    "cta.title": "Begin Your Cosmic Path Today",
-    "cta.subtitle":
-      "Join thousands of souls who have discovered their true path through celestial insights and divine guidance",
-    "cta.startJourney": "Start Journey",
+    "cta.title": "Start your cosmic journey today",
+    "cta.subtitle": "",
+    "cta.startJourney": "Connect with us",
     "cta.consultNow": "Consult Now",
     "cta.trial": "Start Free Trial",
     "cta.consult": "Consult Expert",
@@ -434,7 +435,7 @@ const translations = {
     "cta.trustedDesc": "Trusted Service",
 
     // Mahurat Page
-    "mahurat.title": "Mahurat Calculator",
+    "mahurat.title": "Muhurat Calculator",
     "mahurat.subtitle": "Find the most auspicious time for your important events",
     "mahurat.subscriptionRequired": "Subscription Required",
     "mahurat.subscriptionMessage": "Get access to personalized Mahurat calculations for all your important events",
@@ -501,9 +502,9 @@ const translations = {
 
 
     // Kundali Page
-    "kundali.title": "Kundali Generator",
+    "kundali.title": "Janam   Kundali",
     "kundali.subtitle":
-      "Generate your comprehensive birth chart with detailed astrological insights",
+      "Enter your birth details to generate your comprehensive birth chart with detailed astrological insights",
     "kundali.fullName": "Full Name",
     "kundali.gender": "Gender",
     "kundali.male": "Male",
@@ -514,10 +515,9 @@ const translations = {
     "kundali.localBirthTime": "Local Birth Time",
     "kundali.utcTime": "UTC Time",
     "kundali.description":
-      "Enter your birth details to compute an accurate Lagna (D1), Chandra, Navamsa (D9) and Dashamsa (D10) chart powered by the Swiss Ephemeris.",
-    "kundali.awaitingTitle": "Awaiting Birth Details",
-    "kundali.awaitingDesc":
-      "Enter your accurate birth information to unlock high-fidelity Swiss Ephemeris calculations for all major divisional charts.",
+      "Enter your details to generate your accurate Janam Kundali and divisional charts.",
+    "kundali.awaitingTitle": "Enter Details to Get Kundali",
+    "kundali.awaitingDesc": "",
     "kundali.planetaryPositions": "Planetary Positions",
     "kundali.planet": "Planet",
     "kundali.sign": "Sign",
@@ -570,9 +570,13 @@ const translations = {
     "kundali.ascendant": "Ascendant",
     "kundali.ayanamsa": "Ayanamsa (Lahiri)",
     "kundali.timezone": "Timezone",
+    "KUNDALI.AYANAMSA": "Ayanamsa (Lahiri)",
+    "KUNDALI.TIMEZONE": "Timezone",
+    "kundali.place": "Place:",
     "kundali.active": "ACTIVE",
     "kundali.antardashas": "Antardasha Periods:",
     "kundali.yrs": "yrs",
+    "kundali.dashaBhogya": "Dasha Bhogya:",
 
     // Zodiac Signs
     "sign.Aries": "Aries",
@@ -915,6 +919,8 @@ const translations = {
     "about.subtitle":
       "Your trusted companion for cosmic guidance and spiritual services",
     "about.missionTitle": "Our Mission",
+    "about.established": "Est. 2024",
+    "about.ourMissionTitle": "Our Mission",
     "about.ourMission":
       "At Viprakarma, we believe that understanding the cosmic forces that shape our lives can lead to better decisions, deeper self-awareness, and a more fulfilling existence. Our mission is to make authentic Vedic astrology and spiritual services accessible to everyone through modern technology while preserving the ancient wisdom of our traditions. We combine the precision of astronomical calculations with the insights of experienced astrologers to provide you with accurate, personalized guidance for every aspect of your life.",
     "about.valuesTitle": "Our Values",
@@ -1012,7 +1018,7 @@ const translations = {
     "nav.kundaliMatching": "कुंडली मिलान",
     "nav.talkToAstrologer": "ज्योतिषी से बात करें",
     "nav.about": "हमारे बारे में",
-    "nav.contact": "संपर्क",
+    "nav.contact": "संपर्क करें",
     "nav.subscribe": "सब्स्क्राइब",
     "nav.login": "लॉगिन",
     "nav.signup": "साइन अप",
@@ -1020,6 +1026,7 @@ const translations = {
     "nav.admin": "एडमिन पोर्टल",
     "nav.profile": "प्रोफाइल",
     "nav.poojaBooking": "पूजा बुकिंग",
+    "nav.vastu": "वास्तु",
 
     // Footer
     "footer.brandDesc":
@@ -1039,12 +1046,13 @@ const translations = {
       "सर्वाधिकार सुरक्षित। आध्यात्मिक खोजकर्ताओं के लिए ✨ के साथ बनाया गया।",
 
     // Hero Section
-    "hero.title1": "अपनी",
-    "hero.title2": "दैव नियति खोजें",
+    "hero.topper": "अपनी दैवीय नियति खोजें → ज्योतिष एक विज्ञान है",
+    "hero.title1": "अनलॉक करें अपना",
+    "hero.title2": "कॉस्मिक ब्लूप्रिंट",
     "hero.subtitle":
-      "वैयक्तिक ज्योतिष, अंकशास्त्र और प्रसिद्ध ज्योतिषियों से विशेष मार्गदर्शन के साथ ब्रह्मांड के रहस्यों को अनलॉक करें।",
-    "hero.cta1": "मुफ्त कुंडली प्राप्त करें",
-    "hero.cta2": "प्रीमियम सुविधाएं",
+      "विशेषज्ञ ज्योतिषियों के मार्गदर्शन के साथ अपने जीवन को सुगम बनाएँ।",
+    "hero.cta1": "कुंडली खोलें",
+    "hero.cta2": "पंडित जी से बात करें",
     "hero.stats1": "खुश उपयोगकर्ता",
     "hero.stats2": "विशेषज्ञ ज्योतिषी",
     "hero.stats3": "साल का अनुभव",
@@ -1081,7 +1089,7 @@ const translations = {
     // Stats
     "stats.title": "हजारों लोगों द्वारा विश्वसनीय",
     "stats.subtitle":
-      "हमारे बढ़ते समुदाय में शामिल हों जहां लोगों ने मार्गदर्शन, स्पष्टता और परिवर्तन पाया है",
+      "विप्रकर्म से जुड़ें और स्पष्ट मार्गदर्शन एवं जीवन में परिवर्तन लाएं",
     "stats.testimonials": "हमारे ग्राहक क्या कहते हैं",
     "stats.users": "संतुष्ट ग्राहक",
     "stats.astrologers": "विशेषज्ञ ज्योतिषी",
@@ -1104,18 +1112,17 @@ const translations = {
 
     // CTA Section
     "cta.title": "आज अपनी ब्रह्मांडीय यात्रा शुरू करें",
-    "cta.subtitle":
-      "हजारों जागृत आत्माओं में शामिल हों जिन्होंने हमारे दिव्य मार्गदर्शन और ब्रह्मांडीय अंतर्दृष्टि के माध्यम से अपना सच्चा मार्ग खोजा है",
-    "cta.startJourney": "यात्रा शुरू करें",
+    "cta.subtitle": "",
+    "cta.startJourney": "हमसे जुड़ें",
     "cta.consultNow": "अभी परामर्श करें",
-    "cta.trial": "मुफ्त ट्रायल शुरू करें",
+    "cta.trial": "मुफ्त कुंडली प्राप्त करें",
     "cta.consult": "विशेषज्ञ से परामर्श करें",
     "cta.secure": "100% सुरक्षित",
-    "cta.secureDesc": "& गोपनीय",
+    "cta.secureDesc": "और गोपनीय",
     "cta.available": "24/7 उपलब्ध",
     "cta.availableDesc": "दिव्य सेवाएं",
-    "cta.trusted": "विश्वसनीय तब से",
-    "cta.trustedDesc": "विश्वसनीय सेवा",
+    "cta.trusted": "विश्वसनीय",
+    "cta.trustedDesc": "सेवा",
 
     // Admin Panel
     "admin.title": "विप्रकर्म एडमिन",
@@ -1391,6 +1398,8 @@ const translations = {
 
     // About Page
     "about.missionTitle": "हमारा विशेष कार्य",
+    "about.established": "स्थापना 2024",
+    "about.ourMissionTitle": "हमारा मिशन",
     "about.ourMission":
       "विप्रकर्म में, हम मानते हैं कि हमारे जीवन को आकार देने वाली ब्रह्मांडीय शक्तियों को समझना बेहतर निर्णय, गहरी आत्म-जागरूकता और अधिक संतोषजनक अस्तित्व की ओर ले जा सकता है। हमारा मिशन आधुनिक तकनीक के माध्यम से प्रामाणिक वैदिक ज्योतिष और आध्यात्मिक सेवाओं को सभी के लिए सुलभ बनाना है, जबकि हमारी परंपराओं की प्राचीन बुद्धिमत्ता को संरक्षित रखते हुए। हम आपको आपके जीवन के हर पहलू के लिए सटीक, व्यक्तिगत मार्गदर्शन प्रदान करने के लिए खगोलीय गणनाओं की सटीकता को अनुभवी ज्योतिषियों की अंतर्दृष्टि के साथ जोड़ते हैं।",
     "about.title": "विप्रकर्म के बारे में",
@@ -1403,6 +1412,8 @@ const translations = {
 
 
     // Mahurat Page
+    "महूर्त": "मुहूर्त",
+    "महूर्त गणना": "मुहूर्त गणना",
     "mahurat.title": "मुहूर्त कैलकुलेटर",
     "mahurat.subtitle": "अपने महत्वपूर्ण कार्यों के लिए सबसे शुभ समय खोजें",
     "mahurat.subscriptionRequired": "सदस्यता आवश्यक",
@@ -1439,7 +1450,27 @@ const translations = {
     "mahurat.result.excellent": "व्यापार उद्घाटन के लिए उत्कृष्ट समय। सभी ग्रह स्थितियां अनुकूल हैं",
     "mahurat.result.recommendation": "टिप्पणी",
 
-    // Rashi (Zodiac Signs)
+    "planet.Lord.Sun": "सूर्य",
+    "planet.Lord.Moon": "चंद्र",
+    "planet.Lord.Mars": "मंगल",
+    "planet.Lord.Mercury": "बुध",
+    "planet.Lord.Jupiter": "गुरु",
+    "planet.Lord.Venus": "शुक्र",
+    "planet.Lord.Saturn": "शनि",
+    "planet.Lord.Rahu": "राहु",
+    "planet.Lord.Ketu": "केतु",
+    "planet.Lord.Surya": "सूर्य",
+    "planet.Lord.Chandra": "चंद्र",
+    "planet.Lord.Mangal": "मंगल",
+    "planet.Lord.Budha": "बुध",
+    "planet.Lord.Budh": "बुध",
+    "planet.Lord.Guru": "गुरु",
+    "planet.Lord.Shukra": "शुक्र",
+    "planet.Lord.Shani": "शनि",
+    "paya.Gold": "स्वर्ण (सोना)",
+    "paya.Silver": "रजत (चांदी)",
+    "paya.Copper": "ताम्र (तांबा)",
+    "paya.Iron": "लोहा (लोहा)",
     "mahurat.rashi.aries": "मेष",
     "mahurat.rashi.taurus": "वृषभ",
     "mahurat.rashi.gemini": "मिथुन",
@@ -1469,7 +1500,7 @@ const translations = {
     "mahurat.error.failed": "मुहूर्त बनाने में विफल",
 
     // Kundali Page
-    "kundali.title": "कुंडली जनरेटर",
+    "kundali.title": "जन्म कुंडली",
     "kundali.subtitle":
       "विस्तृत ज्योतिषीय अंतर्दृष्टि के साथ अपनी व्यापक जन्म कुंडली तैयार करें",
     "kundali.birthDetails": "जन्म विवरण",
@@ -1483,10 +1514,9 @@ const translations = {
     "kundali.localBirthTime": "स्थानीय जन्म समय",
     "kundali.utcTime": "UTC समय",
     "kundali.description":
-      "स्विस एफेमेरिस द्वारा संचालित सटीक लग्न (D1), चंद्र, नवमांश (D9) और दशमांश (D10) चार्ट की गणना करने के लिए अपनी जन्म जानकारी दर्ज करें।",
-    "kundali.awaitingTitle": "जन्म विवरण की प्रतीक्षा में",
-    "kundali.awaitingDesc":
-      "सभी प्रमुख विभागीय चार्ट के लिए उच्च-निष्ठा स्विस एफेमेरिस गणना को अनलॉक करने के लिए अपनी सटीक जन्म जानकारी दर्ज करें।",
+      "सटीक जन्म कुंडली और विभागीय चार्ट प्राप्त करने के लिए अपना विवरण दर्ज करें।",
+    "kundali.awaitingTitle": "कुंडली प्राप्त करने के लिए डिटेल्स डालें",
+    "kundali.awaitingDesc": "",
     "kundali.planetaryPositions": "ग्रहों की स्थिति",
     "kundali.planet": "ग्रह",
     "kundali.sign": "राशि",
@@ -1502,7 +1532,7 @@ const translations = {
     "kundali.nakshatraHighlights": "नक्षत्र मुख्य बातें",
     "kundali.dashaTimeline": "विम्शोत्तरी दशा समयरेखा",
     "kundali.currentMahadasha": "वर्तमान महादशा",
-    "kundali.pada": "पाद",
+    "kundali.pada": "पद",
     "kundali.houseLabel": "घर",
     "kundali.sun": "सूर्य",
     "kundali.moon": "चंद्र",
@@ -1545,7 +1575,7 @@ const translations = {
     "kundali.sunNakshatra": "सूर्य नक्षत्र:",
     "kundali.moonNakshatra": "चंद्र नक्षत्र:",
     "kundali.ascendantNakshatra": "लग्न नक्षत्र:",
-    "kundali.padaLabel": "पदा:",
+    "kundali.padaLabel": "पद:",
     "kundali.characteristics": "विशेषताएँ:",
     "kundali.beneficLabel": "हितकारी",  // Renamed/Kept unique
     "kundali.maleficLabel": "अहितकारी", // Renamed/Kept unique
@@ -1578,6 +1608,9 @@ const translations = {
     "kundali.career": "करियर",
     "kundali.finance": "वित्त",
     "kundali.health": "स्वास्थ्य",
+    "kundali.antardashas": "अंतर्दशा अवधि:",
+    "kundali.yrs": "वर्ष",
+    "kundali.dashaBhogya": "दशा भोग्य:",
     "kundali.marriage": "विवाह और संबंध",
     "kundali.education": "शिक्षा",
     "kundali.recommendedRemedies": "अनुशंसित उपाय",
@@ -1618,6 +1651,10 @@ const translations = {
     "kundali.exportingText": "निर्यात हो रहा है...",
     "kundali.saveText": "कुंडली सहेजें",
     "kundali.savingText": "सहेज रहा है...",
+    "kundali.ayanamsa": "अयनांश",
+    "kundali.timezone": "समय क्षेत्र",
+    "KUNDALI.AYANAMSA": "अयनांश",
+    "KUNDALI.TIMEZONE": "समय क्षेत्र",
     "kundali.basicDetailsTitle": "मूल विवरण",
     "kundali.nakshatrasTitle": "नक्षत्र",
     "kundali.planetaryPositionsTitle": "ग्रहों की स्थिति",
@@ -1726,19 +1763,6 @@ const translations = {
     "planet.Uranus": "अरुण",
     "planet.Neptune": "वरुण",
     "planet.Pluto": "यम",
-    "planet.Lord.Sun": "Surya",
-    "planet.Lord.Moon": "Chandra",
-    "planet.Lord.Mars": "Mangal",
-    "planet.Lord.Mercury": "Budh",
-    "planet.Lord.Jupiter": "Guru",
-    "planet.Lord.Venus": "Shukra",
-    "planet.Lord.Saturn": "Shani",
-    "planet.Lord.Rahu": "Rahu",
-    "planet.Lord.Ketu": "Ketu",
-    "paya.Gold": "Swarna (Gold)",
-    "paya.Silver": "Rajat (Silver)",
-    "paya.Copper": "Tamra (Copper)",
-    "paya.Iron": "Loha (Iron)",
     "panchang.rashiSwami": "राशि स्वामी",
     "panchang.nakshatraSwami": "नक्षत्र स्वामी",
     "panchang.vikramSamvat": "विक्रम संवत",
@@ -2167,7 +2191,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const t = (key: string): string => {
     const currentTranslations = translations[language];
-    return (currentTranslations as Record<string, string>)[key] || key;
+    const translation = (currentTranslations as Record<string, string>)[key];
+    return translation !== undefined ? translation : key;
   };
 
   // Render children always to support SSR and prevent hydration mismatch crashes

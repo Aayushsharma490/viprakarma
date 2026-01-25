@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Generate Kundali data
-        const kundaliResponse = await fetch(`${process.env.ASTRO_ENGINE_URL || 'https://astro-engine-production.up.railway.app'}/kundali`, {
+        const kundaliResponse = await fetch(`${process.env.ASTRO_ENGINE_URL || 'https://astro-engine-production-e9fd.up.railway.app'}/kundali`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

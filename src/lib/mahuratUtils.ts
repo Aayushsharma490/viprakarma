@@ -13,7 +13,7 @@ export interface MahuratResult {
     details: string;
 }
 
-const ASTRO_ENGINE_URL = process.env.NEXT_PUBLIC_ASTRO_ENGINE_URL || 'https://astro-engine-production.up.railway.app';
+const ASTRO_ENGINE_URL = process.env.NEXT_PUBLIC_ASTRO_ENGINE_URL || 'https://astro-engine-production-e9fd.up.railway.app';
 
 // Auspicious nakshatras for different purposes
 const auspiciousNakshatras = ['Rohini', 'Pushya', 'Hasta', 'Uttara Phalguni', 'Uttara Ashadha', 'Uttara Bhadrapada', 'Revati', 'Ashwini', 'Mrigashira', 'Punarvasu', 'Swati'];

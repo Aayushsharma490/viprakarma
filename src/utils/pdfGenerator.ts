@@ -201,7 +201,7 @@ export const generateKundaliPDF = async (kundaliData: any, language: string) => 
         ['सूर्यास्त', kundaliData.enhancedDetails?.sunset || 'N/A'],
         ['दिन की अवधि', kundaliData.enhancedDetails?.dayDuration || 'N/A'],
         ['रात की अवधि', kundaliData.enhancedDetails?.nightDuration || 'N/A'],
-        ['दशा शेष', kundaliData.enhancedDetails?.remainingDasha || 'N/A'],
+
     ];
 
     autoTable(doc, {
