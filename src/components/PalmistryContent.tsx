@@ -137,11 +137,11 @@ export default function PalmistryContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm">
-                            <span className="text-white">{t('palmistry.title')?.split(' ')[0] || 'Palmistry'}</span>{' '}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm text-foreground">
+                            <span>{t('palmistry.title')?.split(' ')[0] || 'Palmistry'}</span>{' '}
                             <span className="golden-text">{t('palmistry.title')?.split(' ').slice(1).join(' ') || 'Analysis'}</span>
                         </h1>
-                        <p className="text-xl text-gray-300 font-medium">
+                        <p className="text-xl text-muted-foreground font-medium">
                             {t('palmistry.subtitle') || 'Upload your palm image for comprehensive AI-powered insights and predictions'}
                         </p>
                     </motion.div>
@@ -156,7 +156,7 @@ export default function PalmistryContent() {
                         transition={{ delay: 0.2 }}
                     >
                         <Card className="celestial-card border-border bg-card/30 backdrop-blur-xl p-8 mb-8 rounded-3xl relative overflow-hidden">
-                            <h2 className="text-2xl font-semibold mb-6 text-white flex items-center gap-2">
+                            <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center gap-2">
                                 <Hand className="w-6 h-6 text-amber-500" />
                                 {t('palmistry.uploadTitle') || 'Upload Your Palm'}
                             </h2>
@@ -164,7 +164,7 @@ export default function PalmistryContent() {
                             <div className="space-y-6">
                                 {/* Location Input */}
                                 <div className="space-y-2 relative">
-                                    <Label className="text-gray-100 flex items-center gap-2 mb-2 block">
+                                    <Label className="text-foreground/80 flex items-center gap-2 mb-2 block font-medium">
                                         <MapPin className="w-4 h-4 text-amber-500" />
                                         {t('common.location') || "Your Location"}
                                     </Label>
@@ -176,7 +176,7 @@ export default function PalmistryContent() {
                                         }}
                                         onFocus={() => setShowSuggestions(true)}
                                         placeholder="Enter your city"
-                                        className="bg-background/50 border-border text-white placeholder:text-muted-foreground"
+                                        className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
                                     />
                                     {showSuggestions && suggestions.length > 0 && (
                                         <ul className="absolute z-50 w-full bg-card border border-border rounded-xl shadow-2xl mt-1 max-h-60 overflow-y-auto backdrop-blur-xl">
@@ -187,7 +187,7 @@ export default function PalmistryContent() {
                                                         setLocation(city.city);
                                                         setShowSuggestions(false);
                                                     }}
-                                                    className="px-4 py-2 hover:bg-accent cursor-pointer text-sm text-white border-b border-border/50 last:border-0"
+                                                    className="px-4 py-2 hover:bg-accent cursor-pointer text-sm text-foreground border-b border-border/50 last:border-0"
                                                 >
                                                     {city.city}, {city.state}
                                                 </li>
@@ -212,7 +212,7 @@ export default function PalmistryContent() {
                                                     alt="Palm preview"
                                                     className="max-w-full h-64 object-contain mx-auto rounded-xl"
                                                 />
-                                                <p className="text-sm text-gray-400">{t('palmistry.changeImage') || 'Click to change image'}</p>
+                                                <p className="text-sm text-muted-foreground">{t('palmistry.changeImage') || 'Click to change image'}</p>
                                             </div>
                                         ) : (
                                             <div className="space-y-4">
@@ -220,7 +220,7 @@ export default function PalmistryContent() {
                                                     <Upload className="w-8 h-8 text-amber-500" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-white font-medium">{t('palmistry.uploadText') || 'Click to upload'}</p>
+                                                    <p className="text-foreground font-medium">{t('palmistry.uploadText') || 'Click to upload'}</p>
                                                     <p className="text-sm text-gray-400">{t('palmistry.uploadHint') || 'PNG, JPG up to 10MB'}</p>
                                                 </div>
                                             </div>
@@ -229,11 +229,11 @@ export default function PalmistryContent() {
                                 </div>
 
                                 <div className="bg-background/40 rounded-xl p-6 border border-border">
-                                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                                         <ImageIcon className="w-4 h-4 text-amber-500" />
                                         {t('palmistry.tipsTitle') || 'Tips for best results:'}
                                     </h3>
-                                    <ul className="text-sm text-gray-300 space-y-2">
+                                    <ul className="text-sm text-muted-foreground space-y-2">
                                         <li>{t('palmistry.tips1') || '• Use natural bright lighting'}</li>
                                         <li>{t('palmistry.tips2') || '• Keep palm flat and straight'}</li>
                                         <li>{t('palmistry.tips3') || '• Capture full palm clearly with fingers'}</li>
@@ -274,7 +274,7 @@ export default function PalmistryContent() {
                                     <CheckCircle className="w-7 h-7" />
                                     {t('palmistry.overallAnalysis') || 'Overall Analysis'}
                                 </h3>
-                                <p className="text-gray-300 leading-relaxed text-lg">{analysis.overall}</p>
+                                <p className="text-muted-foreground leading-relaxed text-lg">{analysis.overall}</p>
                             </Card>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -286,18 +286,18 @@ export default function PalmistryContent() {
                                     { title: t('palmistry.fateLine') || 'Fate Line', icon: TrendingUp, data: analysis.fateLine, color: 'blue' }
                                 ].map((line, idx) => (
                                     <Card key={idx} className="celestial-card p-6 bg-card/30 backdrop-blur-xl border-border">
-                                        <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                                        <h3 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
                                             <line.icon className={`w-5 h-5 text-${line.color}-500`} />
                                             {line.title}
                                         </h3>
                                         <div className="space-y-4">
                                             <div className="grid grid-cols-2 gap-y-2 text-sm border-b border-border/50 pb-4">
                                                 <span className="text-gray-400">Meaning:</span>
-                                                <span className="text-white font-medium">{line.data.meaning}</span>
+                                                <span className="text-foreground font-medium">{line.data.meaning}</span>
                                             </div>
                                             <div className="bg-accent/20 rounded-lg p-4">
                                                 <p className="text-xs font-semibold text-amber-500 mb-2 uppercase tracking-wider">Predictions:</p>
-                                                <ul className="text-xs text-gray-300 space-y-2">
+                                                <ul className="text-xs text-muted-foreground space-y-2">
                                                     {line.data.predictions.map((pred: string, pIdx: number) => (
                                                         <li key={pIdx} className="flex items-start gap-2">
                                                             <div className="w-1 h-1 bg-amber-500 rounded-full mt-1.5 flex-shrink-0" />
@@ -312,12 +312,12 @@ export default function PalmistryContent() {
                             </div>
 
                             <Card className="celestial-card p-8 bg-card/30 backdrop-blur-xl border-border">
-                                <h3 className="text-xl font-semibold mb-6 text-white">{t('palmistry.recommendations') || 'Expert Recommendations'}</h3>
+                                <h3 className="text-xl font-semibold mb-6 text-foreground">{t('palmistry.recommendations') || 'Expert Recommendations'}</h3>
                                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {analysis.recommendations.map((rec: string, idx: number) => (
                                         <li key={idx} className="flex items-start gap-4 p-4 bg-background/40 rounded-xl border border-border">
                                             <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                                            <span className="text-sm text-gray-300">{rec}</span>
+                                            <span className="text-sm text-muted-foreground">{rec}</span>
                                         </li>
                                     ))}
                                 </ul>

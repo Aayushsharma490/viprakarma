@@ -83,11 +83,11 @@ export default function NumerologyContent() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm">
-                            <span className="text-white">{t("numerology.title")?.split(' ')[0] || "Numerology"}</span>{' '}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-sm text-foreground">
+                            <span>{t("numerology.title")?.split(' ')[0] || "Numerology"}</span>{' '}
                             <span className="golden-text">{t("numerology.title")?.split(' ').slice(1).join(' ') || "Analysis"}</span>
                         </h1>
-                        <p className="text-xl text-gray-300 font-medium">
+                        <p className="text-xl text-muted-foreground font-medium">
                             {t("numerology.subtitle") ||
                                 "Discover the hidden meanings in your name and birth date"}
                         </p>
@@ -103,13 +103,13 @@ export default function NumerologyContent() {
                         transition={{ delay: 0.2 }}
                     >
                         <Card className="celestial-card border-border bg-card/30 backdrop-blur-xl p-8 mb-8 rounded-3xl relative overflow-hidden">
-                            <h2 className="text-2xl font-semibold mb-6 text-white flex items-center gap-2">
+                            <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center gap-2">
                                 <Hash className="w-6 h-6 text-amber-500" />
                                 {t("numerology.enterDetails") || "Enter Your Details"}
                             </h2>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <Label htmlFor="name" className="text-gray-100 mb-2 block">
+                                    <Label htmlFor="name" className="text-foreground/80 mb-2 block font-medium">
                                         {t("numerology.fullName")}
                                     </Label>
                                     <Input
@@ -121,12 +121,12 @@ export default function NumerologyContent() {
                                             setFormData({ ...formData, name: e.target.value })
                                         }
                                         required
-                                        className="bg-background/50 border-border text-white placeholder:text-muted-foreground"
+                                        className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
                                     />
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="dateOfBirth" className="text-gray-100 mb-2 block">
+                                    <Label htmlFor="dateOfBirth" className="text-foreground/80 mb-2 block font-medium">
                                         {t("numerology.dateOfBirth")}
                                     </Label>
                                     <Input
@@ -137,7 +137,7 @@ export default function NumerologyContent() {
                                             setFormData({ ...formData, dateOfBirth: e.target.value })
                                         }
                                         required
-                                        className="capitalize bg-background/50 border-border text-white inverse-date-picker"
+                                        className="capitalize bg-background/50 border-border text-foreground inverse-date-picker"
                                     />
                                 </div>
 
@@ -183,12 +183,12 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold golden-text">
                                                 {t("numerology.lifePath.title") || "Life Path"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">
+                                            <p className="text-xs text-muted-foreground">
                                                 {t("numerology.lifePath.subtitle") || "Core Identity"}
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {numerologyData.insights.lifePathMeaning}
                                     </p>
                                 </Card>
@@ -205,12 +205,12 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold text-purple-400">
                                                 {t("numerology.driver.title") || "Driver"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">
+                                            <p className="text-xs text-muted-foreground">
                                                 {t("numerology.driver.subtitle") || "Inner Self"}
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {t("numerology.driver.description") || "Your driver number controls your actions and mental thoughts."}
                                     </p>
                                 </Card>
@@ -227,12 +227,12 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold text-pink-400">
                                                 {t("numerology.conductor.title") || "Conductor"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">
+                                            <p className="text-xs text-muted-foreground">
                                                 {t("numerology.conductor.subtitle") || "External Fate"}
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {t("numerology.conductor.description") || "Your conductor number determines your destiny and external environment."}
                                     </p>
                                 </Card>
@@ -251,10 +251,10 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold text-blue-400">
                                                 {t("numerology.destiny.title") || "Destiny"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">{t("numerology.destiny.subtitle") || "Purpose"}</p>
+                                            <p className="text-xs text-muted-foreground">{t("numerology.destiny.subtitle") || "Purpose"}</p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {numerologyData.insights.destinyMeaning}
                                     </p>
                                 </Card>
@@ -270,12 +270,12 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold text-red-400">
                                                 {t("numerology.soulUrge.title") || "Soul Urge"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">
+                                            <p className="text-xs text-muted-foreground">
                                                 {t("numerology.soulUrge.subtitle") || "Deep Desires"}
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {numerologyData.insights.soulUrgeMeaning}
                                     </p>
                                 </Card>
@@ -291,12 +291,12 @@ export default function NumerologyContent() {
                                             <h3 className="text-xl font-semibold text-green-400">
                                                 {t("numerology.personality.title") || "Personality"}
                                             </h3>
-                                            <p className="text-xs text-gray-300">
+                                            <p className="text-xs text-muted-foreground">
                                                 {t("numerology.personality.subtitle") || "Outer Image"}
                                             </p>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 leading-relaxed text-sm">
+                                    <p className="text-muted-foreground leading-relaxed text-sm">
                                         {numerologyData.insights.personalityMeaning}
                                     </p>
                                 </Card>
@@ -310,10 +310,10 @@ export default function NumerologyContent() {
                                             <Hash className="w-6 h-6 text-white" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold text-white">
+                                            <h3 className="text-xl font-bold text-foreground">
                                                 {t("numerology.mobileTitle") || "Lucky Mobile Number Suggestions"}
                                             </h3>
-                                            <p className="text-sm text-gray-300">
+                                            <p className="text-sm text-muted-foreground">
                                                 {t("numerology.mobileSubtitle") || "Choose a number that resonates with your vibrations"}
                                             </p>
                                         </div>
@@ -321,7 +321,7 @@ export default function NumerologyContent() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div>
-                                            <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                            <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                                                 <Star className="w-4 h-4 text-amber-500" />
                                                 {t("numerology.luckyDigits") || "Your Lucky Digits"}
                                             </h4>
@@ -340,11 +340,11 @@ export default function NumerologyContent() {
                                         </div>
 
                                         <div>
-                                            <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                            <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                                                 <TrendingUp className="w-4 h-4 text-amber-500" />
                                                 {t("numerology.suggestion") || "Suggested Totals"}
                                             </h4>
-                                            <p className="text-sm text-gray-300 leading-relaxed">
+                                            <p className="text-sm text-muted-foreground leading-relaxed">
                                                 {numerologyData.mobileSuggestions?.description}
                                             </p>
 
@@ -367,7 +367,7 @@ export default function NumerologyContent() {
                                         {t("numerology.completeProfile") || "Your Complete Profile"}
                                     </h3>
                                 </div>
-                                <p className="text-gray-300 leading-relaxed mb-6">
+                                <p className="text-muted-foreground leading-relaxed mb-6">
                                     {t("numerology.introText") || "Your numbers reveal a unique cosmic blueprint."}{" "}
                                     <strong className="text-amber-500">
                                         {numerologyData.lifePath}
@@ -387,9 +387,9 @@ export default function NumerologyContent() {
                                     <div className="bg-background/40 rounded-lg p-4 border border-border">
                                         <div className="flex items-center gap-2 mb-2">
                                             <TrendingUp className="w-5 h-5 text-green-400" />
-                                            <h4 className="font-semibold text-white">{t("numerology.strengths") || "Strengths"}</h4>
+                                            <h4 className="font-semibold text-foreground">{t("numerology.strengths") || "Strengths"}</h4>
                                         </div>
-                                        <ul className="text-sm text-gray-300 space-y-1">
+                                        <ul className="text-sm text-muted-foreground space-y-1">
                                             <li>{t("numerology.strength1") || "• Natural leadership"}</li>
                                             <li>{t("numerology.strength2") || "• Determination"}</li>
                                             <li>{t("numerology.strength3") || "• Creativity"}</li>
@@ -401,11 +401,11 @@ export default function NumerologyContent() {
                                     <div className="bg-background/40 rounded-lg p-4 border border-border">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Star className="w-5 h-5 text-amber-400" />
-                                            <h4 className="font-semibold text-white">
+                                            <h4 className="font-semibold text-foreground">
                                                 {t("numerology.lifeRecommendations") || "Recommendations"}
                                             </h4>
                                         </div>
-                                        <ul className="text-sm text-gray-300 space-y-1">
+                                        <ul className="text-sm text-muted-foreground space-y-1">
                                             <li>{t("numerology.recommendation1") || "• Pursue goals"}</li>
                                             <li>{t("numerology.recommendation2") || "• Stay creative"}</li>
                                             <li>{t("numerology.recommendation3") || "• Build bonds"}</li>
@@ -420,28 +420,28 @@ export default function NumerologyContent() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-12">
                                 <Card className="celestial-card p-4 text-center bg-card/30 backdrop-blur-xl border-border">
                                     <Heart className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                                    <h4 className="font-semibold text-white mb-1">
+                                    <h4 className="font-semibold text-foreground mb-1">
                                         {t("numerology.loveCompatibility") || "Love Match"}
                                     </h4>
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-xs text-muted-foreground">
                                         {t("numerology.bestMatches") || "Check compatibility"}
                                     </p>
                                 </Card>
                                 <Card className="celestial-card p-4 text-center bg-card/30 backdrop-blur-xl border-border">
                                     <Brain className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-                                    <h4 className="font-semibold text-white mb-1">
+                                    <h4 className="font-semibold text-foreground mb-1">
                                         {t("numerology.luckyDays") || "Lucky Days"}
                                     </h4>
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-xs text-muted-foreground">
                                         {t("numerology.luckyDaysValue") || "Mon, Wed, Fri"}
                                     </p>
                                 </Card>
                                 <Card className="celestial-card p-4 text-center bg-card/30 backdrop-blur-xl border-border">
                                     <Sparkles className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-                                    <h4 className="font-semibold text-white mb-1">
+                                    <h4 className="font-semibold text-foreground mb-1">
                                         {t("numerology.luckyColors") || "Lucky Colors"}
                                     </h4>
-                                    <p className="text-xs text-gray-400">{t("numerology.luckyColorsValue") || "Yellow, Gold"}</p>
+                                    <p className="text-xs text-muted-foreground">{t("numerology.luckyColorsValue") || "Yellow, Gold"}</p>
                                 </Card>
                             </div>
                         </motion.div>
